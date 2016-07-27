@@ -35,7 +35,7 @@ class UploadButton extends Component {
 
     if (!fileName) {
       this.setState({
-        publishError: "Please enter a valid name"
+        publishError: "Oops! Please fill out a name for your presentation."
       });
 
       return;
@@ -62,7 +62,7 @@ class UploadButton extends Component {
       })
       .catch(() => {
         this.setState({
-          publishError: "We're sorry, there was a problem publishing. Please try again in a moment."
+          publishError: "Oh no! Something went wrong with publishing. Please try again in a moment."
         });
       });
   }
@@ -116,6 +116,53 @@ class UploadButton extends Component {
       });
   }
 
+  renderError(err) {
+    if (!err) {
+      return;
+    }
+
+    return (
+      <div className={styles.errorMessage}>
+        <span className={`${styles.errorMessageIcon} octicon octicon-alert`}></span>
+        <span>
+          {err}
+        </span>
+      </div>
+    );
+  }
+
+  renderButtons(fid, info, user) {
+    if (!fid || !info.dateModified) {
+      return (
+        <button className={styles.uploadBtn} onClick={this.onClickUpload} disabled={!user} >
+          <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
+          Upload
+        </button>
+      );
+    }
+    return (
+      <div>
+        <div>
+          <button className={styles.uploadBtn} onClick={this.onClickShare} disabled={!user} >
+            <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
+            Share
+            {info.worldReadable ?
+              info.webUrl :
+              `${info.webUrl}?share_key=${info.shareKey}`
+            }
+          </button>
+        </div>
+        <div>
+          <button className={styles.uploadBtn} onClick={this.onClickSync} disabled={!user} >
+            <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
+            Sync
+          </button>
+          Last synced {moment(info.dateModified).calendar()}
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const { user, presInfo, fid } = this.context.store.api;
     const { fileName: filePath } = this.context.store.fileStore;
@@ -125,35 +172,11 @@ class UploadButton extends Component {
 
     return (
       <div className={styles.upload}>
-        {fid && presInfo.dateModified ?
-          <div>
-            <div>
-              <button className={styles.uploadBtn} onClick={this.onClickShare} disabled={!user} >
-                <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
-                Share
-                {presInfo.worldReadable ?
-                  presInfo.webUrl :
-                  `${presInfo.webUrl}?share_key=${presInfo.shareKey}`
-                }
-              </button>
-            </div>
-            <div>
-              <button className={styles.uploadBtn} onClick={this.onClickSync} disabled={!user} >
-                <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
-                Sync
-              </button>
-              Last synced {moment(presInfo.dateModified).calendar()}
-            </div>
-          </div>
-          :
-          <button className={styles.uploadBtn} onClick={this.onClickUpload} disabled={!user} >
-            <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
-            Upload
-          </button>
-        }
+        {this.renderButtons(fid, presInfo, user)}
         {!fid && user &&
           <div className={`${styles.flyout} ${uploadFlyoutVisible && styles.visible}`}>
             <p className={styles.flyoutHeading}>Upload presentation to plot.ly</p>
+            {this.renderError(publishError)}
             <form>
               <label className={styles.flyoutLabel}>
                 Name
@@ -185,7 +208,6 @@ class UploadButton extends Component {
                 />
                  Private
               </label>
-              {publishError && <h4>{publishError}</h4>}
               <button type="button" className={styles.flyoutBtnPublish} onClick={this.onPublish}>
                 Publish
               </button>
