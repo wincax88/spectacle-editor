@@ -1,3 +1,4 @@
+import { ipcRenderer } from "electron";
 import { observable, computed, transaction, asReference } from "mobx";
 import Immutable from "seamless-immutable";
 import { generate } from "shortid";
@@ -22,7 +23,11 @@ export default class SlidesStore {
     slides: [{
       // Default first slide
       id: generate(),
-      props: {},
+      props: {
+        style: {
+          backgroundColor: "#f3c"
+        }
+      },
       children: [],
       color: allColors[0]
     }, {
@@ -325,6 +330,8 @@ export default class SlidesStore {
         this.fileStore.setIsDirty(true);
       }
     });
+
+    ipcRenderer.send("update-presentation", this.slides);
   }
 
   serialize() {

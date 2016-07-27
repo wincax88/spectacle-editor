@@ -8,7 +8,10 @@ const config = {
 
   devtool: "source-map",
 
-  entry: "./app/index",
+  entry: {
+    bundle: "./app/index",
+    presentation: "./app/presentation"
+  },
 
   output: {
     ...baseConfig.output,

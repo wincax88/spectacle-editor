@@ -1,8 +1,10 @@
-import { app, BrowserWindow, Menu, crashReporter, shell, ipcMain } from "electron";
+import { app, BrowserWindow, Menu, crashReporter, shell, ipcMain, dialog } from "electron";
+import fs from "fs";
 
 let menu;
 let template;
 let mainWindow = null;
+let presWindow = null;
 
 app.commandLine.appendSwitch("--ignore-certificate-errors");
 
@@ -50,6 +52,14 @@ app.on("window-all-closed", () => {
 
 
 app.on("ready", () => {
+  presWindow = new BrowserWindow({
+    show: true,
+    width: 250,
+    height: 175
+  });
+
+  presWindow.loadURL(`file://${__dirname}/app/presentation.html#/?export`);
+
   mainWindow = new BrowserWindow({
     show: false,
     width: 1600,
@@ -65,7 +75,13 @@ app.on("ready", () => {
 
   mainWindow.on("closed", () => {
     mainWindow = null;
+    presWindow = null;
   });
+
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.openDevTools();
+    presWindow.openDevTools();
+  }
 
   ipcMain.on("social-login", (event, socialUrl) => {
     mainWindow.webContents.session.clearStorageData(() => {});
@@ -79,9 +95,26 @@ app.on("ready", () => {
     shell.openExternal(url);
   });
 
-  if (process.env.NODE_ENV === "development") {
-    mainWindow.openDevTools();
-  }
+  ipcMain.on("show-presentation", () => {
+    presWindow.show();
+    presWindow.focus();
+  });
+
+  ipcMain.on("update-presentation", (event, data) => {
+    presWindow.webContents.send("update", data);
+  });
+
+  presWindow.on("close", (ev) => {
+    if (!mainWindow || !presWindow) {
+      presWindow = null;
+
+      return;
+    }
+
+    ev.preventDefault();
+    presWindow.hide();
+    mainWindow.focus();
+  });
 
   if (process.platform === "darwin") {
     template = [{
@@ -129,6 +162,41 @@ app.on("ready", () => {
         accelerator: "Command+O",
         click() {
           mainWindow.webContents.send("file", "open");
+        }
+      }, {
+        label: "Export to PDF",
+        accelerator: "Command+P",
+        click() {
+          presWindow.capturePage((image) => {
+            fs.writeFile("out.png", image.toPng(), function(err) {
+              if (err) {
+                console.log("ERROR Failed to save file", err);
+              }
+            });
+          });
+          presWindow.webContents.printToPDF({landscape: true, printBackground: true}, (err, data) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+
+            dialog.showSaveDialog({
+              filters: [{
+                name: "pdf",
+                extensions: ["pdf"]
+              }]
+            }, (fileName) => {
+              if (fileName === undefined) {
+                return;
+              }
+
+              const normalizedName = fileName.substr(-4) === ".pdf" ? fileName : `${fileName}.pdf`;
+
+              fs.writeFile(normalizedName, data, (err) => {
+                console.log(err);
+              });
+            });
+          });
         }
       }]
     }, {
