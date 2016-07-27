@@ -11,6 +11,7 @@ const parseJSON = ({ response, text }) => {
 
 export const login = (domain, username, password) => fetch(`${domain}/v2/users/login`, {
   method: "post",
+  credentials: "include",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",

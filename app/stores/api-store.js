@@ -1,4 +1,5 @@
 import { observable, asReference } from "mobx";
+import { remote } from "electron";
 import moment from "moment";
 
 const defaultDomain = "https://api.plot.ly";
@@ -59,6 +60,7 @@ export default class ApiStore {
   }
 
   signOut() {
+    remote.getCurrentWindow().webContents.session.clearStorageData(() => {});
     localStorage.removeItem("user");
     localStorage.removeItem("csrfToken");
 
