@@ -18,7 +18,8 @@ class UploadButton extends Component {
     this.state = {
       uploadFlyoutVisible: false,
       privacy: "public",
-      fileName: ""
+      fileName: "",
+      shareFlyoutVisible: false
     };
   }
 
@@ -116,6 +117,10 @@ class UploadButton extends Component {
       });
   }
 
+  onCloseShareFlyout = () => {
+    this.setState({ shareFlyoutVisible: false });
+  }
+
   renderError(err) {
     if (!err) {
       return;
@@ -140,25 +145,36 @@ class UploadButton extends Component {
         </button>
       );
     }
+
+    const { shareFlyoutVisible } = this.state;
     return (
-      <div>
+      <div className={styles.flex}>
         <div>
           <button className={styles.uploadBtn} onClick={this.onClickShare} disabled={!user} >
-            <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
+            <i className={`ionicons ion-share ${styles.uploadIcon}`}></i>
             Share
+          </button>
+          <div className={`${styles.flyout} ${shareFlyoutVisible && styles.visible}`}>
+            <div className={styles.modalCloseBtn} onClick={this.onCloseShareFlyout}>
+              <i className={"icon ion-android-close"}></i>
+            </div>
+            <p className={styles.flyoutHeading}>Share your presentation</p>
             {info.worldReadable ?
               info.webUrl :
               `${info.webUrl}?share_key=${info.shareKey}`
             }
-          </button>
+          </div>
         </div>
         <div>
           <button className={styles.uploadBtn} onClick={this.onClickSync} disabled={!user} >
-            <i className={`ionicons ion-ios-cloud-upload-outline ${styles.uploadIcon}`}></i>
+            <i className={`ionicons ion-android-sync ${styles.uploadIcon}`}></i>
             Sync
           </button>
-          Last synced {moment(info.dateModified).calendar()}
         </div>
+        <p className={styles.syncStatus}>
+          Last synced <br/>
+          {moment(info.dateModified).calendar()}
+        </p>
       </div>
     );
   }
