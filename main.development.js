@@ -327,11 +327,11 @@ app.on("ready", () => {
       },
       {
         label: "&Export To PDF",
-        accelerator: "Ctrl+W"
+        accelerator: ""
       },
       {
         label: "&Close",
-        accelerator: "Ctrl+W",
+        accelerator: "Ctrl+Q",
         click() {
           mainWindow.close();
         }
