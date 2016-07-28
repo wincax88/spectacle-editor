@@ -55,7 +55,7 @@ class UserMenu extends Component {
 
         <div className={styles.presentations}>
           <p className={styles.presentationsHeading}>
-            <span className={styles.fancy}>Your Presentations</span>
+            <span className={styles.fancy}>Your Plot.ly Presentations</span>
           </p>
           <Spinner className={styles.spinner} />
           <ul className={styles.list}>
