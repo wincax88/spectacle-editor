@@ -13,6 +13,9 @@
 
   --select-hover-color: #e6f2ff;
 
+  --light-bluegray: #c6d0d6;
+  --bluegray: #69738a;
+
   --plotly-blue: #447bdc;
   --dark-plotly-blue: #2d56aa;
   --darker-plotly-blue: #152f5e;
@@ -38,4 +41,5 @@
   --none: 0;
   --basic: 1;
   --basic-increment: 2;
+  --flyout: 3;
 }
