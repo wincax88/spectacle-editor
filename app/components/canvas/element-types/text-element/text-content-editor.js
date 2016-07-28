@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 
-import { isEqual } from "lodash";
-
 export default class TextContentEditor extends Component {
   static propTypes = {
     isEditing: React.PropTypes.bool,
@@ -42,31 +40,6 @@ export default class TextContentEditor extends Component {
 
   handleInput = (ev) => {
     this.setState({ content: ev.target.textContent });
-
-    // add current innerText to history before change
-    if (this.undoOrRedoAction) {
-      this.undoOrRedoAction = false;
-      return;
-    }
-
-    if (!this.history) {
-      this.history = [];
-      this.index = 0;
-    }
-
-    window.clearTimeout(this.inputTimeout);
-
-    this.inputTimeout = window.setTimeout(() => {
-      this.editorChildren = Array.prototype.map.call(this.editor.childNodes, (child) => (
-        child.innerText || ""
-      ));
-
-      if (!isEqual(this.history.slice(-1)[0], this.editorChildren)) {
-        this.history[this.index++] = this.editorChildren;
-      }
-      this.history = this.history.slice(0, this.index);
-      this.index = this.history.length;
-    }, 200);
   }
 
   handleBlur = () => {
@@ -136,75 +109,27 @@ export default class TextContentEditor extends Component {
     this.currentElement = this.context.store.currentElementIndex;
   }
 
-  setEditorStateToString = (content) => {
-    if (!content) {
-      return;
-    }
-
-    const child = this.editor.childNodes[0].cloneNode();
-
-    this.editor.innerHTML = "";
-
-    content.forEach((line) => {
-      const c = child.cloneNode();
-      c.innerText = line;
-      this.editor.appendChild(c);
-    });
-  }
-
-  selectAll = () => {
-    const sel = window.getSelection();
-    const range = document.createRange();
-
-    range.selectNodeContents(this.editor);
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }
-
   handleKeyDown = (ev) => {
     const superKey = process.platform === "darwin" ? ev.metaKey : ev.ctrlKey;
 
-    // super+z
-    if (superKey && !ev.shiftKey && ev.which === 90) {
-      this.undoOrRedoAction = true;
+    if (superKey && ev.which === 90) {
       ev.preventDefault();
-
-      if (this.history && this.history.length && this.index >= 0) {
-        this.setEditorStateToString(this.history[--this.index]);
-        // this.selectAll();
-      }
-
-      if (this.index < 0) {
-        this.index = 0;
-      }
+      document.execCommand("undo");
     }
 
-    // super+shift+z
     if (superKey && ev.which === 90 && ev.shiftKey) {
-      this.undoOrRedoAction = true;
       ev.preventDefault();
-
-      if (this.history && this.history.length && this.index < this.history.length) {
-        this.setEditorStateToString(this.history[++this.index]);
-        // this.selectAll();
-      }
-
-      if (this.index > this.history.length) {
-        this.index = this.history.length;
-      }
+      document.execCommand("redo");
     }
 
-    // delete prevents deleting the first child element
     if (ev.which === 8 && ev.target.innerText.length <= 1) {
       ev.preventDefault();
     }
 
-    // return key prevents default contenteditable behavior
     if (ev.which === 13 && ev.shiftKey && !this.props.componentProps.listType) {
       ev.preventDefault();
     }
 
-    // escape key finalizes and blurs the edit.
     if (ev.which === 27) {
       ev.preventDefault();
       this.handleBlur();
@@ -230,7 +155,6 @@ export default class TextContentEditor extends Component {
         suppressContentEditableWarning
         onClick={this.handleClick}
         onKeyDown={this.handleKeyDown}
-        onKeyUp={this.handleKeyUp}
         onInput={this.handleInput}
       >
         {contentToRender.map((element, i) =>
@@ -278,7 +202,6 @@ export default class TextContentEditor extends Component {
         onClick={this.handleClick}
         onBlur={this.handleBlur}
         onKeyDown={this.handleKeyDown}
-        onKeyUp={this.handleKeyUp}
         onInput={this.handleInput}
       >
         {text.map((element, i) => (
