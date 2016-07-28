@@ -2,7 +2,7 @@
   position: absolute;
 
   margin: auto;
-  z-index: var(--basic-increment);
+  z-index: 100;
 }
 
 .handleLeft::before,

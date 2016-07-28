@@ -379,19 +379,21 @@ export default class TextElement extends Component {
   }
 
   stopEditing = () => {
-    this.setState({
-      editing: false,
-      width: this.currentElementComponent.clientWidth,
-      reRender: true
-    });
+    if (this.currentElementComponent) {
+      this.setState({
+        editing: false,
+        width: this.currentElementComponent.clientWidth,
+        reRender: true
+      });
 
-    // this defer is necessary to force an entire re-render of the text editor
-    // because contentEditable creates new elements outside of react's knowledge.
-    // This will unmount the editor and remount it with the updated children incorporated
-    // into the virtual DOM from the store.
-    defer(() => {
-      this.setState({ reRender: false });
-    });
+      // this defer is necessary to force an entire re-render of the text editor
+      // because contentEditable creates new elements outside of react's knowledge.
+      // This will unmount the editor and remount it with the updated children incorporated
+      // into the virtual DOM from the store.
+      defer(() => {
+        this.setState({ reRender: false });
+      });
+    }
   }
 
   render() {
@@ -411,7 +413,7 @@ export default class TextElement extends Component {
       left
     } = this.state;
 
-    const { isResizing, isDragging } = this.context.store;
+    const { isResizing, isDragging, paragraphStyles } = this.context.store;
 
     if (isResizing) {
       this.currentElementComponent.style.cursor = "ew-resize";
@@ -429,7 +431,6 @@ export default class TextElement extends Component {
     if (isDragging) {
       wrapperStyle.pointerEvents = "none";
     }
-
 
     if (mousePosition || props.style && props.style.position === "absolute") {
       wrapperStyle.position = "absolute";
@@ -459,7 +460,13 @@ export default class TextElement extends Component {
       }
     }
 
-    elementStyle = { ...elementStyle, position: "relative", left: 0, top: 0 };
+    elementStyle = {
+      ...paragraphStyles[props.paragraphStyle],
+      ...elementStyle,
+      position: "relative",
+      left: 0,
+      top: 0
+    };
 
     if (this.props.component.props.style.width !== undefined || isResizing) {
       elementStyle = omit(elementStyle, "whiteSpace");
@@ -472,7 +479,7 @@ export default class TextElement extends Component {
     }
 
 
-    if (isResizing) {
+    if (isResizing && currentlySelected) {
       const componentStylesLeft = props.style && props.style.left || 0;
 
       motionStyles.left = spring(
@@ -492,7 +499,7 @@ export default class TextElement extends Component {
             const computedDragStyles = omit(computedStyles, "width");
             let computedResizeStyles = omit(computedStyles, "top", "left");
 
-            if (!isResizing) {
+            if (!isResizing || !currentlySelected) {
               computedResizeStyles = {};
             }
 
@@ -501,8 +508,7 @@ export default class TextElement extends Component {
                 className={
                   `${styles.canvasElement}
                    ${extraClasses}
-                   ${BLACKLIST_CURRENT_ELEMENT_DESELECT}
-                   ${styles.list}`
+                   ${BLACKLIST_CURRENT_ELEMENT_DESELECT}`
                 }
                 ref={component => {this.currentElementComponent = component;}}
                 style={{ ...wrapperStyle, ...computedDragStyles }}
@@ -526,12 +532,13 @@ export default class TextElement extends Component {
                     ref={component => {
                       this.editable = ReactDOM.findDOMNode(component);
                     }}
+                    currentlySelected={currentlySelected}
                     stopEditing={this.stopEditing}
                     classNames={{ ...styles, paragraph: paragraphClass }}
                     isEditing={editing}
                     placeholderText={defaultText}
                     componentProps={{ ...props }}
-                    style={{ ...elementStyle, ...computedResizeStyles }}
+                    style={{ ...elementStyle, ...computedResizeStyles, zIndex: elementIndex }}
                     children={children}
                   />
                 }

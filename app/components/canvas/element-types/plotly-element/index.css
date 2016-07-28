@@ -15,7 +15,8 @@
   bottom: 0;
   left: 0;
 
-  z-index: var(--basic-increment);
+  z-index: 100;
+  pointer-events: none;
 }
 
 .iframe {

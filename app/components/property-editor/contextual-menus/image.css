@@ -1,0 +1,55 @@
+.fileUpload {
+  margin: 12px 0 0 !important;
+  max-width: 100%;
+
+  text-align: center;
+  cursor: pointer;
+}
+
+.visuallyHidden {
+  pointer-events: none;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.uploadedFile {
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.uploadedFileIcon {
+  flex-basis: 30px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  margin: 0 5px 0 0;
+  padding: 0;
+  width: 30px;
+  height: 20px;
+
+  fill: var(--plotly-blue);
+}
+
+.uploadedFileIcon svg {
+  width: 100%;
+  vertical-align: top;
+}
+
+.uploadedFileName {
+  flex-basis: auto;
+  flex-grow: 1;
+  margin: 0;
+
+  color: var(--plotly-blue);
+  font-size: 12px;
+  line-height: 1.2;
+  vertical-align: middle;
+  word-break: break-all;
+}

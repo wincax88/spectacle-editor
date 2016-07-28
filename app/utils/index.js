@@ -2,6 +2,21 @@ import { sortBy, sortedUniq, invert } from "lodash";
 
 import { ElementTypes, SNAP_DISTANCE } from "../constants";
 
+export const getParagraphStyles = (obj) => (
+  {
+    color: "#3d3d3d",
+    fontFamily: "openSans",
+    fontSize: 45,
+    fontStyle: "normal",
+    fontWeight: 400,
+    minWidth: 20,
+    opacity: 1,
+    textAlign: "center",
+    textDecoration: "none",
+    ...obj
+  }
+);
+
 export const getElementDimensions = ({ type, props }) => {
   if (type === ElementTypes.TEXT) {
     return {
@@ -158,15 +173,18 @@ export const snap = (gridLines, potentialLines, snapFunction) => {
 };
 
 export const verifyFileContent = (fileContent, cb) => {
-  if (!fileContent || !fileContent.content || !fileContent.content.slides) {
+  if (!fileContent ||
+    !fileContent.content ||
+    !fileContent.content.presentation ||
+    !fileContent.content.presentation.slides) {
     return cb(new Error("Empty file"));
   }
 
-  if (!Array.isArray(fileContent.content.slides)) {
+  if (!Array.isArray(fileContent.content.presentation.slides)) {
     return cb(new Error("content.slides must be an array"));
   }
 
-  const slideError = fileContent.content.slides.some((slide) => {
+  const slideError = fileContent.content.presentation.slides.some((slide) => {
     if (!slide.id || !slide.children || !slide.props) {
       cb(new Error("Invalid Slide"));
 

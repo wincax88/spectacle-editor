@@ -57,7 +57,7 @@ class Slide extends Component {
 
     return (
       <div className={slideClass}
-        style={{ cursor: isResizing ? cursorType : "auto" }}
+        style={{ ...currentSlide.props.style, cursor: isResizing ? cursorType : "auto" }}
         id="slide"
       >
         {currentSlide && currentSlide.children.map((childObj, i) => (

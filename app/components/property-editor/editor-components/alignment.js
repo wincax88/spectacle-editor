@@ -13,7 +13,7 @@ export default class Alignment extends Component {
   }
 
   createHandleAlignmentChange = (updatedProp) => () => {
-    const { style } = this.props.currentElement.props;
+    const { style } = this.context.store.currentElement.props;
     const updatedStyles = { ...style, textAlign: updatedProp };
 
     this.context.store.updateElementProps({ style: updatedStyles });

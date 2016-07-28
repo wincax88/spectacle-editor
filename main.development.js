@@ -116,6 +116,18 @@ app.on("ready", () => {
     mainWindow.openDevTools();
   }
 
+  ipcMain.on("encode-image", (event, imagePath) => {
+    fs.readFile(imagePath, (err, imageData) => {
+      if (err) {
+        mainWindow.webContents.send("image-encoded", null);
+
+        return;
+      }
+
+      mainWindow.webContents.send("image-encoded", new Buffer(imageData).toString("base64"));
+    });
+  });
+
   ipcMain.on("social-login", (event, socialUrl) => {
     mainWindow.webContents.session.clearStorageData(() => {});
     // Reset the csrftoken cookie if there is one

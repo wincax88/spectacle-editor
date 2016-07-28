@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+
 import styles from "../index.css";
 import { autorun } from "mobx";
-import { map, omit, find } from "lodash";
+import { map, omit, find, merge } from "lodash";
+
 import {
   Alignment,
   ColorPicker,
@@ -11,9 +13,9 @@ import {
   LinkTo,
   Option,
   Select,
-  UpdateHeading
+  UpdateParagraphStyles
 } from "../editor-components/index.js";
-import { ElementTypes } from "../../../constants";
+import { ElementTypes, ParagraphStyles } from "../../../constants";
 import { FontMap } from "../../../font-settings";
 
 export default class TextMenu extends Component {
@@ -29,7 +31,8 @@ export default class TextMenu extends Component {
 
   componentDidMount() {
     autorun(() => {
-      const { currentElement } = this.context.store;
+      // deep merge necessary to break reference between state and store element style objects
+      const currentElement = merge({}, this.context.store.currentElement);
 
       window.clearTimeout(this.stateTimeout);
 
@@ -76,6 +79,46 @@ export default class TextMenu extends Component {
     }
   }
 
+  handleColorChange = (hex, opacity) => {
+    const style = this.context.store.currentElement.props.style;
+    const updatedColor = {};
+
+    if (style.color !== hex) {
+      updatedColor.color = hex;
+    }
+
+    if (style.opacity !== opacity) {
+      updatedColor.opacity = opacity;
+    }
+
+    if (updatedColor.opacity === undefined && updatedColor.color === undefined) {
+      return;
+    }
+
+    const updatedStyles = {
+      ...this.context.store.currentElement.props.style,
+      ...updatedColor
+    };
+
+    this.context.store.updateElementProps({ style: updatedStyles });
+  }
+
+  handleParagraphStyle = (value) => {
+    const { currentElement } = this.context.store;
+
+    if (value && currentElement) {
+      const { paragraphStyle } = currentElement.props;
+
+      if (paragraphStyle !== value) {
+        this.context.store.updateElementProps({
+          ...currentElement.props,
+          paragraphStyle: value,
+          style: {}
+        });
+      }
+    }
+  }
+
   updateCurrentElementStyles = (currentElement, style) => {
     const oldStyles = currentElement.props.style;
 
@@ -85,11 +128,17 @@ export default class TextMenu extends Component {
   }
 
   render() {
-    const { currentElement } = this.state;
-    const styleProps = currentElement && currentElement.props.style;
+    const currentElement = this.state.currentElement ? merge({}, this.state.currentElement) : null;
+    const { paragraphStyles } = this.context.store;
+    const styleProps = currentElement && {
+      ...paragraphStyles[currentElement.props.paragraphStyle],
+      ...currentElement.props.style
+    };
+
     let currentStyles;
 
     if (currentElement) {
+      currentElement.props.style = styleProps;
       currentStyles = find(FontMap[styleProps.fontFamily].styles, {
         fontWeight: styleProps.fontWeight,
         fontStyle: styleProps.fontStyle
@@ -110,12 +159,13 @@ export default class TextMenu extends Component {
               </div>
               <div>
                 <Select
-                  selectName="FontType"
-                  placeholderText="Heading 1"
-                  defaultValue="Heading 1"
+                  onChange={this.handleParagraphStyle}
+                  selectName="ParagraphStyles"
+                  placeholderText={currentElement.props.paragraphStyle}
+                  defaultValue={currentElement.props.paragraphStyle}
                   currentOptionClassName={styles.select}
                 >
-                  {map(["Heading 1", "Heading 2"], (heading, i) => (
+                  {ParagraphStyles.map((heading, i) => (
                     <Option
                       key={i}
                       value={heading}
@@ -129,7 +179,7 @@ export default class TextMenu extends Component {
             </div>
             <div>
               <div className={styles.breakHr}>
-                <div className={styles.breakTitle}>HEADING 1</div>
+                <div className={styles.breakTitle}>{currentElement.props.paragraphStyle}</div>
               </div>
             </div>
             <div className={styles.row}>
@@ -180,7 +230,7 @@ export default class TextMenu extends Component {
                 })}
               </Select>
               <Incrementer
-                currentElement={this.state.currentElement}
+                currentElement={currentElement}
                 propertyName={"fontSize"}
               />
             </div>
@@ -190,13 +240,13 @@ export default class TextMenu extends Component {
                 <div className={styles.subHeading}>
                   Color
                 </div>
-                <ColorPicker currentElement={this.state.currentElement} />
+                <ColorPicker currentStyles={styleProps} onChangeColor={this.handleColorChange} />
               </div>
               <div>
                 <div className={styles.subHeading}>
                   Formatting
                 </div>
-                <Formatting currentElement={this.state.currentElement} />
+                <Formatting currentElement={currentElement} />
               </div>
             </div>
 
@@ -205,11 +255,13 @@ export default class TextMenu extends Component {
                 Alignment
               </div>
               <Alignment
-                currentElement={this.state.currentElement}
+                currentElement={currentElement}
               />
             </div>
             <div className={styles.rowAlt}>
-              <UpdateHeading />
+              <UpdateParagraphStyles
+                currentElement={currentElement}
+              />
             </div>
             <hr className={`${styles.hr} ${styles.hrList}`} />
             <div className={styles.row}>
@@ -217,14 +269,14 @@ export default class TextMenu extends Component {
                 List
               </div>
               <List
-                currentElement={this.state.currentElement}
+                currentElement={currentElement}
               />
             </div>
             <div className={styles.row}>
               <div className={styles.subHeading}>
                 Link
               </div>
-              <LinkTo />
+              <LinkTo currentElement={this.state.currentElement} />
             </div>
           </div>
         )}

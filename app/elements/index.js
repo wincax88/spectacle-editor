@@ -1,6 +1,7 @@
 import React from "react";
 
 import plotlyPlaceholder from "../assets/images/plotly-placeholder.png";
+import imagePlaceholder from "../assets/icons/image.svg";
 import { ElementTypes } from "../constants";
 import { Image, Heading } from "../spectacle-components";
 
@@ -35,22 +36,15 @@ elements[ElementTypes.TEXT] = {
   // TODO: Figure out defaults for text element
   type: ElementTypes.TEXT,
   ComponentClass: Heading,
-  defaultWidth: 90,
-  defaultHeight: 63,
+  defaultWidth: 51,
+  defaultHeight: 36,
   defaultText: ["Text"],
   props: {
+    paragraphStyle: "Heading 1",
     isQuote: false,
     size: 4,
     listType: null,
-    style: {
-      color: "#3d3d3d",
-      fontFamily: "openSans",
-      fontSize: 45,
-      fontWeight: 400,
-      minWidth: 20,
-      fontStyle: "normal",
-      textAlign: "center"
-    }
+    style: {}
   },
   children: null
 };
@@ -59,9 +53,12 @@ elements[ElementTypes.IMAGE] = {
   type: ElementTypes.IMAGE,
   ComponentClass: Image,
   props: {
-    src: "http://placehold.it/400x200&text=sliding_yeah",
-    width: 400,
-    height: 200
+    src: `data:image/svg+xml;utf8,${imagePlaceholder}`,
+    width: 281,
+    height: 200,
+    style: {
+      opacity: 0.2
+    }
   },
   children: []
 };

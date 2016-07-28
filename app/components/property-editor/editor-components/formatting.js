@@ -19,7 +19,7 @@ export default class Formatting extends Component {
     } else {
       textDecoration = "underline";
     }
-    const { style } = this.props.currentElement.props;
+    const { style } = this.context.store.currentElement.props;
     const updatedStyles = {
       ...style,
       textDecoration

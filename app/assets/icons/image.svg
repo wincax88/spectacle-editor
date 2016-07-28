@@ -1,15 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="21" height="15" viewBox="0 0 21 15" role="img">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: #447bdc;
-      }
-    </style>
-    <filter id="filter" x="562.969" y="75.344" width="14.219" height="14.187" filterUnits="userSpaceOnUse">
-      <feFlood result="flood" flood-color="#447bdc"/>
-      <feComposite result="composite" operator="in" in2="SourceGraphic"/>
-      <feBlend result="blend" in2="SourceGraphic"/>
-    </filter>
-  </defs>
-  <path class="cls-1" d="M16.792,3.708a1,1,0,1,1-1,1,1,1,0,0,1,1-1m0-1a2,2,0,1,0,2,2,2,2,0,0,0-2-2h0Z" style="fill:inherit"/><polygon class="cls-1" points="15.737 7.998 11.698 13.372 10.899 12.771 12.436 10.727 6.943 2.996 -1.587 15 21 15 15.737 7.998" style="fill:inherit"/><path class="cls-1" d="M20,1V14H1V1H20m1-1H0V15H21V0h0Z" style="fill:inherit"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="15" viewBox="0 0 21 15" role="img"><path d="M16.8,3.7a0.945,0.945,0,0,1,1,1,1,1,0,1,1-2,0,0.945,0.945,0,0,1,1-1m0-1a2,2,0,1,0,2,2,2.006,2.006,0,0,0-2-2h0Z" style="fill:inherit"/><polygon points="12.4 10.7 10.9 12.8 11.7 13.4 15.7 8 20 13.7 20 1 1 1 1 11.4 6.9 3 12.4 10.7" style="fill:none"/><path d="M0,0V15H21V0H0ZM15.7,8l-4,5.4-0.8-.6,1.5-2L6.9,3,1,11.4V1H20V13.7Z" style="fill:inherit"/></svg>

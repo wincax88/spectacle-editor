@@ -3,6 +3,7 @@ import React, { Component } from "react";
 export default class TextContentEditor extends Component {
   static propTypes = {
     isEditing: React.PropTypes.bool,
+    currentlySelected: React.PropTypes.bool,
     placeholderText: React.PropTypes.array,
     classNames: React.PropTypes.object,
     componentProps: React.PropTypes.object,
@@ -23,6 +24,14 @@ export default class TextContentEditor extends Component {
 
   componentWillMount() {
     const { children, placeholderText } = this.props;
+
+    this.setState({
+      contentToRender: children && children || placeholderText
+    });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { children, placeholderText } = nextProps;
 
     this.setState({
       contentToRender: children && children || placeholderText
@@ -58,13 +67,19 @@ export default class TextContentEditor extends Component {
   }
 
   handleClick = (ev) => {
-    const { isEditing, placeholderText } = this.props;
+    const { isEditing, placeholderText, currentlySelected } = this.props;
     const { content, contentToRender } = this.state;
     const sel = window.getSelection();
     const range = document.createRange();
 
     if (!isEditing) {
       ev.preventDefault();
+
+      return;
+    }
+
+    if (!currentlySelected) {
+      this.props.stopEditing();
 
       return;
     }
@@ -107,18 +122,17 @@ export default class TextContentEditor extends Component {
   renderEditor(contentToRender) {
     const {
       classNames,
-      componentProps,
-      style
+      style,
+      currentlySelected
     } = this.props;
 
     return (
       <div
         ref={(component) => {this.editor = component;}}
-        {...componentProps}
         className={classNames.content}
         onBlur={this.handleBlur}
         style={{ ...style, whiteSpace: "pre-wrap" }}
-        contentEditable="true"
+        contentEditable={currentlySelected ? "true" : "false"}
         suppressContentEditableWarning
         onClick={this.handleClick}
         onKeyDown={this.handleKeyDown}
@@ -150,7 +164,7 @@ export default class TextContentEditor extends Component {
   }
 
   renderList(type, text) {
-    const { componentProps, classNames, style } = this.props;
+    const { currentlySelected, classNames, style } = this.props;
     let ListTag = "ol";
 
     if (type === "unordered") {
@@ -160,11 +174,10 @@ export default class TextContentEditor extends Component {
     return (
       <ListTag
         ref={(component) => {this.editor = component;}}
-        {...componentProps}
         className={`${classNames.content}`}
         onBlur={this.handleBlur}
         style={style}
-        contentEditable="true"
+        contentEditable={currentlySelected ? "true" : "false"}
         suppressContentEditableWarning
         onClick={this.handleClick}
         onBlur={this.handleBlur}

@@ -8,7 +8,9 @@ const dialog = remote.require("dialog");
 
 const getFileContent = (slidesStore) => JSON.stringify({
   content: {
-    slides: slidesStore.serialize()
+    presentation: {
+      slides: slidesStore.serialize()
+    }
   }
 });
 
@@ -69,6 +71,7 @@ export const fileActions = {
       // TODO: error handling
       fs.readFile(fileName, "utf-8", (err, data) => {
         if (err) {
+          console.log(err);
           notificationSystem.addNotification({
             message: "Error opening presentation",
             level: "error"
@@ -80,6 +83,7 @@ export const fileActions = {
         try {
           fileContents = JSON.parse(data);
         } catch (e) {
+          console.log(e);
           notificationSystem.addNotification({
             message: "Error opening presentation",
             level: "error"
@@ -88,6 +92,7 @@ export const fileActions = {
 
         verifyFileContent(fileContents, (schemaError) => {
           if (schemaError) {
+            console.log(schemaError);
             notificationSystem.addNotification({
               message: "Error opening presentation",
               level: "error"
@@ -96,7 +101,7 @@ export const fileActions = {
             return;
           }
 
-          slidesStore.deserialize(fileContents.content.slides);
+          slidesStore.deserialize(fileContents.content.presentation.slides);
 
           fileStore.setFileName(fileName);
           fileStore.setIsDirty(false);
