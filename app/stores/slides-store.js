@@ -312,6 +312,19 @@ export default class SlidesStore {
     });
   }
 
+  deleteCurrentElement() {
+    if (!this.currentElement) {
+      return;
+    }
+
+    const nextState = this.currentState;
+
+    nextState.slides[this.currentSlideIndex].children.splice(this.currentElementIndex, 1);
+    nextState.currentElementIndex = null;
+
+    this._addToHistory(nextState);
+  }
+
   updateElementDraggingState(isDraggingElement, isDraggingNewElement = false) {
     transaction(() => {
       this.isDragging = isDraggingElement;

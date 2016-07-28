@@ -155,10 +155,17 @@ app.on("ready", () => {
         }
       }, {
         label: "Redo",
-        accelerator: "Command+Y",
+        accelerator: "Command+Shift+Z",
         selector: "redo:",
         click() {
           mainWindow.webContents.send("edit", "redo");
+        }
+      }, {
+        label: "Delete Element",
+        accelerator: "CMD+D",
+        selector: "delete:",
+        click() {
+          mainWindow.webContents.send("edit", "delete");
         }
       }, {
         type: "separator"
@@ -291,7 +298,10 @@ app.on("ready", () => {
         }
       }, {
         label: "Delete Element",
-        accelerator: ""
+        accelerator: "Ctrl+D",
+        click() {
+          mainWindow.webContents.send("edit", "delete");
+        }
       }]
     },
     {

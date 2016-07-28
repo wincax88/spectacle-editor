@@ -112,5 +112,8 @@ export const editActions = {
   },
   redo: (slidesStore) => {
     slidesStore.redo();
+  },
+  delete: (slidesStore) => {
+    slidesStore.deleteCurrentElement();
   }
 };
