@@ -255,7 +255,20 @@ app.on("ready", () => {
       submenu: [{
         label: "&Open",
         accelerator: "Ctrl+O"
-      }, {
+      },
+      {
+        label: "&Save",
+        accelerator: "Ctrl+S"
+      },
+      {
+        label: "&Save As...",
+        accelerator: "Ctrl+Shift+S"
+      },
+      {
+        label: "&Export To PDF",
+        accelerator: "Ctrl+W"
+      },
+      {
         label: "&Close",
         accelerator: "Ctrl+W",
         click() {
@@ -263,6 +276,25 @@ app.on("ready", () => {
         }
       }]
     }, {
+      label: "&Edit",
+      submenu: [{
+        label: "&Undo",
+        accelerator: "Ctrl+Z",
+        click() {
+          mainWindow.webContents.send("edit", "undo");
+        }
+      }, {
+        label: "&Redo",
+        accelerator: "Ctrl+Shift+Z",
+        click() {
+          mainWindow.webContents.send("edit", "redo");
+        }
+      }, {
+        label: "Delete Element",
+        accelerator: ""
+      }]
+    },
+    {
       label: "&View",
       submenu: (process.env.NODE_ENV === "development") ? [{
         label: "&Reload",
@@ -276,7 +308,12 @@ app.on("ready", () => {
         click() {
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
-      }, {
+      },
+      {
+        label: "&Slideshow",
+        accelerator: ""
+      },
+      {
         label: "Toggle &Developer Tools",
         accelerator: "Alt+Ctrl+I",
         click() {
