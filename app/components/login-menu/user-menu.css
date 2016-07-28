@@ -1,27 +1,89 @@
+@import '../../variables.css';
+
 .userMenu {
   position: absolute;
   top: 10px;
-  right: 0;
-  width: 240px;
-  color: #3d3d3d;
+  right: 20px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+
+  color: var(--primary-font-color);
 }
 
-.userMenu img {
-  border-radius: 50%;
+.userAvatar {
   height: 40px;
-  margin-right: 10px;
-  float: left;
+  margin-left: 10px;
+
+  border-radius: 50%;
 }
 
-.userSubMenu h4 {
-  margin: 5px 0 0;
+.userName {
+  margin: 0;
+
   font-size: 16px;
   font-weight: bold;
   letter-spacing: 0.2px;
   color: #3d3d3d;
 }
 
+.flyoutBtn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0;
+
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.flyoutBtnIcon {
+  margin-left: 5px;
+
+  color: var(--tertiary-font-color);
+  font-size: 17px;
+}
+
+.flyout {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  background-color: var(--secondary-background-color);
+  border: 1px solid var(--primary-border-color);
+  border-radius: 4px;
+  box-shadow: var(--select-list-shadow);
+  color: var(--primary-font-color);
+  font-size: 12px;
+  line-height: 1.8;
+  min-width: 300px;
+  padding: 10px 20px 20px;
+  z-index: var(--flyout);
+}
+
+.flyoutBtnClose {
+  position: absolute;
+  top: 0;
+  right: 5px;
+
+  background: none;
+  border: none;
+  color: var(--plotly-blue);
+  font-size: 24px;
+  outline: none;
+}
+
 .signOut {
+  margin: 0;
+  padding: 0;
+
+  background: none;
+  border: 0;
   font-size: 10px;
   font-weight: normal;
   line-height: 1.5;
@@ -29,4 +91,77 @@
   text-transform: uppercase;
   color: #447bdc;
   cursor: pointer;
+}
+
+.presentations {
+  margin: 12px 0 0;
+}
+
+.presentationsHeading {
+  margin: 12px 0 0;
+
+  color: var(--bluegray);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  line-height: 1.9;
+  text-align: center;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+
+.fancy {
+  position: relative;
+}
+
+.fancy::before,
+.fancy::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  width: 55px;
+
+  border-top: 1px solid #c6d0d6;
+}
+
+.fancy::before {
+  right: 100%;
+  margin-right: 15px;
+}
+
+.fancy::after {
+  left: 100%;
+  margin-left: 15px;
+}
+
+.spinner {
+  display: block;
+  margin: 0 auto;
+  max-width: 50px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  max-height: 700px;
+  overflow-y: scroll;
+}
+
+.listItem {
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  line-height: 1.8;
+}
+
+.presentationLink {
+  color: var(--plotly-blue);
+  text-decoration: none;
+  transition: color ease-in 250ms;
+}
+
+.presentationLink:hover {
+  color: var(--dark-plotly-blue);
+  transition: color ease-out 200ms;
 }

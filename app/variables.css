@@ -13,6 +13,9 @@
 
   --select-hover-color: #e6f2ff;
 
+  --light-bluegray: #c6d0d6;
+  --bluegray: #69738a;
+
   --plotly-blue: #447bdc;
   --dark-plotly-blue: #2d56aa;
   --darker-plotly-blue: #152f5e;
@@ -26,11 +29,6 @@
   --drag-shadow: 0 1px 3px 0 rgba(204, 204, 204, 0.6);
   --slide-stage-shadow: 0 0 3px 0 rgba(204, 204, 204, 0.6);
   --select-list-shadow: 0 0 8px 4px rgba(204, 204, 204, 0.3);
-
-  /* Z-Index */
-  --z-index-modal: 999999999;
-  --z-index-modal-negative: 999999998;
-
   --selected-editor-component-shadow: inset 0 0 5px #ccc;
 
   /* Z-Index */
@@ -38,4 +36,7 @@
   --none: 0;
   --basic: 1;
   --basic-increment: 2;
+  --flyout: 3;
+  --z-index-modal: 999999999;
+  --z-index-modal-negative: 999999998;
 }
