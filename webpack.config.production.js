@@ -10,7 +10,8 @@ const config = {
 
   entry: {
     bundle: "./app/index",
-    presentation: "./app/presentation"
+    presentation: "./app/presentation",
+    "slide-preview": "./app/slide-preview"
   },
 
   output: {

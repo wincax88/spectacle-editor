@@ -15,7 +15,8 @@ const config = {
       "webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr",
       "./app/index"
     ],
-    presentation: "./app/presentation"
+    presentation: "./app/presentation",
+    "slide-preview": "./app/slide-preview"
   },
 
   output: {

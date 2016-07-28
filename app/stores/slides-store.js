@@ -136,6 +136,13 @@ export default class SlidesStore {
         slides
       }]);
     }
+
+    ipcRenderer.on("trigger-update", () => {
+      ipcRenderer.send("update-presentation", {
+        slides: this.slides,
+        currentSlideIndex: this.currentSlideIndex
+      });
+    });
   }
 
   // TODO: Move user to own store
@@ -331,7 +338,10 @@ export default class SlidesStore {
       }
     });
 
-    ipcRenderer.send("update-presentation", this.slides);
+    ipcRenderer.send("update-presentation", {
+      slides: this.slides,
+      currentSlideIndex: this.currentSlideIndex
+    });
   }
 
   serialize() {

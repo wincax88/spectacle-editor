@@ -5,6 +5,8 @@ let menu;
 let template;
 let mainWindow = null;
 let presWindow = null;
+let pdfWindow = null;
+let screencapWindow = null;
 
 app.commandLine.appendSwitch("--ignore-certificate-errors");
 
@@ -47,18 +49,50 @@ if (process.env.NODE_ENV === "development") {
 
 
 app.on("window-all-closed", () => {
+  pdfWindow = null;
+  screencapWindow = null;
+
   if (process.platform !== "darwin") app.quit();
 });
 
 
 app.on("ready", () => {
-  presWindow = new BrowserWindow({
-    show: true,
+  screencapWindow = new BrowserWindow({
+    show: false,
     width: 250,
-    height: 175
+    height: 175,
+    enableLargerThanScreen: true,
+    webPreferences: {
+      partition: "screenCap"
+    }
   });
 
-  presWindow.loadURL(`file://${__dirname}/app/presentation.html#/?export`);
+  screencapWindow.loadURL(`file://${__dirname}/app/slide-preview.html#/?export`);
+
+  ipcMain.on("ready-to-screencap", (event, data) => {
+    const { currentSlideIndex, numberOfSlides } = data;
+
+    screencapWindow.setSize(250, numberOfSlides * 175, false);
+
+    screencapWindow.capturePage((image) => {
+      fs.writeFile("out.png", image.toPng(), function(err) {
+        if (err) {
+          console.log("ERROR Failed to save file", err);
+        }
+      });
+    });
+  });
+
+  pdfWindow = new BrowserWindow({
+    show: false,
+    width: 1000,
+    height: 700,
+    webPreferences: {
+      partition: "pdf"
+    }
+  });
+
+  pdfWindow.loadURL(`file://${__dirname}/app/presentation.html#/?export`);
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -80,7 +114,6 @@ app.on("ready", () => {
 
   if (process.env.NODE_ENV === "development") {
     mainWindow.openDevTools();
-    presWindow.openDevTools();
   }
 
   ipcMain.on("social-login", (event, socialUrl) => {
@@ -95,25 +128,13 @@ app.on("ready", () => {
     shell.openExternal(url);
   });
 
-  ipcMain.on("show-presentation", () => {
-    presWindow.show();
-    presWindow.focus();
-  });
-
   ipcMain.on("update-presentation", (event, data) => {
-    presWindow.webContents.send("update", data);
-  });
+    screencapWindow.webContents.send("update", data);
+    pdfWindow.webContents.send("update", data);
 
-  presWindow.on("close", (ev) => {
-    if (!mainWindow || !presWindow) {
-      presWindow = null;
-
-      return;
+    if (presWindow) {
+      presWindow.webContents.send("update", data);
     }
-
-    ev.preventDefault();
-    presWindow.hide();
-    mainWindow.focus();
   });
 
   if (process.platform === "darwin") {
@@ -167,16 +188,14 @@ app.on("ready", () => {
         label: "Export to PDF",
         accelerator: "Command+P",
         click() {
-          presWindow.capturePage((image) => {
-            fs.writeFile("out.png", image.toPng(), function(err) {
-              if (err) {
-                console.log("ERROR Failed to save file", err);
-              }
-            });
-          });
-          presWindow.webContents.printToPDF({landscape: true, printBackground: true}, (err, data) => {
+          pdfWindow.webContents.printToPDF({
+            landscape: true,
+            printBackground: true,
+            marginsType: 1
+          }, (err, data) => {
             if (err) {
               console.log(err);
+
               return;
             }
 
@@ -186,14 +205,16 @@ app.on("ready", () => {
                 extensions: ["pdf"]
               }]
             }, (fileName) => {
-              if (fileName === undefined) {
+              if (!fileName) {
                 return;
               }
 
               const normalizedName = fileName.substr(-4) === ".pdf" ? fileName : `${fileName}.pdf`;
 
-              fs.writeFile(normalizedName, data, (err) => {
-                console.log(err);
+              fs.writeFile(normalizedName, data, (fileErr) => {
+                if (fileErr) {
+                  console.log(fileErr);
+                }
               });
             });
           });
@@ -259,6 +280,37 @@ app.on("ready", () => {
         accelerator: "Ctrl+Command+F",
         click() {
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
+        }
+      }]
+    }, {
+      label: "Play",
+      submenu: [{
+        label: "Slide Show",
+        accelerator: "Command+L",
+        click() {
+          if (presWindow) {
+            presWindow.focus();
+
+            return;
+          }
+
+          presWindow = new BrowserWindow({
+            show: false,
+            width: 1000,
+            height: 700
+          });
+
+          presWindow.loadURL(`file://${__dirname}/app/presentation.html`);
+
+          presWindow.webContents.on("did-finish-load", () => {
+            mainWindow.webContents.send("trigger-update");
+            presWindow.show();
+            presWindow.focus();
+          });
+
+          presWindow.on("closed", () => {
+            presWindow = null;
+          });
         }
       }]
     }, {
