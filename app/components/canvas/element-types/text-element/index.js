@@ -432,7 +432,6 @@ export default class TextElement extends Component {
       wrapperStyle.pointerEvents = "none";
     }
 
-
     if (mousePosition || props.style && props.style.position === "absolute") {
       wrapperStyle.position = "absolute";
 

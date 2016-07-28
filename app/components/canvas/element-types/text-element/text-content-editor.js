@@ -122,7 +122,6 @@ export default class TextContentEditor extends Component {
   renderEditor(contentToRender) {
     const {
       classNames,
-      componentProps,
       style,
       currentlySelected
     } = this.props;
@@ -130,7 +129,6 @@ export default class TextContentEditor extends Component {
     return (
       <div
         ref={(component) => {this.editor = component;}}
-        {...componentProps}
         className={classNames.content}
         onBlur={this.handleBlur}
         style={{ ...style, whiteSpace: "pre-wrap" }}
@@ -166,7 +164,7 @@ export default class TextContentEditor extends Component {
   }
 
   renderList(type, text) {
-    const { currentlySelected, componentProps, classNames, style } = this.props;
+    const { currentlySelected, classNames, style } = this.props;
     let ListTag = "ol";
 
     if (type === "unordered") {
@@ -176,7 +174,6 @@ export default class TextContentEditor extends Component {
     return (
       <ListTag
         ref={(component) => {this.editor = component;}}
-        {...componentProps}
         className={`${classNames.content}`}
         onBlur={this.handleBlur}
         style={style}
