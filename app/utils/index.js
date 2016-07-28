@@ -2,6 +2,21 @@ import { sortBy, sortedUniq, invert } from "lodash";
 
 import { ElementTypes, SNAP_DISTANCE } from "../constants";
 
+export const getParagraphStyles = (obj) => (
+  {
+    color: "#3d3d3d",
+    fontFamily: "openSans",
+    fontSize: 45,
+    fontStyle: "normal",
+    fontWeight: 400,
+    minWidth: 20,
+    opacity: 1,
+    textAlign: "center",
+    textDecoration: "none",
+    ...obj
+  }
+);
+
 export const getElementDimensions = ({ type, props }) => {
   if (type === ElementTypes.TEXT) {
     return {

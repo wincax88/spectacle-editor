@@ -21,6 +21,15 @@ export const IconTypes = {
   ...ElementTypes
 };
 
+export const ParagraphStyles = [
+  "Heading 1",
+  "Heading 2",
+  "Heading 3",
+  "Body",
+  "Body Small",
+  "Caption"
+];
+
 export const SpringSettings = {
   DRAG: { stiffness: 1000, damping: 50 },
   RESIZE: { stiffness: 210, damping: 20 }

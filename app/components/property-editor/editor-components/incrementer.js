@@ -14,7 +14,7 @@ export default class Incrementer extends Component {
   }
 
   updateStore(updatedValue = 0) {
-    const { currentElement } = this.props;
+    const { currentElement } = this.context.store;
     const { style } = currentElement.props;
     const updatedStyleProp = {};
 

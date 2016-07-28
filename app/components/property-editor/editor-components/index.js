@@ -6,7 +6,7 @@ import LinkTo from "./linkto";
 import List from "./list";
 import Select from "./select";
 import Option from "./option";
-import UpdateHeading from "./updateheading";
+import UpdateParagraphStyles from "./updateparagraphstyles";
 
 export default {
   Alignment,
@@ -17,5 +17,5 @@ export default {
   List,
   Option,
   Select,
-  UpdateHeading
+  UpdateParagraphStyles
 };

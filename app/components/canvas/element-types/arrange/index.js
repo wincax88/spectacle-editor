@@ -4,24 +4,24 @@ import { BRINGTOFRONT, BRINGFORWARD, SENDBACKWARD, SENDTOBACK } from "../../../.
 import styles from "./index.css";
 
 class Arrange extends Component {
+  static contextTypes = {
+    store: React.PropTypes.object
+  }
+
   onClickFront = () => {
-    // TODO
-    console.log("Bring to Front!");
+    this.context.store.setCurrentElementToFrontOrBack(true);
   }
 
   onClickForward = () => {
-    // TODO
-    console.log("Increment forward by 1");
+    this.context.store.incrementCurrentElementIndexBy(1);
   }
 
   onClickBackward = () => {
-    // TODO
-    console.log("Decrement backward by 1");
+    this.context.store.incrementCurrentElementIndexBy(-1);
   }
 
   onClickBack = () => {
-    // TODO
-    console.log("Send to back!");
+    this.context.store.setCurrentElementToFrontOrBack();
   }
 
   render() {

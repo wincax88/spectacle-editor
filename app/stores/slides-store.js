@@ -1,11 +1,11 @@
 import { observable, computed, transaction, asReference } from "mobx";
 import Immutable from "seamless-immutable";
 import { generate } from "shortid";
-import { merge } from "lodash";
+import { merge, pick, omit } from "lodash";
 
 import ApiStore from "./api-store";
 import elementMap from "../elements";
-import { getGridLinesObj, getGridLineHashes } from "../utils";
+import { getParagraphStyles, getGridLinesObj, getGridLineHashes } from "../utils";
 
 export default class SlidesStore {
   // Default slides state
@@ -13,6 +13,14 @@ export default class SlidesStore {
   @observable history = asReference(Immutable.from([{
     currentSlideIndex: 0,
     currentElementIndex: null,
+    paragraphStyles: {
+      "Heading 1": getParagraphStyles({ fontSize: 26 }),
+      "Heading 2": getParagraphStyles({ fontSize: 20 }),
+      "Heading 3": getParagraphStyles({ fontSize: 11, fontWeight: 700 }),
+      Body: getParagraphStyles({ fontSize: 11 }),
+      "Body Small": getParagraphStyles({ fontSize: 10 }),
+      Caption: getParagraphStyles({ fontSize: 11, fontStyle: "italic" })
+    },
     slides: [{
       // Default first slide
       id: generate(),
@@ -60,6 +68,10 @@ export default class SlidesStore {
   // Returns a new mutable object. Functions as a cloneDeep.
   @computed get slides() {
     return this.history[this.historyIndex].slides.asMutable({ deep: true });
+  }
+
+  @computed get paragraphStyles() {
+    return this.history[this.historyIndex].paragraphStyles.asMutable({ deep: true });
   }
 
   @computed get currentSlideIndex() {
@@ -140,6 +152,7 @@ export default class SlidesStore {
   dropElement(elementType, extraProps) {
     const slideToAddTo = this.currentSlide;
     const newSlidesArray = this.slides;
+    const newParagraphStyles = this.paragraphStyles;
     const element = elementMap[elementType];
     const mergedProps = merge(element.props, extraProps);
 
@@ -154,7 +167,8 @@ export default class SlidesStore {
     this._addToHistory({
       currentSlideIndex: this.currentSlideIndex,
       currentElementIndex: slideToAddTo.children.length - 1,
-      slides: newSlidesArray
+      slides: newSlidesArray,
+      paragraphStyles: newParagraphStyles
     });
   }
 
@@ -183,10 +197,12 @@ export default class SlidesStore {
 
   moveSlide(currentIndex, newIndex) {
     const slidesArray = this.slides;
+    const newParagraphStyles = this.paragraphStyles;
 
     slidesArray.splice(newIndex, 0, slidesArray.splice(currentIndex, 1)[0]);
 
     this._addToHistory({
+      paragraphStyles: newParagraphStyles,
       currentSlideIndex: newIndex,
       slides: slidesArray
     });
@@ -194,6 +210,7 @@ export default class SlidesStore {
 
   addSlide() {
     const slidesArray = this.slides;
+    const newParagraphStyles = this.paragraphStyles;
 
     // TODO: Figure out new slide defaults/interface
     const newSlide = {
@@ -208,6 +225,7 @@ export default class SlidesStore {
     slidesArray.splice(index, 0, newSlide);
 
     this._addToHistory({
+      paragraphStyles: newParagraphStyles,
       currentSlideIndex: index,
       currentElementIndex: null,
       slides: slidesArray
@@ -216,14 +234,71 @@ export default class SlidesStore {
 
   deleteSlide() {
     const slidesArray = this.slides;
+    const newParagraphStyles = this.paragraphStyles;
     const index = this.currentSlideIndex === 0 ? 0 : this.currentSlideIndex - 1;
 
     slidesArray.splice(this.currentSlideIndex, 1);
 
     this._addToHistory({
+      paragraphStyles: newParagraphStyles,
       currentSlideIndex: index,
       currentElementIndex: null,
       slides: slidesArray
+    });
+  }
+
+  setCurrentElementToFrontOrBack(toFront) {
+    transaction(() => {
+      const slidesArray = this.slides;
+      const currentChildren = slidesArray[this.currentSlideIndex].children;
+      const currentChild = currentChildren.splice(this.currentElementIndex, 1);
+      const newParagraphStyles = this.paragraphStyles;
+      let index;
+
+      if (toFront) {
+        slidesArray[this.currentSlideIndex]
+          .children = currentChildren.concat(currentChild);
+        index = slidesArray[this.currentSlideIndex].children.length - 1;
+      } else {
+        slidesArray[this.currentSlideIndex]
+          .children = currentChild.concat(currentChildren);
+        index = 0;
+      }
+
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: this.currentSlideIndex,
+        currentElementIndex: index,
+        slides: slidesArray
+      });
+    });
+  }
+
+  incrementCurrentElementIndexBy(num) {
+    const slidesArray = this.slides;
+    const currentChildren = slidesArray[this.currentSlideIndex].children;
+
+    if (
+      num + this.currentElementIndex < 0 ||
+      num + this.currentElementIndex >= currentChildren.length
+    ) {
+      return;
+    }
+
+    transaction(() => {
+      const currentChild = currentChildren[this.currentElementIndex];
+      const sibling = currentChildren[this.currentElementIndex + num];
+      const newParagraphStyles = this.paragraphStyles;
+
+      currentChildren[this.currentElementIndex] = sibling;
+      currentChildren[this.currentElementIndex + num] = currentChild;
+
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: this.currentSlideIndex,
+        currentElementIndex: this.currentElementIndex + num,
+        slides: slidesArray
+      });
     });
   }
 
@@ -254,8 +329,20 @@ export default class SlidesStore {
       return;
     }
 
+    const { paragraphStyle } = this.currentElement.props;
     const newProps = merge(this.currentElement.props, props);
     const newState = this.currentState;
+
+    if (
+      paragraphStyle !== props.paragraphStyle &&
+      props.style &&
+      !Object.keys(props.style).length
+    ) {
+      // if paragraph style changes, remove all added styles, but not any other ones affecting
+      // position and word wrap
+      newProps.style = omit(newProps.style, Object.keys(newState.paragraphStyles[paragraphStyle]));
+    }
+
     newState.slides[this.currentSlideIndex].children[this.currentElementIndex].props = newProps;
     this._addToHistory(newState);
   }
@@ -269,6 +356,27 @@ export default class SlidesStore {
     const newState = this.currentState;
     newState.slides[this.currentSlideIndex].props = newProps;
     this._addToHistory(newState);
+  }
+
+  updateParagraphStyles(name, styles) {
+    const newParagraphStyles = this.paragraphStyles;
+    const filteredParagraphStyles = pick(styles, Object.keys(newParagraphStyles[name]));
+    const filteredElementStyles = omit(styles, Object.keys(newParagraphStyles[name]));
+    const slidesArray = this.slides;
+
+    slidesArray[this.currentSlideIndex]
+      .children[this.currentElementIndex]
+      .props
+      .style = filteredElementStyles;
+
+    newParagraphStyles[name] = { ...newParagraphStyles[name], ...filteredParagraphStyles };
+
+    this._addToHistory({
+      paragraphStyles: newParagraphStyles,
+      currentSlideIndex: this.currentSlideIndex,
+      currentElementIndex: this.currentElementIndex,
+      slides: slidesArray
+    });
   }
 
   updateChildren(nextChild, slideIndex, elementIndex) {

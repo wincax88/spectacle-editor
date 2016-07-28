@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from "react";
-import ReactDOM from "react-dom";
+import { findDOMNode } from "react-dom";
 import { Motion, spring } from "react-motion";
 import { omit, defer } from "lodash";
 
@@ -42,29 +42,15 @@ export default class ImageElement extends Component {
 
   componentDidMount() {
     defer(() => {
-      const { width, height } = this.currentElementComponent.getBoundingClientRect();
+      if (this.currentElementComponent && !this.context.store.isDragging) {
+        const { width, height } = this.currentElementComponent.getBoundingClientRect();
 
-      this.setState({ // eslint-disable-line react/no-did-mount-set-state
-        width,
-        height
-      });
+        this.setState({ // eslint-disable-line react/no-did-mount-set-state
+          width,
+          height
+        });
+      }
     });
-  }
-
-  componentWillReceiveProps() {
-    const { isDragging, isResizing } = this.context.store;
-
-    if (!isDragging && !isResizing) {
-      // defer measuring new height and width, otherwise value will be what height was before resize
-      defer(() => {
-        if (this.editable) {
-          this.setState({
-            width: this.editable.clientWidth,
-            height: this.editable.clientHeight
-          });
-        }
-      });
-    }
   }
 
   shouldComponentUpdate() {
@@ -484,16 +470,18 @@ export default class ImageElement extends Component {
   handleMouseDown = (ev) => {
     ev.preventDefault();
 
+    this.clickStart = new Date().getTime();
     this.context.store.setCurrentElementIndex(this.props.elementIndex);
 
-    const { pageX, pageY } = ev;
-    const boundingBox = this.currentElementComponent.getBoundingClientRect();
+    const { pageX, pageY, target } = ev;
+    const boundingBox = target.getBoundingClientRect();
     const mouseOffset = [Math.floor(boundingBox.left - pageX), Math.floor(boundingBox.top - pageY)];
     const originalPosition = [
       this.props.component.props.style.left,
       this.props.component.props.style.top
     ];
-    const { width, height } = boundingBox;
+
+    const { width, height } = this.currentElementComponent.getBoundingClientRect();
 
     window.addEventListener("mouseup", this.handleMouseUp);
     window.addEventListener("touchend", this.handleMouseUp);
@@ -501,28 +489,51 @@ export default class ImageElement extends Component {
     // Do this preemptively so that dragging doesn't take the performance hit
     this.gridLines = this.context.store.gridLines;
 
-    this.context.store.updateElementDraggingState(true, true);
+    // Only do drag if we hold the mouse down for a bit
+    this.mouseClickTimeout = setTimeout(() => {
+      this.clickStart = null;
+      this.mouseClickTimeout = null;
 
-    // Make the cursor dragging everywhere
-    document.body.style.cursor = "-webkit-grabbing";
-    this.currentElementComponent.style.cursor = "-webkit-grabbing";
+      this.context.store.updateElementDraggingState(true, true);
 
-    // TODO: handle elements that aren't absolutely positioned?
-    this.setState({
-      delta: [0, 0],
-      mouseStart: [pageX, pageY],
-      isPressed: true,
-      mouseOffset,
-      originalPosition,
-      width,
-      height
-    });
+      // Make the cursor dragging everywhere
+      document.body.style.cursor = "-webkit-grabbing";
 
-    window.addEventListener("touchmove", this.handleTouchMove);
-    window.addEventListener("mousemove", this.handleMouseMove);
+      // TODO: handle elements that aren't absolutely positioned?
+      this.setState({
+        delta: [0, 0],
+        mouseStart: [pageX, pageY],
+        isPressed: true,
+        mouseOffset,
+        originalPosition,
+        width,
+        height
+      });
+
+      window.addEventListener("touchmove", this.handleTouchMove);
+      window.addEventListener("mousemove", this.handleMouseMove);
+    }, 150);
   }
 
   handleMouseUp = () => {
+    if (this.mouseClickTimeout || this.mouseClickTimeout === 0) {
+      clearTimeout(this.mouseClickTimeout);
+      window.removeEventListener("mouseup", this.handleMouseUp);
+      window.removeEventListener("touchend", this.handleMouseUp);
+
+      this.mouseClickTimeout = null;
+
+      // this.props.onDropElement(this.props.elementType);
+      const timeSinceMouseDown = new Date().getTime() - this.clickStart;
+
+      // Give the user the remainder of the 250ms to do a double click
+      setTimeout(() => {
+        this.clickStart = null;
+      }, 250 - timeSinceMouseDown);
+
+      return;
+    }
+
     window.removeEventListener("touchmove", this.handleTouchMove);
     window.removeEventListener("touchend", this.handleMouseUp);
     window.removeEventListener("mousemove", this.handleMouseMove);
@@ -582,9 +593,9 @@ export default class ImageElement extends Component {
     let elementStyle = props.style ? { ...props.style } : {};
     const { isDragging, isResizing, cursorType } = this.context.store;
 
-    if (isResizing) {
+    if (currentlySelected && isResizing) {
       this.currentElementComponent.style.cursor = cursorType;
-    } else if (this.currentElementComponent && !isDragging) {
+    } else if (currentlySelected && this.currentElementComponent && !isDragging) {
       this.currentElementComponent.style.cursor = "move";
     }
 
@@ -620,12 +631,12 @@ export default class ImageElement extends Component {
 
     elementStyle = { ...elementStyle, position: "relative", left: 0, top: 0 };
 
-    if (isPressed) {
+    if (currentlySelected && isPressed) {
       motionStyles.left = spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
       motionStyles.top = spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
     }
 
-    if (isResizing) {
+    if (currentlySelected && isResizing) {
       const componentStylesLeft = props.style && props.style.left || 0;
       const componentStylesTop = props.style && props.style.top || 0;
 
@@ -649,7 +660,7 @@ export default class ImageElement extends Component {
             const computedDragStyles = omit(computedStyles, "width", "height");
             let computedResizeStyles = omit(computedStyles, "top", "left");
 
-            if (!isResizing) {
+            if (!currentlySelected || !isResizing) {
               computedResizeStyles = {};
             }
 
@@ -666,7 +677,7 @@ export default class ImageElement extends Component {
                 {currentlySelected &&
                   <ResizeNode
                     cornerTopLeft
-                    ref={component => {this.topLeftNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.topLeftNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
                     component={this.props.component}
@@ -674,7 +685,7 @@ export default class ImageElement extends Component {
                 }
                 {currentlySelected &&
                   <ResizeNode
-                    ref={component => {this.leftResizeNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.leftResizeNode = findDOMNode(component);}}
                     alignLeft
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
@@ -683,7 +694,7 @@ export default class ImageElement extends Component {
                 }
                 {currentlySelected &&
                   <ResizeNode
-                    ref={component => {this.bottomLeftNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.bottomLeftNode = findDOMNode(component);}}
                     cornerBottomLeft
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
@@ -692,7 +703,7 @@ export default class ImageElement extends Component {
                 }
                 {currentlySelected &&
                   <ResizeNode
-                    ref={component => {this.topResizeNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.topResizeNode = findDOMNode(component);}}
                     alignTop
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
@@ -703,14 +714,15 @@ export default class ImageElement extends Component {
                   <Arrange />
                 }
                   <ComponentClass
+                    ref={component => {this.image = findDOMNode(component);}}
                     {...props}
                     className={styles.image}
-                    style={{ ...elementStyle, ...computedResizeStyles }}
+                    style={{ ...elementStyle, ...computedResizeStyles, zIndex: elementIndex }}
                   />
                 {currentlySelected &&
                   <ResizeNode
                     cornerTopRight
-                    ref={component => {this.topRightNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.topRightNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
                     component={this.props.component}
@@ -719,7 +731,7 @@ export default class ImageElement extends Component {
                 {currentlySelected &&
                   <ResizeNode
                     alignRight
-                    ref={component => {this.rightResizeNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.rightResizeNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
                     component={this.props.component}
@@ -727,7 +739,7 @@ export default class ImageElement extends Component {
                 }
                 {currentlySelected &&
                   <ResizeNode
-                    ref={component => {this.bottomRightNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.bottomRightNode = findDOMNode(component);}}
                     cornerBottomRight
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
@@ -736,7 +748,7 @@ export default class ImageElement extends Component {
                 }
                 {currentlySelected &&
                   <ResizeNode
-                    ref={component => {this.bottomResizeNode = ReactDOM.findDOMNode(component);}}
+                    ref={component => {this.bottomResizeNode = findDOMNode(component);}}
                     alignBottom
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
