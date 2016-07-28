@@ -337,12 +337,25 @@ export default class TextElement extends Component {
     }, 150);
   }
 
-  handleMouseUp = () => {
+  handleMouseUp = (ev) => {
     const timeSinceMouseDown = new Date().getTime() - this.clickStart;
 
     clearTimeout(this.mouseClickTimeout);
 
-    if (this.clickStart && timeSinceMouseDown <= 150) {
+    // while loop is necessary because the mouseup was preempting the click event on the
+    // arrange buttons and was not firing on them. This ensures that editing mode only
+    // occurs when the mouseup happens on the editor or one of its children.
+    let el = ev.target;
+
+    while (el) {
+      if (el === this.editable) {
+        break;
+      }
+
+      el = el.parentNode;
+    }
+
+    if (el && this.clickStart && timeSinceMouseDown <= 150) {
       window.removeEventListener("mouseup", this.handleMouseUp);
       window.removeEventListener("touchend", this.handleMouseUp);
 
