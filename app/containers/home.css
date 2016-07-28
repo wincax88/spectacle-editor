@@ -13,4 +13,5 @@
   height: calc(100% - 120px);
   width: 100%;
   background-color: #f8f8f9;
+  z-index: var(--none);
 }
