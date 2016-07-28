@@ -147,6 +147,9 @@ class UploadButton extends Component {
     }
 
     const { shareFlyoutVisible } = this.state;
+    const shareLink = info.worldReadable ?
+      info.webUrl : `${info.webUrl}?share_key=${info.shareKey}`;
+
     return (
       <div className={styles.flex}>
         <div>
@@ -159,10 +162,13 @@ class UploadButton extends Component {
               <i className={"icon ion-android-close"}></i>
             </div>
             <p className={styles.flyoutHeading}>Share your presentation</p>
-            {info.worldReadable ?
-              info.webUrl :
-              `${info.webUrl}?share_key=${info.shareKey}`
-            }
+              <a
+                className={styles.shareLink}
+                href="`${shareLink}`"
+                target="_blank"
+              >
+                {shareLink}
+              </a>
           </div>
         </div>
         <div>
@@ -172,7 +178,7 @@ class UploadButton extends Component {
           </button>
         </div>
         <p className={styles.syncStatus}>
-          Last synced <br/>
+          <span className={styles.syncHeading}>Last synchronization</span>
           {moment(info.dateModified).calendar()}
         </p>
       </div>
