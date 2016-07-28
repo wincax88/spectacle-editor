@@ -59,8 +59,20 @@ class UserMenu extends Component {
           </p>
           <Spinner className={styles.spinner} />
           <ul className={styles.list}>
-            <li className={styles.listItem}>Presentation name 1</li>
-            <li className={styles.listItem}>Presentation name 2</li>
+            <li className={styles.listItem}>
+              <a href="#"
+                className={styles.presentationLink}
+              >
+                Presentation name 1
+              </a>
+            </li>
+            <li className={styles.listItem}>
+              <a href="#"
+                className={styles.presentationLink}
+              >
+                Presentation name 2
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -73,9 +85,7 @@ class UserMenu extends Component {
 
     return (
       <div className={styles.userMenu}>
-        <div className={styles.userSubMenu}>
-          <p className={styles.userName}>{user.username}</p>
-        </div>
+        <p className={styles.userName}>{user.username}</p>
         <button className={styles.flyoutBtn} onClick={this.onOpenFlyout}>
           <img className={styles.userAvatar} alt="" src={user.avatar_url} />
           <i className={`${styles.flyoutBtnIcon} icon ion-ios-arrow-down`} ></i>
