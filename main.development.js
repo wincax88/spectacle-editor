@@ -80,6 +80,25 @@ app.on("ready", () => {
     });
   });
 
+  ipcMain.on("current-element", (event, isCurrentElement) => {
+    menu.items.forEach((item, i) => {
+      if (item.label === "Edit") {
+        item.submenu.items.forEach((option, k) => {
+          if (
+            option.label === "Move Forward" ||
+            option.label === "Move Backward" ||
+            option.label === "Move To Front" ||
+            option.label === "Move To Back" ||
+            option.label === "Delete Element"
+          ) {
+            menu.items[i].submenu.items[k].enabled = isCurrentElement;
+          }
+        });
+      }
+    });
+    // console.log(menu.items[2].submenu.items);
+  });
+
   ipcMain.on("social-login", (event, socialUrl) => {
     mainWindow.webContents.session.clearStorageData(() => {});
     // Reset the csrftoken cookie if there is one
