@@ -1,6 +1,10 @@
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
 
 class Spinner extends Component {
+  static propTypes = {
+    className: PropTypes.string
+  };
+
   componentDidMount() {
       /* Created a spinner using SVG Circus http://svgcircus.com/ */
       /* eslint-disable */
@@ -22,8 +26,11 @@ class Spinner extends Component {
   }
 
   render() {
+    const { className } = this.props;
+
     return (
       <svg
+        className={ className }
         id="SVG-Circus-a475b338-504e-f312-5218-91b9bc643dc8"
         version="1.1"
         viewBox="0 0 100 100"
