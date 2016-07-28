@@ -115,5 +115,17 @@ export const editActions = {
   },
   delete: (slidesStore) => {
     slidesStore.deleteCurrentElement();
+  },
+  forward: (slidesStore) => {
+    slidesStore.incrementCurrentElementIndexBy(1);
+  },
+  backward: (slidesStore) => {
+    slidesStore.incrementCurrentElementIndexBy(-1);
+  },
+  front: (slidesStore) => {
+    slidesStore.setCurrentElementToFrontOrBack(true);
+  },
+  back: (slidesStore) => {
+    slidesStore.setCurrentElementToFrontOrBack();
   }
 };

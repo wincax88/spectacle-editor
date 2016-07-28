@@ -161,6 +161,41 @@ app.on("ready", () => {
           mainWindow.webContents.send("edit", "redo");
         }
       }, {
+        type: "separator"
+      },
+      {
+        label: "Move Forward",
+        accelerator: "CMD+[",
+        selector: "forward:",
+        click() {
+          mainWindow.webContents.send("edit", "forward");
+        }
+      },
+      {
+        label: "Move Backward",
+        accelerator: "CMD+]",
+        selector: "backward:",
+        click() {
+          mainWindow.webContents.send("edit", "backward");
+        }
+      },
+      {
+        label: "Move To Front",
+        accelerator: "shift+CMD+[",
+        selector: "front:",
+        click() {
+          mainWindow.webContents.send("edit", "front");
+        }
+      },
+      {
+        label: "Move To Back",
+        accelerator: "shift+CMD+]",
+        selector: "back:",
+        click() {
+          mainWindow.webContents.send("edit", "back");
+        }
+      },
+      {
         label: "Delete Element",
         accelerator: "CMD+D",
         selector: "delete:",
@@ -296,7 +331,39 @@ app.on("ready", () => {
         click() {
           mainWindow.webContents.send("edit", "redo");
         }
-      }, {
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "&Move Forward",
+        accelerator: "Ctrl+[",
+        click() {
+          mainWindow.webContents.send("edit", "forward");
+        }
+      },
+      {
+        label: "&Move Backward",
+        accelerator: "Ctrl+]",
+        click() {
+          mainWindow.webContents.send("edit", "backward");
+        }
+      },
+      {
+        label: "&Move To Front",
+        accelerator: "shift+Ctrl+[",
+        click() {
+          mainWindow.webContents.send("edit", "front");
+        }
+      },
+      {
+        label: "&Move To Back",
+        accelerator: "shift+Ctrl+]",
+        click() {
+          mainWindow.webContents.send("edit", "back");
+        }
+      },
+      {
         label: "Delete Element",
         accelerator: "Ctrl+D",
         click() {

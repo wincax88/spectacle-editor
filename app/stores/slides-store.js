@@ -258,6 +258,10 @@ export default class SlidesStore {
   }
 
   setCurrentElementToFrontOrBack(toFront) {
+    if (!this.currentElement) {
+      return;
+    }
+
     transaction(() => {
       const slidesArray = this.slides;
       const currentChildren = slidesArray[this.currentSlideIndex].children;
@@ -289,6 +293,7 @@ export default class SlidesStore {
     const currentChildren = slidesArray[this.currentSlideIndex].children;
 
     if (
+      !this.currentElement ||
       num + this.currentElementIndex < 0 ||
       num + this.currentElementIndex >= currentChildren.length
     ) {
