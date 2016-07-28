@@ -1,4 +1,6 @@
-import { observable } from "mobx";
+import { observable, asReference } from "mobx";
+import { remote } from "electron";
+import moment from "moment";
 
 const defaultDomain = "https://api.plot.ly";
 
@@ -17,10 +19,12 @@ const normalizeDomain = (domain) => {
   return `http://${domain}`;
 };
 
-export default class FileStore {
+export default class ApiStore {
   @observable domainUrl = defaultDomain;
   @observable user = null;
   @observable csrfToken = null;
+  @observable presInfo = asReference({});
+  @observable fid = null;
 
   constructor() {
     const userString = localStorage.getItem("user");
@@ -56,10 +60,26 @@ export default class FileStore {
   }
 
   signOut() {
+    remote.getCurrentWindow().webContents.session.clearStorageData(() => {});
     localStorage.removeItem("user");
     localStorage.removeItem("csrfToken");
 
     this.user = null;
     this.csrfToken = null;
+  }
+
+  setPresentation(presObject) {
+    this.presInfo = {
+      // presObject.date_modified does not change when updating content
+      dateModified: moment(new Date()),
+      owner: presObject.owner,
+      fileName: presObject.filename,
+      webUrl: presObject.web_url,
+      worldReadable: presObject.world_readable,
+      shareKey: presObject.share_key,
+      shareKeyEnabled: presObject.share_key_enabled
+    };
+
+    this.fid = presObject.fid;
   }
 }

@@ -1,15 +1,18 @@
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
+import { SketchPicker } from "react-color";
+
 import { EYEDROPPER } from "../../../assets/icons";
 import styles from "./colorpicker.css";
-import { SketchPicker } from "react-color";
 
 export default class ColorPicker extends Component {
   static propTypes = {
-    currentElement: React.PropTypes.object
+    currentElement: PropTypes.object,
+    onChangeColor: PropTypes.func,
+    currentStyles: PropTypes.object
   }
 
   static contextTypes = {
-    store: React.PropTypes.object
+    store: PropTypes.object
   }
 
   constructor(props) {
@@ -18,7 +21,7 @@ export default class ColorPicker extends Component {
     this.state = { pickerIsOpen: false };
   }
 
-  getRGBAValues({ opacity = 1, color }) {
+  getRGBAValues({ opacity = 1, color = "#ffffff" }) {
     const removedHash = color.replace(/^#/, "");
 
     return {
@@ -61,43 +64,19 @@ export default class ColorPicker extends Component {
   }
 
   handleChangeComplete = (color) => {
-    this.updateColor(color.hex, color.hsl.a);
-  }
-
-  updateColor(hex, opacity) {
-    const style = this.props.currentElement.props.style;
-    const updatedColor = {};
-
-    if (style.color !== hex) {
-      updatedColor.color = hex;
-    }
-
-    if (style.opacity !== opacity) {
-      updatedColor.opacity = opacity;
-    }
-
-    if (updatedColor.opacity === undefined && updatedColor.color === undefined) {
-      return;
-    }
-
-    const updatedStyles = {
-      ...this.context.store.currentElement.props.style,
-      ...updatedColor
-    };
-
-    this.context.store.updateElementProps({ style: updatedStyles });
+    this.props.onChangeColor(color.hex, color.hsl.a);
   }
 
   render() {
-    const { currentElement } = this.props;
-    const rgba = this.getRGBAValues(currentElement.props.style);
+    const { currentStyles } = this.props;
+    const rgba = this.getRGBAValues(currentStyles);
 
     return (
       <div className={styles.colorWrapper}>
         <div
           onClick={this.handlePickerOpen}
           className={styles.colorPickerTemplateBox}
-          style={{ background: currentElement.props.style.color }}
+          style={{ background: currentStyles.color || currentStyles.backgroundColor || "#fff" }}
         >
         </div>
         <button

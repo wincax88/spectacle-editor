@@ -7,12 +7,6 @@ import ApiStore from "./api-store";
 import elementMap from "../elements";
 import { getParagraphStyles, getGridLinesObj, getGridLineHashes } from "../utils";
 
-// TODO: REMOVE. Useful for testing
-const allColors = [
-  "#EF767A", "#456990", "#49BEAA", "#49DCB1", "#EEB868", "#EF767A", "#456990",
-  "#49BEAA", "#49DCB1", "#EEB868", "#EF767A"
-];
-
 export default class SlidesStore {
   // Default slides state
   // history will be an array of slides arrays
@@ -30,29 +24,24 @@ export default class SlidesStore {
     slides: [{
       // Default first slide
       id: generate(),
-      props: {},
-      children: [],
-      color: allColors[0]
+      props: { style: {} },
+      children: []
     }, {
       id: generate(),
-      props: {},
-      children: [],
-      color: allColors[1]
+      props: { style: {} },
+      children: []
     }, {
       id: generate(),
-      props: {},
-      children: [],
-      color: allColors[2]
+      props: { style: {} },
+      children: []
     }, {
       id: generate(),
-      props: {},
-      children: [],
-      color: allColors[3]
+      props: { style: {} },
+      children: []
     }, {
       id: generate(),
-      props: {},
-      children: [],
-      color: allColors[4]
+      props: { style: {} },
+      children: []
     }
   ] }]));
 
@@ -226,9 +215,10 @@ export default class SlidesStore {
     // TODO: Figure out new slide defaults/interface
     const newSlide = {
       id: generate(),
-      props: {},
-      children: [],
-      color: allColors[6]
+      props: {
+        style: {}
+      },
+      children: []
     };
 
     const index = this.currentSlideIndex + 1;
@@ -354,6 +344,17 @@ export default class SlidesStore {
     }
 
     newState.slides[this.currentSlideIndex].children[this.currentElementIndex].props = newProps;
+    this._addToHistory(newState);
+  }
+
+  updateSlideProps(props) {
+    if (!this.currentSlide) {
+      return;
+    }
+
+    const newProps = merge(this.currentSlide.props, props);
+    const newState = this.currentState;
+    newState.slides[this.currentSlideIndex].props = newProps;
     this._addToHistory(newState);
   }
 

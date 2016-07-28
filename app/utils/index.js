@@ -173,15 +173,18 @@ export const snap = (gridLines, potentialLines, snapFunction) => {
 };
 
 export const verifyFileContent = (fileContent, cb) => {
-  if (!fileContent || !fileContent.content || !fileContent.content.slides) {
+  if (!fileContent ||
+    !fileContent.content ||
+    !fileContent.content.presentation ||
+    !fileContent.content.presentation.slides) {
     return cb(new Error("Empty file"));
   }
 
-  if (!Array.isArray(fileContent.content.slides)) {
+  if (!Array.isArray(fileContent.content.presentation.slides)) {
     return cb(new Error("content.slides must be an array"));
   }
 
-  const slideError = fileContent.content.slides.some((slide) => {
+  const slideError = fileContent.content.presentation.slides.some((slide) => {
     if (!slide.id || !slide.children || !slide.props) {
       cb(new Error("Invalid Slide"));
 

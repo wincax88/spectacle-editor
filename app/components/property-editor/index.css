@@ -130,3 +130,14 @@
   margin: 0 auto;
   width: 180px;
 }
+
+.checkboxLabel {
+  margin-bottom: 10px;
+  display: block;
+  font-size: 14px;
+}
+
+.checkboxLabel input {
+  vertical-align: bottom;
+  margin-right: 5px;
+}
