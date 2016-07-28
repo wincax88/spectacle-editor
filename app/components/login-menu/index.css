@@ -35,7 +35,7 @@
   padding: 16px 12px;
 
   background-color: #ffffeb;
-  box-shadow: inset 0px 2px 4px rgba(153, 153, 130, 0.15);
+  box-shadow: inset 0 2px 4px rgba(153, 153, 130, 0.15);
   border: 1px solid rgba(153, 153, 130, 0.25);
   color: var(--primary-font-color);
   font-size: 16px;

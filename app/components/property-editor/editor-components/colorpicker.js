@@ -1,15 +1,18 @@
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
+import { SketchPicker } from "react-color";
+
 import { EYEDROPPER } from "../../../assets/icons";
 import styles from "./colorpicker.css";
-import { SketchPicker } from "react-color";
 
 export default class ColorPicker extends Component {
   static propTypes = {
-    currentElement: React.PropTypes.object
+    currentElement: PropTypes.object,
+    onChangeColor: PropTypes.func,
+    currentStyles: PropTypes.object
   }
 
   static contextTypes = {
-    store: React.PropTypes.object
+    store: PropTypes.object
   }
 
   constructor(props) {

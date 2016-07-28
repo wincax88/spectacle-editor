@@ -97,7 +97,6 @@ class Home extends Component {
             <PropertyEditor />
             <Canvas />
           </div>
-          <div style={{position: "absolute", left: 2000, top: 0, height: 600, width: 1000}}>fooood</div>
         </div>
       </Provider>
     );
