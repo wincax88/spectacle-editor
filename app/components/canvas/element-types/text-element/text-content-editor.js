@@ -110,12 +110,36 @@ export default class TextContentEditor extends Component {
   }
 
   handleKeyDown = (ev) => {
+    const superKey = process.platform === "darwin" ? ev.metaKey : ev.ctrlKey;
+
+    // undo super+z, stop propagation so as not to trigger global undo
+    if (superKey && ev.which === 90 && !ev.shiftKey) {
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      document.execCommand("undo");
+    }
+
+    // undo super+shift+z, stop propagation so as not to trigger global redo
+    if (superKey && ev.which === 90 && ev.shiftKey) {
+      ev.preventDefault();
+      document.execCommand("redo");
+    }
+
+    // delete prevented so that content editable child element is not deleted
     if (ev.which === 8 && ev.target.innerText.length <= 1) {
       ev.preventDefault();
     }
 
+    // shift+enter new line in when not in list mode doesn't work properly, disabled
     if (ev.which === 13 && ev.shiftKey && !this.props.componentProps.listType) {
       ev.preventDefault();
+    }
+
+    // escape will finalze edit.
+    if (ev.which === 27) {
+      ev.preventDefault();
+      this.handleBlur();
     }
   }
 

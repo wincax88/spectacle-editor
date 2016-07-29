@@ -248,6 +248,10 @@ export default class SlidesStore {
   }
 
   setCurrentElementToFrontOrBack(toFront) {
+    if (!this.currentElement) {
+      return;
+    }
+
     transaction(() => {
       const slidesArray = this.slides;
       const currentChildren = slidesArray[this.currentSlideIndex].children;
@@ -279,6 +283,7 @@ export default class SlidesStore {
     const currentChildren = slidesArray[this.currentSlideIndex].children;
 
     if (
+      !this.currentElement ||
       num + this.currentElementIndex < 0 ||
       num + this.currentElementIndex >= currentChildren.length
     ) {
@@ -300,6 +305,19 @@ export default class SlidesStore {
         slides: slidesArray
       });
     });
+  }
+
+  deleteCurrentElement() {
+    if (!this.currentElement) {
+      return;
+    }
+
+    const nextState = this.currentState;
+
+    nextState.slides[this.currentSlideIndex].children.splice(this.currentElementIndex, 1);
+    nextState.currentElementIndex = null;
+
+    this._addToHistory(nextState);
   }
 
   updateElementDraggingState(isDraggingElement, isDraggingNewElement = false) {

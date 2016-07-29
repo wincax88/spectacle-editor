@@ -80,6 +80,25 @@ app.on("ready", () => {
     });
   });
 
+  ipcMain.on("current-element", (event, isCurrentElement) => {
+    menu.items.forEach((item, i) => {
+      if (item.label === "Edit") {
+        item.submenu.items.forEach((option, k) => {
+          if (
+            option.label === "Move Forward" ||
+            option.label === "Move Backward" ||
+            option.label === "Move To Front" ||
+            option.label === "Move To Back" ||
+            option.label === "Delete Element"
+          ) {
+            menu.items[i].submenu.items[k].enabled = isCurrentElement;
+          }
+        });
+      }
+    });
+    // console.log(menu.items[2].submenu.items);
+  });
+
   ipcMain.on("social-login", (event, socialUrl) => {
     mainWindow.webContents.session.clearStorageData(() => {});
     // Reset the csrftoken cookie if there is one
@@ -155,29 +174,53 @@ app.on("ready", () => {
         }
       }, {
         label: "Redo",
-        accelerator: "Command+Y",
+        accelerator: "Command+Shift+Z",
         selector: "redo:",
         click() {
           mainWindow.webContents.send("edit", "redo");
         }
       }, {
         type: "separator"
-      }, {
-        label: "Cut",
-        accelerator: "Command+X",
-        selector: "cut:"
-      }, {
-        label: "Copy",
-        accelerator: "Command+C",
-        selector: "copy:"
-      }, {
-        label: "Paste",
-        accelerator: "Command+V",
-        selector: "paste:"
-      }, {
-        label: "Select All",
-        accelerator: "Command+A",
-        selector: "selectAll:"
+      },
+      {
+        label: "Move Forward",
+        accelerator: "CMD+[",
+        selector: "forward:",
+        click() {
+          mainWindow.webContents.send("edit", "forward");
+        }
+      },
+      {
+        label: "Move Backward",
+        accelerator: "CMD+]",
+        selector: "backward:",
+        click() {
+          mainWindow.webContents.send("edit", "backward");
+        }
+      },
+      {
+        label: "Move To Front",
+        accelerator: "shift+CMD+[",
+        selector: "front:",
+        click() {
+          mainWindow.webContents.send("edit", "front");
+        }
+      },
+      {
+        label: "Move To Back",
+        accelerator: "shift+CMD+]",
+        selector: "back:",
+        click() {
+          mainWindow.webContents.send("edit", "back");
+        }
+      },
+      {
+        label: "Delete Element",
+        accelerator: "CMD+D",
+        selector: "delete:",
+        click() {
+          mainWindow.webContents.send("edit", "delete");
+        }
       }]
     }, {
       label: "View",
@@ -255,14 +298,81 @@ app.on("ready", () => {
       submenu: [{
         label: "&Open",
         accelerator: "Ctrl+O"
-      }, {
+      },
+      {
+        label: "&Save",
+        accelerator: "Ctrl+S"
+      },
+      {
+        label: "&Save As...",
+        accelerator: "Ctrl+Shift+S"
+      },
+      {
+        label: "&Export To PDF",
+        accelerator: ""
+      },
+      {
         label: "&Close",
-        accelerator: "Ctrl+W",
+        accelerator: "Ctrl+Q",
         click() {
           mainWindow.close();
         }
       }]
     }, {
+      label: "&Edit",
+      submenu: [{
+        label: "&Undo",
+        accelerator: "Ctrl+Z",
+        click() {
+          mainWindow.webContents.send("edit", "undo");
+        }
+      }, {
+        label: "&Redo",
+        accelerator: "Ctrl+Shift+Z",
+        click() {
+          mainWindow.webContents.send("edit", "redo");
+        }
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "&Move Forward",
+        accelerator: "Ctrl+[",
+        click() {
+          mainWindow.webContents.send("edit", "forward");
+        }
+      },
+      {
+        label: "&Move Backward",
+        accelerator: "Ctrl+]",
+        click() {
+          mainWindow.webContents.send("edit", "backward");
+        }
+      },
+      {
+        label: "&Move To Front",
+        accelerator: "shift+Ctrl+[",
+        click() {
+          mainWindow.webContents.send("edit", "front");
+        }
+      },
+      {
+        label: "&Move To Back",
+        accelerator: "shift+Ctrl+]",
+        click() {
+          mainWindow.webContents.send("edit", "back");
+        }
+      },
+      {
+        label: "Delete Element",
+        accelerator: "Ctrl+D",
+        click() {
+          mainWindow.webContents.send("edit", "delete");
+        }
+      }]
+    },
+    {
       label: "&View",
       submenu: (process.env.NODE_ENV === "development") ? [{
         label: "&Reload",
@@ -276,7 +386,12 @@ app.on("ready", () => {
         click() {
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
-      }, {
+      },
+      {
+        label: "&Slideshow",
+        accelerator: ""
+      },
+      {
         label: "Toggle &Developer Tools",
         accelerator: "Alt+Ctrl+I",
         click() {

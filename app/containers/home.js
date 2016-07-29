@@ -46,6 +46,10 @@ class Home extends Component {
 
   componentDidMount() {
     autorun(() => {
+      if (ipcRenderer && ipcRenderer.send) {
+        ipcRenderer.send("current-element", !!slideStore.currentElement);
+      }
+
       if (fileStore.fileName) {
         // Don't show path info or `.json` extension
         document.title = fileStore.fileName.split("/").pop().slice(0, -5);
