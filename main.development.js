@@ -74,11 +74,15 @@ app.on("ready", () => {
 
     screencapWindow.setSize(250, numberOfSlides * 175, false);
 
-    screencapWindow.capturePage((image) => {
-      fs.writeFile("out.png", image.toPng(), function(err) {
-        if (err) {
-          console.log("ERROR Failed to save file", err);
-        }
+    screencapWindow.capturePage({
+      x: 0,
+      y: 175 * currentSlideIndex,
+      width: 250,
+      height: 175
+    }, (image) => {
+      mainWindow.webContents.send("slide-preview-image", {
+        image: new Buffer(image.toPng()).toString("base64"),
+        slideIndex: currentSlideIndex
       });
     });
   });

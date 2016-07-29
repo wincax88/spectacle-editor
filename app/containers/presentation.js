@@ -9,6 +9,7 @@ class Presentation extends Component {
 
   constructor(props) {
     super(props);
+    this.lastCurrentSlideIndex = 0;
 
     ipcRenderer.on("update", (event, data) => {
       this.setState({
@@ -29,17 +30,30 @@ class Presentation extends Component {
   componentDidUpdate() {
     if (this.props.screenCapture) {
       setTimeout(() => {
+        if (this.lastCurrentSlideIndex !== this.state.currentSlideIndex) {
+          this.lastCurrentSlideIndex = this.state.currentSlideIndex;
+
+          return;
+        }
+
         ipcRenderer.send("ready-to-screencap", {
           currentSlideIndex: this.state.currentSlideIndex,
           numberOfSlides: this.state.presentation.content.slides.length
         });
-      }, 100);
+      }, 10);
     }
   }
 
   render() {
     return (
       <div>
+        <style>
+          {`
+            body {
+              overflow: hidden;
+            }
+          `}
+        </style>
         {this.props.screenCapture && <style>
           {`
             body {

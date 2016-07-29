@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
+import { without } from "lodash";
 
 import { ColorPicker } from "../editor-components/index.js";
 import styles from "../index.css";
@@ -35,13 +36,21 @@ export default class SlideMenu extends Component {
   }
 
   handleTransitionChange = (ev) => {
-    ev.preventDefault();
+    const { value, checked } = ev.target;
+    const currentTransitionArray = this.context.store.currentSlide.props.transition;
+    let newTransitionArray;
 
-    console.log(ev.target.value, ev.target.checked);
+    if (checked) {
+      newTransitionArray = currentTransitionArray.concat([value]);
+    } else {
+      newTransitionArray = without(currentTransitionArray, value);
+    }
+
+    this.context.store.updateSlideProps({ transition: newTransitionArray });
   }
 
   render() {
-    const { currentSlide: { props: { style } } } = this.context.store;
+    const { currentSlide: { props: { style, transition } } } = this.context.store;
 
     return (
       <div className={styles.wrapper}>
@@ -69,6 +78,7 @@ export default class SlideMenu extends Component {
                   name="transitions"
                   value="slide"
                   onChange={this.handleTransitionChange}
+                  checked={transition.includes("slide")}
                 />
                 Slide
               </label>
@@ -78,6 +88,7 @@ export default class SlideMenu extends Component {
                   name="transitions"
                   value="zoom"
                   onChange={this.handleTransitionChange}
+                  checked={transition.includes("zoom")}
                 />
                 Zoom
               </label>
@@ -87,6 +98,7 @@ export default class SlideMenu extends Component {
                   name="transitions"
                   value="fade"
                   onChange={this.handleTransitionChange}
+                  checked={transition.includes("fade")}
                 />
                 Fade
               </label>
@@ -96,6 +108,7 @@ export default class SlideMenu extends Component {
                   name="transitions"
                   value="spin"
                   onChange={this.handleTransitionChange}
+                  checked={transition.includes("spin")}
                 />
                 Spin
               </label>

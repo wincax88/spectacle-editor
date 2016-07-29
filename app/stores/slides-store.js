@@ -2,7 +2,7 @@ import { ipcRenderer } from "electron";
 import { observable, computed, transaction, asReference } from "mobx";
 import Immutable from "seamless-immutable";
 import { generate } from "shortid";
-import { merge, pick, omit } from "lodash";
+import { merge, mergeWith, pick, omit } from "lodash";
 
 import ApiStore from "./api-store";
 import elementMap from "../elements";
@@ -25,28 +25,30 @@ export default class SlidesStore {
     slides: [{
       // Default first slide
       id: generate(),
-      props: { style: {} },
+      props: { style: {}, transition: ["slide"] },
       children: []
     }, {
       id: generate(),
-      props: { style: {} },
+      props: { style: {}, transition: ["slide"] },
       children: []
     }, {
       id: generate(),
-      props: { style: {} },
+      props: { style: {}, transition: ["slide"] },
       children: []
     }, {
       id: generate(),
-      props: { style: {} },
+      props: { style: {}, transition: ["slide"] },
       children: []
     }, {
       id: generate(),
-      props: { style: {} },
+      props: { style: {}, transition: ["slide"] },
       children: []
     }
   ] }]));
 
   @observable historyIndex = 0;
+
+  @observable slidePreviewList = new Array(500);
 
   // Slide info
   @observable width = 0;
@@ -140,6 +142,14 @@ export default class SlidesStore {
         currentSlideIndex: this.currentSlideIndex
       });
     });
+
+    ipcRenderer.on("slide-preview-image", (event, data) => {
+      const { image, slideIndex } = data;
+
+      if (image) {
+        this.slidePreviewList[slideIndex] = `data:image/png;base64, ${image}`;
+      }
+    });
   }
 
   // TODO: Move user to own store
@@ -223,9 +233,7 @@ export default class SlidesStore {
     // TODO: Figure out new slide defaults/interface
     const newSlide = {
       id: generate(),
-      props: {
-        style: {}
-      },
+      props: { style: {}, transition: ["slide"] },
       children: []
     };
 
@@ -360,7 +368,12 @@ export default class SlidesStore {
       return;
     }
 
-    const newProps = merge(this.currentSlide.props, props);
+    const newProps = mergeWith(this.currentSlide.props, props, (originalVal, newVal) => {
+      if (Array.isArray(newVal)) {
+        return newVal;
+      }
+    });
+
     const newState = this.currentState;
     newState.slides[this.currentSlideIndex].props = newProps;
     this._addToHistory(newState);

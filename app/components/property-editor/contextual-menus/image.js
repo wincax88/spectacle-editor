@@ -10,6 +10,14 @@ import styles from "./image.css";
 
 const defaultImageSource = elements[ElementTypes.IMAGE].props.src;
 
+const normalizeUrl = (url) => {
+  if (url.indexOf("http://") === 0 || url.indexOf("https://") === 0) {
+    return url;
+  }
+
+  return `http://${url}`;
+};
+
 export default class ImageMenu extends Component {
   static contextTypes = {
     store: React.PropTypes.object
@@ -81,6 +89,16 @@ export default class ImageMenu extends Component {
     }
   }
 
+  onSourceBlur = (ev) => {
+    const imageSrc = ev.target.value;
+    const normalizedUrl = normalizeUrl(imageSrc);
+
+    if (imageSrc !== normalizedUrl) {
+      this.context.store.updateElementProps({
+        src: normalizedUrl
+      });
+    }
+  }
 
   render() {
     const { currentElement } = this.state;
@@ -113,6 +131,7 @@ export default class ImageMenu extends Component {
           type="text"
           name="imagesSource"
           onChange={this.onSourceChange}
+          onBlur={this.onSourceBlur}
           value={srcValue}
         />
         <p className={commonStyles.subHeading}>File Upload</p>
