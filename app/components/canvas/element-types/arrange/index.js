@@ -4,9 +4,15 @@ import { BRINGTOFRONT, BRINGFORWARD, SENDBACKWARD, SENDTOBACK } from "../../../.
 import styles from "./index.css";
 
 class Arrange extends Component {
+  static propTypes = {
+    scale: React.PropTypes.number,
+    height: React.PropTypes.number,
+    width: React.PropTypes.number
+  };
+
   static contextTypes = {
     store: React.PropTypes.object
-  }
+  };
 
   onClickFront = () => {
     this.context.store.setCurrentElementToFrontOrBack(true);
@@ -25,8 +31,20 @@ class Arrange extends Component {
   }
 
   render() {
+    const scale = 1 / this.props.scale;
+    const heightOffset = ((this.props.height * scale) - this.props.height) / 2;
+    const yScale = this.props.height + heightOffset + (20 * scale);
+    const xScale = (this.props.width / 2) - (100 * scale);
+
+    const containerStyles = {
+      transform: `scale(${scale})`,
+      transformOrigin: "top left",
+      bottom: `${yScale}px`,
+      left: `${xScale}px`
+    };
+
     return (
-      <div className={styles.arrangeContainer}>
+      <div className={styles.arrangeContainer} style={containerStyles}>
         <div className={styles.arrange}>
           <button
             className={styles.arrangeButton}
