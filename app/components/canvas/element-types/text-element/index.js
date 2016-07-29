@@ -76,11 +76,6 @@ export default class TextElement extends Component {
     return true;
   }
 
-  handleTouchStartResize = (ev) => {
-    ev.preventDefault();
-    this.handleMouseDownResize(ev.touches[0]);
-  }
-
   handleMouseDownResize = (ev) => {
     ev.stopPropagation();
     ev.preventDefault();
@@ -111,15 +106,8 @@ export default class TextElement extends Component {
       resizeLastX: pageX
     }, () => {
       window.addEventListener("mousemove", this.handleMouseMoveResize);
-      window.addEventListener("touchmove", this.handleTouchMoveResize);
       window.addEventListener("mouseup", this.handleMouseUpResize);
-      window.addEventListener("touchend", this.handleTouchEndResize);
     });
-  }
-
-  handleTouchMoveResize = (ev) => {
-    ev.preventDefault();
-    this.handleMouseMoveResize(ev.touches[0]);
   }
 
   handleMouseMoveResize = (ev) => {
@@ -200,17 +188,10 @@ export default class TextElement extends Component {
     }
   }
 
-  handleTouchEndResize = (ev) => {
-    ev.preventDefault();
-    this.handleMouseUpResize(ev.touches[0]);
-  }
-
   handleMouseUpResize = (ev) => {
     ev.preventDefault();
     window.removeEventListener("mousemove", this.handleMouseMoveResize);
     window.removeEventListener("mouseup", this.handleMouseUpResize);
-    window.removeEventListener("touchmove", this.handleTouchMoveResize);
-    window.removeEventListener("touchend", this.handleTouchEndResize);
 
     this.rightResizeNode.style.visibility = "visible";
     this.leftResizeNode.style.visibility = "visible";
@@ -224,16 +205,6 @@ export default class TextElement extends Component {
     propStyles.width = width;
     propStyles.left = left;
     this.context.store.updateElementProps({ style: propStyles });
-  }
-
-  handleTouchStart = (ev) => {
-    ev.preventDefault();
-    this.handleMouseDown(ev.touches[0]);
-  }
-
-  handleTouchMove = (ev) => {
-    ev.preventDefault();
-    this.handleMouseMove(ev.touches[0]);
   }
 
   handleMouseMove = ({ pageX, pageY, offsetX, offsetY, target: { id } }) => {
@@ -306,7 +277,6 @@ export default class TextElement extends Component {
     const { width, height } = boundingBox;
 
     window.addEventListener("mouseup", this.handleMouseUp);
-    window.addEventListener("touchend", this.handleMouseUp);
 
     // Do this preemptively so that dragging doesn't take the performance hit
     this.gridLines = this.context.store.gridLines;
@@ -332,7 +302,6 @@ export default class TextElement extends Component {
         height
       });
 
-      window.addEventListener("touchmove", this.handleTouchMove);
       window.addEventListener("mousemove", this.handleMouseMove);
     }, 150);
   }
@@ -357,7 +326,6 @@ export default class TextElement extends Component {
 
     if (el && this.clickStart && timeSinceMouseDown <= 150) {
       window.removeEventListener("mouseup", this.handleMouseUp);
-      window.removeEventListener("touchend", this.handleMouseUp);
 
       this.clickStart = null;
       this.setState({ editing: true });
@@ -365,8 +333,6 @@ export default class TextElement extends Component {
       return;
     }
 
-    window.removeEventListener("touchmove", this.handleTouchMove);
-    window.removeEventListener("touchend", this.handleMouseUp);
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
 
@@ -526,14 +492,12 @@ export default class TextElement extends Component {
                 ref={component => {this.currentElementComponent = component;}}
                 style={{ ...wrapperStyle, ...computedDragStyles }}
                 onMouseDown={!editing && this.handleMouseDown}
-                onTouchStart={!editing && this.handleTouchStart}
               >
                 {currentlySelected && !editing &&
                   <ResizeNode
                     ref={component => {this.leftResizeNode = ReactDOM.findDOMNode(component);}}
                     alignLeft
                     handleMouseDownResize={this.handleMouseDownResize}
-                    handleTouchResize={this.handleTouchStartResize}
                     component={this.props.component}
                   />
                 }
@@ -560,7 +524,6 @@ export default class TextElement extends Component {
                     ref={component => {this.rightResizeNode = ReactDOM.findDOMNode(component);}}
                     alignRight
                     handleMouseDownResize={this.handleMouseDownResize}
-                    handleTouchResize={this.handleTouchStartResize}
                     component={this.props.component}
                   />
                 }
