@@ -410,6 +410,7 @@ export default class TextElement extends Component {
       editing,
       isPressed,
       width,
+      height,
       left
     } = this.state;
 
@@ -439,14 +440,14 @@ export default class TextElement extends Component {
       const mouseX = mousePosition && mousePosition[0] ? mousePosition[0] : null;
 
       motionStyles.left = spring(
-        mouseX && mouseX || props.style.left || 0,
+        mouseX && mouseX || props.style.left * scale || 0,
         SpringSettings.DRAG
       );
 
       const mouseY = mousePosition && mousePosition[1] ? mousePosition[1] : null;
 
       motionStyles.top = spring(
-        mouseY && mouseY || props.style.top || 0,
+        mouseY && mouseY || props.style.top * scale || 0,
         SpringSettings.DRAG
       );
 
@@ -458,6 +459,7 @@ export default class TextElement extends Component {
 
       if (scale) {
         wrapperStyle.transform = `scale(${scale})`;
+        wrapperStyle.transformOrigin = "top left";
       }
     }
 
@@ -475,13 +477,13 @@ export default class TextElement extends Component {
     }
 
     if (isPressed) {
-      motionStyles.left = spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
-      motionStyles.top = spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
+      motionStyles.left = spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
+      motionStyles.top = spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
     }
 
 
     if (isResizing && currentlySelected) {
-      const componentStylesLeft = props.style && props.style.left || 0;
+      const componentStylesLeft = props.style && props.style.left * scale || 0;
 
       motionStyles.left = spring(
         left === undefined ? componentStylesLeft : left,
@@ -520,13 +522,18 @@ export default class TextElement extends Component {
                   <ResizeNode
                     ref={component => {this.leftResizeNode = ReactDOM.findDOMNode(component);}}
                     alignLeft
+                    scale={scale}
                     handleMouseDownResize={this.handleMouseDownResize}
                     handleTouchResize={this.handleTouchStartResize}
                     component={this.props.component}
                   />
                 }
                 {currentlySelected && !isResizing && !isDragging &&
-                  <Arrange />
+                  <Arrange
+                    scale={scale}
+                    width={computedStyles.width}
+                    height={height}
+                  />
                 }
                 {!this.state.reRender &&
                   <TextContentEditor
@@ -547,6 +554,7 @@ export default class TextElement extends Component {
                   <ResizeNode
                     ref={component => {this.rightResizeNode = ReactDOM.findDOMNode(component);}}
                     alignRight
+                    scale={scale}
                     handleMouseDownResize={this.handleMouseDownResize}
                     handleTouchResize={this.handleTouchStartResize}
                     component={this.props.component}

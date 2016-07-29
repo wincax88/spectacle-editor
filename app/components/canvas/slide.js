@@ -8,7 +8,8 @@ import styles from "./slide.css";
 class Slide extends Component {
   static propTypes = {
     isDragging: PropTypes.bool.isRequired,
-    isOver: PropTypes.bool.isRequired
+    isOver: PropTypes.bool.isRequired,
+    scale: PropTypes.number.isRequired
   };
 
   static contextTypes = {
@@ -41,8 +42,8 @@ class Slide extends Component {
   }
 
   render() {
-    const { isOver } = this.props;
-    const { store: { currentSlide, isDragging, isResizing, cursorType } } = this.context;
+    const { isOver, scale } = this.props;
+    const { store: { currentSlide, isDragging, isResizing } } = this.context;
     const { verticalGridLine, horizontalGridLine } = this.state;
 
     let slideClass = styles.slide;
@@ -55,17 +56,19 @@ class Slide extends Component {
       slideClass += ` ${styles.isOver}`;
     }
 
+    if (isResizing) {
+      slideClass += ` ${styles.isResizing}`;
+    }
+
     return (
-      <div className={slideClass}
-        style={{ cursor: isResizing ? cursorType : "auto" }}
-        id="slide"
-      >
+      <div className={slideClass} id="slide">
         {currentSlide && currentSlide.children.map((childObj, i) => (
           <CanvasElement
             key={childObj.id}
             component={childObj}
             elementIndex={i}
             isDragging={isDragging}
+            scale={scale}
             showGridLine={this.showGridLine}
             hideGridLine={this.hideGridLine}
           />
