@@ -46,7 +46,9 @@ class Home extends Component {
 
   componentDidMount() {
     autorun(() => {
-      ipcRenderer.send("current-element", !!slideStore.currentElement);
+      if (ipcRenderer && ipcRenderer.send) {
+        ipcRenderer.send("current-element", !!slideStore.currentElement);
+      }
 
       if (fileStore.fileName) {
         // Don't show path info or `.json` extension
