@@ -13,6 +13,7 @@ export default {
     }
   },
   ipcRenderer: {
-    on: () => {}
+    on: () => {},
+    send: () => {}
   }
 };

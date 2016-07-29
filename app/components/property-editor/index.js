@@ -6,6 +6,7 @@ import styles from "./index.css";
 import SlideMenu from "./contextual-menus/slides";
 import TextMenu from "./contextual-menus/text";
 import ImageMenu from "./contextual-menus/image";
+import PlotlyMenu from "./contextual-menus/plotly";
 import { ElementTypes, BLACKLIST_CURRENT_ELEMENT_DESELECT } from "../../constants";
 
 @observer
@@ -58,6 +59,12 @@ class PropertyEditor extends Component {
           styles.contextMenuActive : ""}`}
         >
           <ImageMenu />
+        </div>
+        <div className={`${styles.menu} ${styles.contextMenu}
+           ${(ElementTypes.PLOTLY === contextualMenu) ?
+          styles.contextMenuActive : ""}`}
+        >
+          <PlotlyMenu />
         </div>
       </div>
     );

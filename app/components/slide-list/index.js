@@ -262,8 +262,11 @@ class SlideList extends Component {
       originalDragIndex,
       isPressed,
       updating,
-      scrollTop
+      scrollTop,
+      slideList
     } = this.state;
+
+    const { slidePreviewList } = this.context.store;
 
     return (
       <div className={styles.list}>
@@ -279,7 +282,7 @@ class SlideList extends Component {
             height: 0,
             padding: 0
           })}
-          styles={this.state.slideList.map(slide => ({
+          styles={slideList.map(slide => ({
             key: `${slide.id}key`,
             style: {
               left: spring(0, springSetting2),
@@ -371,6 +374,14 @@ class SlideList extends Component {
                             (originalDragIndex !== i) ?
                              <span className={styles.slideIndex}>{i + 1}</span> :
                              null
+                          }
+                          {slidePreviewList[i] &&
+                            <img
+                              src={slidePreviewList[i]}
+                              alt="slide-preview"
+                              height={100}
+                              width={140}
+                            />
                           }
                         </div>
                       )}

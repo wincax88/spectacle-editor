@@ -8,7 +8,11 @@ const config = {
 
   devtool: "source-map",
 
-  entry: "./app/index",
+  entry: {
+    bundle: "./app/index",
+    presentation: "./app/presentation",
+    "slide-preview": "./app/slide-preview"
+  },
 
   output: {
     ...baseConfig.output,
@@ -63,7 +67,7 @@ const config = {
         warnings: false
       }
     }),
-    new ExtractTextPlugin("style.css", { allChunks: true })
+    new ExtractTextPlugin("[name].css", { allChunks: false })
   ],
 
   target: "electron-renderer"
