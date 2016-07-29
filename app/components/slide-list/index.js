@@ -266,7 +266,7 @@ class SlideList extends Component {
       slideList
     } = this.state;
 
-    const { slidePreviewList } = this.context.store;
+    const { slidePreviews } = this.context.store;
 
     return (
       <div className={styles.list}>
@@ -375,9 +375,9 @@ class SlideList extends Component {
                              <span className={styles.slideIndex}>{i + 1}</span> :
                              null
                           }
-                          {slidePreviewList[i] &&
+                          {slidePreviews[i] &&
                             <img
-                              src={slidePreviewList[i]}
+                              src={slidePreviews[i]}
                               alt="slide-preview"
                               height={100}
                               width={140}

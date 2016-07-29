@@ -82,7 +82,7 @@ class UserMenu extends Component {
         if (resJson.content && resJson.fid) {
           const content = JSON.parse(resJson.content);
           this.context.store.deserialize(content.presentation);
-          this.context.store.api.setPresentation(resJson.content);
+          this.context.store.api.setPresentation(resJson);
         }
       })
       .catch((err) => {

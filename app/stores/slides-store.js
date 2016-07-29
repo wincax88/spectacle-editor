@@ -50,7 +50,7 @@ export default class SlidesStore {
 
   @observable historyIndex = 0;
 
-  @observable slidePreviewList = new Array(500);
+  @observable slidePreviews = new Array(500);
 
   // Slide info
   @observable width = 0;
@@ -149,7 +149,7 @@ export default class SlidesStore {
       const { image, slideIndex } = data;
 
       if (image) {
-        this.slidePreviewList[slideIndex] = `data:image/png;base64, ${image}`;
+        this.slidePreviews[slideIndex] = `data:image/png;base64, ${image}`;
       }
     });
   }
@@ -221,10 +221,13 @@ export default class SlidesStore {
 
     slidesArray.splice(newIndex, 0, slidesArray.splice(currentIndex, 1)[0]);
 
-    this._addToHistory({
-      paragraphStyles: newParagraphStyles,
-      currentSlideIndex: newIndex,
-      slides: slidesArray
+    transaction(() => {
+      this.slidePreviews.splice(newIndex, 0, this.slidePreviews.splice(currentIndex, 1)[0]);
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: newIndex,
+        slides: slidesArray
+      });
     });
   }
 
@@ -232,7 +235,6 @@ export default class SlidesStore {
     const slidesArray = this.slides;
     const newParagraphStyles = this.paragraphStyles;
 
-    // TODO: Figure out new slide defaults/interface
     const newSlide = {
       id: generate(),
       props: { style: {}, transition: ["slide"] },
@@ -242,11 +244,14 @@ export default class SlidesStore {
     const index = this.currentSlideIndex + 1;
     slidesArray.splice(index, 0, newSlide);
 
-    this._addToHistory({
-      paragraphStyles: newParagraphStyles,
-      currentSlideIndex: index,
-      currentElementIndex: null,
-      slides: slidesArray
+    transaction(() => {
+      this.slidePreviews.splice(index, 0, null);
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: index,
+        currentElementIndex: null,
+        slides: slidesArray
+      });
     });
   }
 
@@ -257,11 +262,14 @@ export default class SlidesStore {
 
     slidesArray.splice(this.currentSlideIndex, 1);
 
-    this._addToHistory({
-      paragraphStyles: newParagraphStyles,
-      currentSlideIndex: index,
-      currentElementIndex: null,
-      slides: slidesArray
+    transaction(() => {
+      this.slidePreviews.splice(this.currentSlideIndex, 1);
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: index,
+        currentElementIndex: null,
+        slides: slidesArray
+      });
     });
   }
 
