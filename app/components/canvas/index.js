@@ -143,13 +143,17 @@ class SlideList extends Component {
     this.gridLines = null;
 
     if (!position) {
+      const slideElement = findDOMNode(this.refs.slide);
+      const element = Elements[elementType];
+      const height = element.defaultHeight || element.props.height;
+      const width = element.defaultWidth || element.props.width;
+
       this.context.store.dropElement(elementType, {
         style: {
           whiteSpace: "nowrap",
           position: "absolute",
-          // TODO: Place in center of slide
-          left: 0,
-          top: 0
+          left: (slideElement.clientWidth / 2) - (width / 2),
+          top: (slideElement.clientHeight / 2) - (height / 2)
         }
       });
 
