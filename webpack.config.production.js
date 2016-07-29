@@ -67,7 +67,7 @@ const config = {
         warnings: false
       }
     }),
-    new ExtractTextPlugin("style.css", { allChunks: true })
+    new ExtractTextPlugin("[name].css", { allChunks: false })
   ],
 
   target: "electron-renderer"

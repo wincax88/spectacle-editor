@@ -91,6 +91,11 @@ export default class ImageMenu extends Component {
 
   onSourceBlur = (ev) => {
     const imageSrc = ev.target.value;
+
+    if (!imageSrc) {
+      return;
+    }
+
     const normalizedUrl = normalizeUrl(imageSrc);
 
     if (imageSrc !== normalizedUrl) {

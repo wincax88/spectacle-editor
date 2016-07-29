@@ -60,6 +60,11 @@ export default class PlotlyMenu extends Component {
 
   onSourceBlur = (ev) => {
     const plotlySrc = ev.target.value;
+
+    if (!plotlySrc) {
+      return;
+    }
+
     const normalizedUrl = normalizeUrl(plotlySrc);
 
     if (plotlySrc !== normalizedUrl) {
