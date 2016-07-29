@@ -16,6 +16,7 @@ body {
   margin: 0;
   overflow-y: hidden;
   position: relative;
+  -webkit-user-select: none;
   width: 100vw;
 }
 
@@ -38,6 +39,10 @@ li {
 button {
   cursor: pointer;
   font-family: inherit;
+}
+
+input {
+  -webkit-user-select: auto;
 }
 
 input:focus,
@@ -64,12 +69,12 @@ button:active {
   line-height: 1.5;
   outline: none;
   width: 100%;
-  transition: border-color ease 200ms;
+  transition: border-color ease-in 193ms;
 }
 
 .globalInput:focus {
   border-color: #9ea4b0;
-  transition: border-color ease 200ms;
+  transition: border-color ease-out 225ms;
 }
 
 .globalLabel {
