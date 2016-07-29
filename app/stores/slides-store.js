@@ -8,20 +8,22 @@ import ApiStore from "./api-store";
 import elementMap from "../elements";
 import { getParagraphStyles, getGridLinesObj, getGridLineHashes } from "../utils";
 
+const defaultParagraphStyles = {
+  "Heading 1": getParagraphStyles({ fontSize: 26 }),
+  "Heading 2": getParagraphStyles({ fontSize: 20 }),
+  "Heading 3": getParagraphStyles({ fontSize: 11, fontWeight: 700 }),
+  Body: getParagraphStyles({ fontSize: 11 }),
+  "Body Small": getParagraphStyles({ fontSize: 10 }),
+  Caption: getParagraphStyles({ fontSize: 11, fontStyle: "italic" })
+};
+
 export default class SlidesStore {
   // Default slides state
   // history will be an array of slides arrays
   @observable history = asReference(Immutable.from([{
     currentSlideIndex: 0,
     currentElementIndex: null,
-    paragraphStyles: {
-      "Heading 1": getParagraphStyles({ fontSize: 26 }),
-      "Heading 2": getParagraphStyles({ fontSize: 20 }),
-      "Heading 3": getParagraphStyles({ fontSize: 11, fontWeight: 700 }),
-      Body: getParagraphStyles({ fontSize: 11 }),
-      "Body Small": getParagraphStyles({ fontSize: 10 }),
-      Caption: getParagraphStyles({ fontSize: 11, fontStyle: "italic" })
-    },
+    paragraphStyles: merge({}, defaultParagraphStyles),
     slides: [{
       // Default first slide
       id: generate(),
@@ -481,11 +483,16 @@ export default class SlidesStore {
   }
 
   serialize() {
-    return this.slides;
+    return {
+      slidePreviews: this.slidePreviews,
+      slides: this.slides,
+      paragraphStyles: this.paragraphStyles
+    };
   }
 
-  deserialize(newSlides) {
-    const hydratedSlides = newSlides.map((slide) => ({
+  deserialize(newPres) {
+    const { slides, slidePreviews, paragraphStyles } = newPres;
+    const hydratedSlides = slides.map((slide) => ({
       ...slide,
       children: slide.children.map((childObj) => ({
         ...childObj,
@@ -498,8 +505,13 @@ export default class SlidesStore {
       this.history = Immutable.from([{
         currentSlideIndex: 0,
         currentElementIndex: null,
-        slides: hydratedSlides
+        slides: hydratedSlides,
+        paragraphStyles: paragraphStyles || defaultParagraphStyles
       }]);
+
+      if (slidePreviews) {
+        this.slidePreviews = slidePreviews;
+      }
     });
   }
 }

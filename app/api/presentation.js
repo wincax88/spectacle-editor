@@ -12,9 +12,7 @@ export const create = (domain, csrfToken, presJSON, isPublic, fileName) =>
       world_readable: isPublic,
       filename: fileName || "Untitled",
       content: JSON.stringify({
-        presentation: {
-          slides: presJSON
-        }
+        presentation: presJSON
       })
     })
   })
@@ -33,10 +31,34 @@ export const patch = (domain, fid, csrfToken, patchJSON) =>
     },
     body: JSON.stringify({
       content: JSON.stringify({
-        presentation: {
-          slides: patchJSON
-        }
+        presentation: patchJSON
       })
     })
+  })
+  .then((response) => response.json());
+
+export const fetchOne = (domain, fid, csrfToken) =>
+  fetch(`${domain}/v2/spectacle-presentations/${fid}`, {
+    method: "get",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Plotly-Client-Platform": "Python 0.2",
+      "X-CSRFToken": csrfToken
+    }
+  })
+  .then((response) => response.json());
+
+export const fetchAll = (domain, csrfToken) =>
+  fetch(`${domain}/v2/spectacle-presentations/`, {
+    method: "get",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "Plotly-Client-Platform": "Python 0.2",
+      "X-CSRFToken": csrfToken
+    }
   })
   .then((response) => response.json());

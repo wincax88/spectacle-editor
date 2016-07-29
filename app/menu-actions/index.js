@@ -7,11 +7,7 @@ import { verifyFileContent } from "../utils";
 const dialog = remote.require("dialog");
 
 const getFileContent = (slidesStore) => JSON.stringify({
-  content: {
-    presentation: {
-      slides: slidesStore.serialize()
-    }
-  }
+  presentation: slidesStore.serialize()
 });
 
 const saveFile = (fileName, fileContent, fileStore) => {
@@ -101,7 +97,7 @@ export const fileActions = {
             return;
           }
 
-          slidesStore.deserialize(fileContents.content.presentation.slides);
+          slidesStore.deserialize(fileContents.presentation);
 
           fileStore.setFileName(fileName);
           fileStore.setIsDirty(false);
