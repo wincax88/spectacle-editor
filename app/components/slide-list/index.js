@@ -333,7 +333,7 @@ class SlideList extends Component {
                     "#ebf5ff" : "transparent";
 
                   const borderStyle = currentSlideIndex === i ?
-                    "1px solid #447bdc" : "1px solid transparent";
+                    "1px solid #447bdc" : "1px solid #e7e8e9";
 
                   const position = i === originalDragIndex && isPressed ?
                     "fixed" : "relative";

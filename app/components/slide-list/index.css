@@ -39,8 +39,10 @@
 }
 
 .slideWrapper {
-  width: 140px;
-  height: 100px;
-  background-color: white;
   position: relative;
+  height: 100px;
+  width: 140px;
+
+  background-color: white;
+  box-shadow: var(--slide-stage-shadow);
 }

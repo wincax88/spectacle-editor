@@ -27,7 +27,7 @@
 
   /* Drop Shadows */
   --drag-shadow: 0 1px 3px 0 rgba(204, 204, 204, 0.6);
-  --slide-stage-shadow: 0 0 3px 0 rgba(204, 204, 204, 0.6);
+  --slide-stage-shadow: 0 0 3px 0 rgba(204, 204, 204, 0.4);
   --select-list-shadow: 0 0 8px 4px rgba(204, 204, 204, 0.3);
   --selected-editor-component-shadow: inset 0 0 5px #ccc;
 
