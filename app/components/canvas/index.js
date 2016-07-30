@@ -143,13 +143,33 @@ class SlideList extends Component {
     this.gridLines = null;
 
     if (!position) {
+      const slideElement = findDOMNode(this.refs.slide);
+      const element = Elements[elementType];
+      const height = element.defaultHeight || element.props.height;
+      const width = element.defaultWidth || element.props.width;
+
+      let left = (slideElement.clientWidth / 2) - (width / 2);
+      let top = (slideElement.clientHeight / 2) - (height / 2);
+
+      const positions =
+        this.context.store.currentSlide.children.reduce((positionHashMap, child) => {
+          const key = `${child.props.style.left}x${child.props.style.top}`;
+          positionHashMap[key] = true; // eslint-disable-line no-param-reassign
+
+          return positionHashMap;
+        }, {});
+
+      while (positions[`${left}x${top}`]) {
+        left += 10;
+        top += 10;
+      }
+
       this.context.store.dropElement(elementType, {
         style: {
           whiteSpace: "nowrap",
           position: "absolute",
-          // TODO: Place in center of slide
-          left: 0,
-          top: 0
+          left,
+          top
         }
       });
 
