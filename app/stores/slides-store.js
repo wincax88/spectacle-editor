@@ -8,20 +8,22 @@ import ApiStore from "./api-store";
 import elementMap from "../elements";
 import { getParagraphStyles, getGridLinesObj, getGridLineHashes } from "../utils";
 
+const defaultParagraphStyles = {
+  "Heading 1": getParagraphStyles({ fontSize: 26 }),
+  "Heading 2": getParagraphStyles({ fontSize: 20 }),
+  "Heading 3": getParagraphStyles({ fontSize: 11, fontWeight: 700 }),
+  Body: getParagraphStyles({ fontSize: 11 }),
+  "Body Small": getParagraphStyles({ fontSize: 10 }),
+  Caption: getParagraphStyles({ fontSize: 11, fontStyle: "italic" })
+};
+
 export default class SlidesStore {
   // Default slides state
   // history will be an array of slides arrays
   @observable history = asReference(Immutable.from([{
     currentSlideIndex: 0,
     currentElementIndex: null,
-    paragraphStyles: {
-      "Heading 1": getParagraphStyles({ fontSize: 26 }),
-      "Heading 2": getParagraphStyles({ fontSize: 20 }),
-      "Heading 3": getParagraphStyles({ fontSize: 11, fontWeight: 700 }),
-      Body: getParagraphStyles({ fontSize: 11 }),
-      "Body Small": getParagraphStyles({ fontSize: 10 }),
-      Caption: getParagraphStyles({ fontSize: 11, fontStyle: "italic" })
-    },
+    paragraphStyles: merge({}, defaultParagraphStyles),
     slides: [{
       // Default first slide
       id: generate(),
@@ -48,7 +50,7 @@ export default class SlidesStore {
 
   @observable historyIndex = 0;
 
-  @observable slidePreviewList = new Array(500);
+  @observable slidePreviews = new Array(500);
 
   // Slide info
   @observable width = 0;
@@ -147,7 +149,7 @@ export default class SlidesStore {
       const { image, slideIndex } = data;
 
       if (image) {
-        this.slidePreviewList[slideIndex] = `data:image/png;base64, ${image}`;
+        this.slidePreviews[slideIndex] = `data:image/png;base64, ${image}`;
       }
     });
   }
@@ -219,10 +221,13 @@ export default class SlidesStore {
 
     slidesArray.splice(newIndex, 0, slidesArray.splice(currentIndex, 1)[0]);
 
-    this._addToHistory({
-      paragraphStyles: newParagraphStyles,
-      currentSlideIndex: newIndex,
-      slides: slidesArray
+    transaction(() => {
+      this.slidePreviews.splice(newIndex, 0, this.slidePreviews.splice(currentIndex, 1)[0]);
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: newIndex,
+        slides: slidesArray
+      });
     });
   }
 
@@ -230,7 +235,6 @@ export default class SlidesStore {
     const slidesArray = this.slides;
     const newParagraphStyles = this.paragraphStyles;
 
-    // TODO: Figure out new slide defaults/interface
     const newSlide = {
       id: generate(),
       props: { style: {}, transition: ["slide"] },
@@ -240,11 +244,14 @@ export default class SlidesStore {
     const index = this.currentSlideIndex + 1;
     slidesArray.splice(index, 0, newSlide);
 
-    this._addToHistory({
-      paragraphStyles: newParagraphStyles,
-      currentSlideIndex: index,
-      currentElementIndex: null,
-      slides: slidesArray
+    transaction(() => {
+      this.slidePreviews.splice(index, 0, null);
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: index,
+        currentElementIndex: null,
+        slides: slidesArray
+      });
     });
   }
 
@@ -255,11 +262,14 @@ export default class SlidesStore {
 
     slidesArray.splice(this.currentSlideIndex, 1);
 
-    this._addToHistory({
-      paragraphStyles: newParagraphStyles,
-      currentSlideIndex: index,
-      currentElementIndex: null,
-      slides: slidesArray
+    transaction(() => {
+      this.slidePreviews.splice(this.currentSlideIndex, 1);
+      this._addToHistory({
+        paragraphStyles: newParagraphStyles,
+        currentSlideIndex: index,
+        currentElementIndex: null,
+        slides: slidesArray
+      });
     });
   }
 
@@ -481,11 +491,16 @@ export default class SlidesStore {
   }
 
   serialize() {
-    return this.slides;
+    return {
+      slidePreviews: this.slidePreviews,
+      slides: this.slides,
+      paragraphStyles: this.paragraphStyles
+    };
   }
 
-  deserialize(newSlides) {
-    const hydratedSlides = newSlides.map((slide) => ({
+  deserialize(newPres) {
+    const { slides, slidePreviews, paragraphStyles } = newPres;
+    const hydratedSlides = slides.map((slide) => ({
       ...slide,
       children: slide.children.map((childObj) => ({
         ...childObj,
@@ -498,8 +513,13 @@ export default class SlidesStore {
       this.history = Immutable.from([{
         currentSlideIndex: 0,
         currentElementIndex: null,
-        slides: hydratedSlides
+        slides: hydratedSlides,
+        paragraphStyles: paragraphStyles || defaultParagraphStyles
       }]);
+
+      if (slidePreviews) {
+        this.slidePreviews = slidePreviews;
+      }
     });
   }
 }

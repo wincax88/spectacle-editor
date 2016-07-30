@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from "react";
 import { observer } from "mobx-react";
 
+import { fetchOne, fetchAll } from "../../api/presentation";
 import Spinner from "../../assets/icons/spinner";
 import styles from "./user-menu.css";
 
@@ -19,12 +20,42 @@ class UserMenu extends Component {
     super(props);
 
     this.state = {
-      userFlyoutVisible: false
+      userFlyoutVisible: false,
+      loading: true,
+      presentationList: null
     };
   }
 
   onOpenFlyout = () => {
-    this.setState({ userFlyoutVisible: true });
+    this.setState({
+      userFlyoutVisible: true,
+      loading: true
+    });
+
+    const { domainUrl, csrfToken } = this.context.store.api;
+
+    fetchAll(domainUrl, csrfToken)
+      .then((resJson) => {
+        if (resJson.results && resJson.results.length) {
+          this.setState({
+            presentationList: resJson.results,
+            loading: false
+          });
+
+          return;
+        }
+
+        this.setState({
+          loading: false,
+          presError: "No presentations uploaded"
+        });
+      })
+      .catch(() => {
+        this.setState({
+          loading: false,
+          presError: "We're sorry, there was a problem fetching your presentations"
+        });
+      });
   }
 
   onCloseFlyout = () => {
@@ -35,6 +66,28 @@ class UserMenu extends Component {
     ev.preventDefault();
 
     this.context.store.api.signOut();
+  }
+
+  onClickPres(fid, ev) {
+    ev.preventDefault();
+
+    if (!fid) {
+      return;
+    }
+
+    const { domainUrl, csrfToken } = this.context.store.api;
+
+    fetchOne(domainUrl, fid, csrfToken)
+      .then((resJson) => {
+        if (resJson.content && resJson.fid) {
+          const content = JSON.parse(resJson.content);
+          this.context.store.deserialize(content.presentation);
+          this.context.store.api.setPresentation(resJson);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   renderFlyout(visible) {
@@ -57,23 +110,22 @@ class UserMenu extends Component {
           <p className={styles.presentationsHeading}>
             <span className={styles.fancy}>Your Plot.ly Presentations</span>
           </p>
-          <Spinner className={styles.spinner} />
-          <ul className={styles.list}>
-            <li className={styles.listItem}>
-              <a href="#"
-                className={styles.presentationLink}
-              >
-                Presentation name 1
-              </a>
-            </li>
-            <li className={styles.listItem}>
-              <a href="#"
-                className={styles.presentationLink}
-              >
-                Presentation name 2
-              </a>
-            </li>
-          </ul>
+          {this.state.loading && <Spinner className={styles.spinner} />}
+          {this.state.presError && <h4>{this.state.presError}</h4>}
+          {this.state.presentationList &&
+            <ul className={styles.list}>
+              {this.state.presentationList.map((presObj) => (
+                <li className={styles.listItem}>
+                  <a href="#"
+                    className={styles.presentationLink}
+                    onClick={this.onClickPres.bind(this, presObj.fid)}
+                  >
+                    {presObj.filename}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          }
         </div>
       </div>
     );

@@ -14,16 +14,14 @@ class Presentation extends Component {
     ipcRenderer.on("update", (event, data) => {
       this.setState({
         currentSlideIndex: data.currentSlideIndex,
-        presentation: {
-          content: {
-            slides: data.slides
-          }
+        content: {
+          presentation: data
         }
       });
     });
 
     this.state = {
-      presentation: null
+      content: null
     };
   }
 
@@ -38,7 +36,7 @@ class Presentation extends Component {
 
         ipcRenderer.send("ready-to-screencap", {
           currentSlideIndex: this.state.currentSlideIndex,
-          numberOfSlides: this.state.presentation.content.slides.length
+          numberOfSlides: this.state.content.presentation.slides.length
         });
       }, 10);
     }
@@ -66,7 +64,7 @@ class Presentation extends Component {
           `}
           </style>
         }
-        {this.state.presentation && <Viewer presentation={this.state.presentation} />}
+        {this.state.content && <Viewer content={this.state.content} />}
       </div>
     );
   }
