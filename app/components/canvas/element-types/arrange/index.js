@@ -33,12 +33,12 @@ class Arrange extends Component {
   render() {
     const scale = 1 / this.props.scale;
     const heightOffset = ((this.props.height * scale) - this.props.height) / 2;
-    const yScale = this.props.height + heightOffset + (20 * scale);
+    const yScale = this.props.height + (17 * scale);
     const xScale = (this.props.width / 2) - (100 * scale);
 
     const containerStyles = {
       transform: `scale(${scale})`,
-      transformOrigin: "top left",
+      transformOrigin: "bottom left",
       bottom: `${yScale}px`,
       left: `${xScale}px`
     };
