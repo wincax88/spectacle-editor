@@ -1,146 +1,146 @@
 @font-face {
   font-family: "droidSans";
-  src: url("../assets/fonts/droid_sans/droidsans.ttf") format("truetype");
+  src: url("../assets/fonts/droid-sans/droid-sans.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "droidSans";
-  src: url("../assets/fonts/droid_sans/droidsans-bold.ttf") format("truetype");
+  src: url("../assets/fonts/droid-sans/droid-sans-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "droidSansMono";
-  src: url("../assets/fonts/droid_sans_mono/droidsansmono.ttf") format("truetype");
+  src: url("../assets/fonts/droid-sans-mono/droid-sans-mono.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "droidSerif";
-  src: url("../assets/fonts/droid_serif/droidserif.ttf") format("truetype");
+  src: url("../assets/fonts/droid-serif/droid-serif.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "droidSerif";
-  src: url("../assets/fonts/droid_serif/droidserif-bold.ttf") format("truetype");
+  src: url("../assets/fonts/droid-serif/droid-serif-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "droidSerif";
-  src: url("../assets/fonts/droid_serif/droidserif-bolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/droid-serif/droid-serif-bold-italic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
 }
 
 @font-face {
   font-family: "droidSerif";
-  src: url("../assets/fonts/droid_serif/droidserif-italic.ttf") format("truetype");
+  src: url("../assets/fonts/droid-serif/droid-serif-italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
   font-family: "liberationSans";
-  src: url("../assets/fonts/liberation_sans/liberationsans-bold.ttf") format("truetype");
+  src: url("../assets/fonts/liberation-sans/liberation-sans-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "liberationSans";
-  src: url("../assets/fonts/liberation_sans/liberationsans-bolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/liberation-sans/liberation-sans-bold-italic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
 }
 
 @font-face {
   font-family: "liberationSans";
-  src: url("../assets/fonts/liberation_sans/liberationsans-italic.ttf") format("truetype");
+  src: url("../assets/fonts/liberation-sans/liberation-sans-italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
   font-family: "liberationSans";
-  src: url("../assets/fonts/liberation_sans/liberationsans-regular.ttf") format("truetype");
+  src: url("../assets/fonts/liberation-sans/liberation-sans-regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-bold.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-bolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-bold-italic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-extrabold.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-extra-bold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-extrabolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-extra-bold-italic.ttf") format("truetype");
   font-weight: 800;
   font-style: italic;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-italic.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-light.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-lightitalic.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-light-italic.ttf") format("truetype");
   font-weight: 300;
   font-style: italic;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-regular.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-semibold.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-semi-bold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: "openSans";
-  src: url("../assets/fonts/opensans/opensans-semibolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/open-sans/open-sans-semi-bold-italic.ttf") format("truetype");
   font-weight: 600;
   font-style: italic;
 }
@@ -161,14 +161,14 @@
 
 @font-face {
   font-family: "overPass";
-  src: url("../assets/fonts/overpass/overpass-extralight-italic.ttf") format("truetype");
+  src: url("../assets/fonts/overpass/overpass-extra-light-italic.ttf") format("truetype");
   font-weight: 200;
   font-style: italic;
 }
 
 @font-face {
   font-family: "overPass";
-  src: url("../assets/fonts/overpass/overpass-extralight.ttf") format("truetype");
+  src: url("../assets/fonts/overpass/overpass-extra-light.ttf") format("truetype");
   font-weight: 200;
   font-style: normal;
 }
@@ -203,14 +203,14 @@
 
 @font-face {
   font-family: "ptSans";
-  src: url("../assets/fonts/pt_sans_narrow/pt_sans-narrow-web-bold.ttf") format("truetype");
+  src: url("../assets/fonts/pt-sans-narrow/pt-sans-narrow-web-bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "ptSans";
-  src: url("../assets/fonts/pt_sans_narrow/pt_sans-narrow-web-regular.ttf") format("truetype");
+  src: url("../assets/fonts/pt-sans-narrow/pt-sans-narrow-web-regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
@@ -224,7 +224,7 @@
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-blackitalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-black-italic.ttf") format("truetype");
   font-weight: 900;
   font-style: italic;
 }
@@ -238,35 +238,35 @@
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-bolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-bold-italic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
 }
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-extrabold.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-extra-bold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-extrabolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-extra-bold-italic.ttf") format("truetype");
   font-weight: 800;
   font-style: italic;
 }
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-extralight.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-extra-light.ttf") format("truetype");
   font-weight: 200;
   font-style: normal;
 }
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-extralightitalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-extra-light-italic.ttf") format("truetype");
   font-weight: 200;
   font-style: italic;
 }
@@ -287,7 +287,7 @@
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-lightitalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-light-italic.ttf") format("truetype");
   font-weight: 300;
   font-style: italic;
 }
@@ -301,7 +301,7 @@
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-mediumitalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-medium-italic.ttf") format("truetype");
   font-weight: 500;
   font-style: italic;
 }
@@ -315,14 +315,14 @@
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-semibold.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-semi-bold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-semibolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-semi-bold-italic.ttf") format("truetype");
   font-weight: 600;
   font-style: italic;
 }
@@ -336,7 +336,7 @@
 
 @font-face {
   font-family: "raleway";
-  src: url("../assets/fonts/raleway/raleway-thinitalic.ttf") format("truetype");
+  src: url("../assets/fonts/raleway/raleway-thin-italic.ttf") format("truetype");
   font-weight: 100;
   font-style: italic;
 }
@@ -350,7 +350,7 @@
 
 @font-face {
   font-family: "roboto";
-  src: url("../assets/fonts/roboto/roboto-blackitalic.ttf") format("truetype");
+  src: url("../assets/fonts/roboto/roboto-black-italic.ttf") format("truetype");
   font-weight: 900;
   font-style: italic;
 }
@@ -364,7 +364,7 @@
 
 @font-face {
   font-family: "roboto";
-  src: url("../assets/fonts/roboto/roboto-bolditalic.ttf") format("truetype");
+  src: url("../assets/fonts/roboto/roboto-bold-italic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
 }
@@ -385,7 +385,7 @@
 
 @font-face {
   font-family: "roboto";
-  src: url("../assets/fonts/roboto/roboto-lightitalic.ttf") format("truetype");
+  src: url("../assets/fonts/roboto/roboto-light-italic.ttf") format("truetype");
   font-weight: 300;
   font-style: italic;
 }
@@ -399,7 +399,7 @@
 
 @font-face {
   font-family: "roboto";
-  src: url("../assets/fonts/roboto/roboto-mediumitalic.ttf") format("truetype");
+  src: url("../assets/fonts/roboto/roboto-medium-italic.ttf") format("truetype");
   font-weight: 500;
   font-style: italic;
 }
@@ -420,7 +420,7 @@
 
 @font-face {
   font-family: "roboto";
-  src: url("../assets/fonts/roboto/roboto-thinitalic.ttf") format("truetype");
+  src: url("../assets/fonts/roboto/roboto-thin-italic.ttf") format("truetype");
   font-weight: 100;
   font-style: italic;
 }
