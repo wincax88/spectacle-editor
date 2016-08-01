@@ -124,14 +124,19 @@ export default class PlotlyElement extends Component {
       currentTarget !== this.leftResizeNode &&
       currentTarget !== this.rightResizeNode;
 
-    const { width, height } = this.currentElementComponent.getBoundingClientRect();
+    let { width, height } = this.currentElementComponent.getBoundingClientRect();
     const componentProps = this.props.component.props;
-    const componentLeft = componentProps.style && componentProps.style.left;
-    const componentTop = componentProps.style && componentProps.style.top;
+    const componentLeft = componentProps.style && componentProps.style.left * this.props.scale;
+    const componentTop = componentProps.style && componentProps.style.top * this.props.scale;
     const left = componentLeft || 0;
     const top = componentTop || 0;
 
     this.gridLines = this.context.store.gridLines;
+
+    const upscale = 1 / this.props.scale;
+
+    width = width * upscale;
+    height = height * upscale;
 
     this.changeNodeVisibility("hidden", currentTarget);
     this.context.store.updateElementResizeState(true, this.getCursorTypes(currentTarget));
@@ -385,7 +390,13 @@ export default class PlotlyElement extends Component {
     this.context.store.updateElementResizeState(false);
     this.changeNodeVisibility();
 
-    const { width, left, top, height } = this.state;
+    let { width, left, top, height } = this.state;
+
+    const upscale = 1 / this.props.scale;
+
+    left = left * upscale;
+    top = top * upscale;
+
     const propStyles = { ...this.props.component.props.style, width, left, top, height };
 
     this.context.store.updateElementProps({ style: propStyles });
