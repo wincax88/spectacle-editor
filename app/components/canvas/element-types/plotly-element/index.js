@@ -608,12 +608,12 @@ export default class PlotlyElement extends Component {
 
       const mouseX = mousePosition && mousePosition[0] ? mousePosition[0] : null;
       motionStyles.left = spring(
-        mouseX && mouseX || props.style && props.style.left || 0,
+        mouseX && mouseX || props.style && props.style.left * scale || 0,
         SpringSettings.DRAG
       );
       const mouseY = mousePosition && mousePosition[1] ? mousePosition[1] : null;
       motionStyles.top = spring(
-        mouseY && mouseY || props.style && props.style.top || 0,
+        mouseY && mouseY || props.style && props.style.top * scale || 0,
         SpringSettings.DRAG
       );
 
@@ -626,19 +626,20 @@ export default class PlotlyElement extends Component {
 
       if (scale) {
         wrapperStyle.transform = `scale(${scale})`;
+        wrapperStyle.transformOrigin = "left top";
       }
     }
 
     elementStyle = { ...elementStyle, position: "relative", left: 0, top: 0 };
 
     if (currentlySelected && isPressed) {
-      motionStyles.left = spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
-      motionStyles.top = spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
+      motionStyles.left = spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
+      motionStyles.top = spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
     }
 
     if (currentlySelected && isResizing) {
-      const componentStylesLeft = props.style && props.style.left || 0;
-      const componentStylesTop = props.style && props.style.top || 0;
+      const componentStylesLeft = props.style && props.style.left * scale || 0;
+      const componentStylesTop = props.style && props.style.top * scale || 0;
 
       motionStyles.top = spring(
         top === undefined ? componentStylesTop : top,
@@ -680,6 +681,7 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.topLeftNode = ReactDOM.findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -689,6 +691,7 @@ export default class PlotlyElement extends Component {
                     alignLeft
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -698,6 +701,7 @@ export default class PlotlyElement extends Component {
                     cornerBottomLeft
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -707,11 +711,12 @@ export default class PlotlyElement extends Component {
                     alignTop
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
                 {currentlySelected && !isResizing && !isDragging &&
-                  <Arrange />
+                  <Arrange scale={scale} width={computedStyles.width} height={height}/>
                 }
                   <ComponentClass
                     {...props}
@@ -729,6 +734,7 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.topRightNode = ReactDOM.findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -738,6 +744,7 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.rightResizeNode = ReactDOM.findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -747,6 +754,7 @@ export default class PlotlyElement extends Component {
                     cornerBottomRight
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -756,6 +764,7 @@ export default class PlotlyElement extends Component {
                     alignBottom
                     handleMouseDownResize={this.handleMouseDownResize}
                     onTouch={this.handleTouchStartResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
