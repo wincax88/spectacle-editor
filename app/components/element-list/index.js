@@ -57,6 +57,7 @@ class ElementList extends Component {
             elementLeft={listLeft + ((elementWidth + elementMarginRight) * i)}
             elementWidth={elementWidth}
             elementHeight={elementHeight}
+            scale={this.props.scale}
           />
         ))}
       </div>

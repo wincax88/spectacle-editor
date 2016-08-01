@@ -174,6 +174,11 @@ class SlideList extends Component {
     x -= left + 1;
     y -= top + 1;
 
+    const upscale = 1 / this.context.store.scale;
+
+    x = x * upscale;
+    y = y * upscale;
+
     this.context.store.dropElement(elementType, /* props */{
       style: {
         position: "absolute",
