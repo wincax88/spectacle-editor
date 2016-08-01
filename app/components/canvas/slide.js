@@ -7,8 +7,8 @@ import styles from "./slide.css";
 @observer
 class Slide extends Component {
   static propTypes = {
-    isDragging: PropTypes.bool.isRequired,
-    isOver: PropTypes.bool.isRequired,
+    isDragging: PropTypes.bool,
+    isOver: PropTypes.bool,
     scale: PropTypes.number.isRequired
   };
 

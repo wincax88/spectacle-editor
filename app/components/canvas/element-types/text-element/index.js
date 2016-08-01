@@ -271,8 +271,8 @@ export default class TextElement extends Component {
     const boundingBox = this.currentElementComponent.getBoundingClientRect();
     const mouseOffset = [Math.floor(boundingBox.left - pageX), Math.floor(boundingBox.top - pageY)];
     const originalPosition = [
-      this.props.component.props.style.left,
-      this.props.component.props.style.top
+      this.props.component.props.style.left * this.props.scale,
+      this.props.component.props.style.top * this.props.scale
     ];
     const { width, height } = boundingBox;
 
@@ -307,6 +307,7 @@ export default class TextElement extends Component {
   }
 
   handleMouseUp = (ev) => {
+    const upscale = 1 / this.props.scale;
     const timeSinceMouseDown = new Date().getTime() - this.clickStart;
 
     clearTimeout(this.mouseClickTimeout);
@@ -345,8 +346,8 @@ export default class TextElement extends Component {
     this.context.store.updateElementDraggingState(false);
     this.context.store.updateElementProps({
       style: {
-        left: this.state.delta[0] + this.props.component.props.style.left,
-        top: this.state.delta[1] + this.props.component.props.style.top
+        left: (this.state.delta[0] * upscale) + this.props.component.props.style.left,
+        top: (this.state.delta[1] * upscale) + this.props.component.props.style.top
       }
     });
 
