@@ -84,9 +84,9 @@ export default class TextElement extends Component {
 
     const { target, pageX } = ev;
     const isLeftSideDrag = target === this.leftResizeNode;
-    const { width, height } = this.editable.getBoundingClientRect();
+    let { width, height } = this.editable.getBoundingClientRect();
     const componentProps = this.props.component.props;
-    const componentLeft = componentProps.style && componentProps.style.left;
+    const componentLeft = componentProps.style && componentProps.style.left * this.props.scale;
     const left = componentLeft || 0;
 
     if (isLeftSideDrag) {
@@ -96,6 +96,11 @@ export default class TextElement extends Component {
     }
 
     this.gridLines = this.context.store.gridLines;
+
+    const upscale = 1 / this.props.scale;
+
+    width = width * upscale;
+    height = height * upscale;
 
     this.setState({
       isLeftSideDrag,
@@ -203,7 +208,7 @@ export default class TextElement extends Component {
     const propStyles = { ...this.props.component.props.style };
 
     propStyles.width = width;
-    propStyles.left = left;
+    propStyles.left = left * (1 / this.props.scale);
     this.context.store.updateElementProps({ style: propStyles });
   }
 
