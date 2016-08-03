@@ -55,7 +55,7 @@ class Home extends Component {
         document.title = fileStore.fileName.split("/").pop().slice(0, -5);
       }
 
-      if (fileStore.isDirty) {
+      if (fileStore.isDirty && !document.title.match(/\* - Edited$/)) {
         document.title += "* - Edited";
       }
     });
