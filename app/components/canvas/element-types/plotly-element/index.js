@@ -694,7 +694,11 @@ export default class PlotlyElement extends Component {
                   />
                 }
                 {currentlySelected && !isResizing && !isDragging &&
-                  <Arrange scale={scale} width={computedStyles.width} height={height}/>
+                  <Arrange
+                    scale={scale}
+                    width={props.style.width || props.width}
+                    height={props.style.height || props.height}
+                  />
                 }
                   <ComponentClass
                     {...props}

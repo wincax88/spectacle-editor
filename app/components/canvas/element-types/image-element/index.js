@@ -371,8 +371,8 @@ export default class ImageElement extends Component {
     this.context.store.updateElementResizeState(false);
     this.changeNodeVisibility();
 
-    let { width, left, top, height } = this.state;
-
+    let { left, top } = this.state;
+    const { width, height } = this.state;
     const upscale = 1 / this.props.scale;
 
     left = left * upscale;
@@ -694,7 +694,11 @@ export default class ImageElement extends Component {
                   />
                 }
                 {currentlySelected && !isResizing && !isDragging &&
-                  <Arrange scale={scale} width={computedStyles.width} height={height}/>
+                  <Arrange
+                    scale={scale}
+                    width={props.style.width || props.width}
+                    height={props.style.height || props.height}
+                  />
                 }
                   <ComponentClass
                     ref={component => {this.image = findDOMNode(component);}}

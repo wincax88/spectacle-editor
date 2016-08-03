@@ -144,7 +144,7 @@ class SlideList extends Component {
       height: 700 * scale,
       left,
       top,
-      scale,
+      scale
     });
   }
 
@@ -222,7 +222,7 @@ class SlideList extends Component {
       width,
       height,
       top,
-      left,
+      left
      } = this.context.store;
 
     const PreviewElementType = dragElementType === ElementTypes.PLOTLY ?
@@ -252,10 +252,10 @@ class SlideList extends Component {
             }}
           >
             <Slide
-							ref="slide"
-							isOver={isOverPosition}
-							scale={scale}
-						/>
+              ref="slide"
+              isOver={isOverPosition}
+              scale={scale}
+            />
           </div>
           {isOverPosition &&
             <CanvasElement

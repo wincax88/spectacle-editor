@@ -465,7 +465,6 @@ export default class TextElement extends Component {
       motionStyles.top = spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
     }
 
-
     if (isResizing && currentlySelected) {
       const componentStylesLeft = props.style && props.style.left * scale || 0;
 
@@ -513,8 +512,14 @@ export default class TextElement extends Component {
                 {currentlySelected && !isResizing && !isDragging && !editing &&
                   <Arrange
                     scale={scale}
-                    width={computedStyles.width}
-                    height={height}
+                    width={
+                      this.currentElementComponent &&
+                      this.currentElementComponent.clientWidth
+                    }
+                    height={
+                      this.currentElementComponent &&
+                      this.currentElementComponent.clientHeight
+                    }
                   />
                 }
                 {!this.state.reRender &&
