@@ -177,7 +177,7 @@ export default class TextElement extends Component {
 
     if (isLeftSideDrag) {
       change = resizeLastX - pageX;
-      left = isSnapped ? left : left - change;
+      left = isSnapped ? left : left - (change * this.props.scale);
     } else {
       change = pageX - resizeLastX;
     }
