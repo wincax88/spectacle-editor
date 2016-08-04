@@ -31,8 +31,6 @@ class Arrange extends Component {
   }
 
   render() {
-    // console.log(this.props.height);
-    // console.log(this.props.width);
     const scale = 1 / this.props.scale;
     const yScale = this.props.height + (17 * scale);
     const xScale = (this.props.width / 2) - (100 * scale);

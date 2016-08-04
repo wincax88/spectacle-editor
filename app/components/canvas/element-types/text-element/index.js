@@ -122,6 +122,7 @@ export default class TextElement extends Component {
     let { left, width, canvasElementWidth } = this.state;
     let change;
     let isSnapped;
+    const upscale = 1 / this.props.scale;
 
     const snapCallback = (line, index) => {
       if (line === null) {
@@ -140,16 +141,17 @@ export default class TextElement extends Component {
       }
 
       if (index === 1) {
-        pointToAlignWithLine = Math.ceil(left + canvasElementWidth / 2);
+        pointToAlignWithLine = Math.ceil(left + (canvasElementWidth * this.props.scale) / 2);
       }
 
       if (index === 2) {
-        pointToAlignWithLine = Math.ceil(left + canvasElementWidth);
+        pointToAlignWithLine = Math.ceil(left + (canvasElementWidth * this.props.scale));
       }
 
-      const distance = pointToAlignWithLine - line;
+      const distance = (pointToAlignWithLine - line);
 
       if (Math.abs(distance) < 15) {
+        // console.log(this.gridLines.vertical);
         if (isLeftSideDrag) {
           left -= distance;
           canvasElementWidth += distance;
@@ -167,7 +169,7 @@ export default class TextElement extends Component {
       this.gridLines.vertical,
       getPointsToSnap(
         left,
-        canvasElementWidth,
+        canvasElementWidth * this.props.scale,
         (Math.max(pageX, resizeLastX) - Math.min(pageX, resizeLastX)) / 2
       ),
       snapCallback
