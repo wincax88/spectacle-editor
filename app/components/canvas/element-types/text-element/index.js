@@ -499,7 +499,7 @@ export default class TextElement extends Component {
                    ${BLACKLIST_CURRENT_ELEMENT_DESELECT}`
                 }
                 ref={component => {this.currentElementComponent = component;}}
-                style={{ ...wrapperStyle, ...computedDragStyles }}
+                style={{ ...wrapperStyle, ...computedDragStyles, zIndex: elementIndex }}
                 onMouseDown={!editing && this.handleMouseDown}
               >
                 {currentlySelected && !editing &&

@@ -650,7 +650,7 @@ export default class PlotlyElement extends Component {
                   `${styles.canvasElement} ${extraClasses} ${BLACKLIST_CURRENT_ELEMENT_DESELECT}`
                 }
                 ref={component => {this.currentElementComponent = component;}}
-                style={{ ...wrapperStyle, ...computedDragStyles }}
+                style={{ ...wrapperStyle, ...computedDragStyles, zIndex: elementIndex }}
                 onMouseDown={this.handleMouseDown}
               >
                 {currentlySelected &&
