@@ -45,11 +45,9 @@ export default class TextElement extends Component {
 
   componentDidMount() {
     defer(() => {
-      const { width, height } = this.editable.getBoundingClientRect();
-
       this.setState({ // eslint-disable-line react/no-did-mount-set-state
-        width,
-        height
+        width: this.editable.clientWidth,
+        height: this.editable.clientHeight
       });
     });
   }
@@ -81,7 +79,6 @@ export default class TextElement extends Component {
     ev.preventDefault();
 
     this.context.store.updateElementResizeState(true);
-
     const { target, pageX } = ev;
     const isLeftSideDrag = target === this.leftResizeNode;
     let { width, height } = this.editable.getBoundingClientRect();
@@ -154,11 +151,11 @@ export default class TextElement extends Component {
       if (Math.abs(distance) < 15) {
         if (isLeftSideDrag) {
           left -= distance;
-          canvasElementWidth += distance;
-          width += distance;
+          canvasElementWidth += (distance * upscale);
+          width += (distance * upscale);
         } else {
-          canvasElementWidth -= distance;
-          width -= distance;
+          canvasElementWidth -= (distance * upscale);
+          width -= (distance * upscale);
         }
 
         isSnapped = true;
@@ -177,15 +174,13 @@ export default class TextElement extends Component {
 
     if (isLeftSideDrag) {
       change = resizeLastX - pageX;
-      // change = (resizeLastX - pageX) * upscale;
       left = isSnapped ? left : left - change;
     } else {
       change = pageX - resizeLastX;
     }
 
-    const newCanvasElementWidth = isSnapped ? canvasElementWidth : change + canvasElementWidth;
-    const newWidth = isSnapped ? width : change + width;
-
+    const newCanvasElementWidth = isSnapped ? canvasElementWidth : (change * upscale) + canvasElementWidth;
+    const newWidth = isSnapped ? width : (change * upscale) + width;
     if (newCanvasElementWidth >= 0) {
       this.setState({
         left,
