@@ -308,7 +308,7 @@ app.on("ready", () => {
       },
       {
         label: "Delete Element",
-        accelerator: "CMD+D",
+        accelerator: "Backspace",
         selector: "delete:",
         click() {
           mainWindow.webContents.send("edit", "delete");
@@ -508,7 +508,7 @@ app.on("ready", () => {
       },
       {
         label: "Delete Element",
-        accelerator: "Ctrl+D",
+        accelerator: "Backspace",
         click() {
           mainWindow.webContents.send("edit", "delete");
         }
