@@ -115,7 +115,23 @@ export default class SlidesStore {
     return getGridLineHashes(
       getGridLinesObj(
         // Pass in elements to snap to
-        this.currentSlide.children,
+        this.currentSlide.children.map(child => {
+          const { props } = child;
+          const obj = { props: { style: {} } };
+
+          if (typeof props.height === "number" && typeof props.width === "number") {
+            obj.props.height = props.height * this.scale;
+            obj.props.width = props.width * this.scale;
+          } else if (props.style.height && props.style.width) {
+            obj.props.style.height = props.style.height *= this.scale;
+            obj.props.style.width = props.style.width *= this.scale;
+          }
+
+          obj.props.style.top = props.style.top * this.scale;
+          obj.props.style.left = props.style.left * this.scale;
+
+          return obj;
+        }),
         // Start with slide edges and slide center lines
         [0, Math.floor(this.height / 2), this.height],
         [0, Math.floor(this.width / 2), this.width]

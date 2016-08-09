@@ -151,8 +151,8 @@ export default class TextElement extends Component {
       if (Math.abs(distance) < 15) {
         if (isLeftSideDrag) {
           left -= distance;
-          canvasElementWidth += (distance * upscale);
-          width += (distance * upscale);
+          canvasElementWidth += distance * upscale;
+          width += distance * upscale;
         } else {
           canvasElementWidth -= (distance * upscale);
           width -= (distance * upscale);
@@ -400,7 +400,6 @@ export default class TextElement extends Component {
       editing,
       isPressed,
       width,
-      height,
       left
     } = this.state;
 
@@ -466,8 +465,10 @@ export default class TextElement extends Component {
     }
 
     if (isPressed) {
-      motionStyles.left = spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
-      motionStyles.top = spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
+      motionStyles.left =
+        spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
+      motionStyles.top =
+        spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
     }
 
     if (isResizing && currentlySelected) {

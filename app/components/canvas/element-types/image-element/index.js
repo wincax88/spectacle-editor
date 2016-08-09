@@ -620,8 +620,10 @@ export default class ImageElement extends Component {
     elementStyle = { ...elementStyle, position: "relative", left: 0, top: 0 };
 
     if (currentlySelected && isPressed) {
-      motionStyles.left = spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
-      motionStyles.top = spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
+      motionStyles.left =
+        spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
+      motionStyles.top =
+        spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
     }
 
     if (currentlySelected && isResizing) {

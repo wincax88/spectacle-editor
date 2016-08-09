@@ -11,8 +11,6 @@ import CanvasElement from "./canvas-element";
 import Slide from "./slide";
 import styles from "./index.css";
 
-const padding = 40;
-
 @observer
 class SlideList extends Component {
   static contextTypes = {
@@ -129,22 +127,20 @@ class SlideList extends Component {
     const xScale = offsetWidth < 1000 ? offsetWidth / 1000 : 1;
     const yScale = offsetHeight < 700 ? offsetHeight / 700 : 1;
 
-    const scale = shouldScale ? Math.min(xScale, yScale) : 1;
+    this.scale = shouldScale ? Math.min(xScale, yScale) : 1;
 
-    const scaleXOffset = width - (1000 * scale);
-    const scaleYOffset = height - (700 * scale);
+    const scaleXOffset = width - (1000 * this.scale);
+    const scaleYOffset = height - (700 * this.scale);
 
     const left = Math.floor(scaleXOffset / 2);
     const top = Math.floor(scaleYOffset / 2);
 
-    const offset = scale < 1 ? [1000 - (1000 * scale), 700 - (700 * scale)] : [0, 0];
-
     this.context.store.setCanvasSize({
-      width: 1000 * scale,
-      height: 700 * scale,
+      width: 1000 * this.scale,
+      height: 700 * this.scale,
       left,
       top,
-      scale
+      scale: this.scale
     });
   }
 
@@ -155,20 +151,21 @@ class SlideList extends Component {
 
     if (!position) {
       const slideElement = findDOMNode(this.refs.slide);
+
       const element = Elements[elementType];
       const height = element.defaultHeight || element.props.height;
       const width = element.defaultWidth || element.props.width;
 
-      let left = (slideElement.clientWidth / 2) - (width / 2);
-      let top = (slideElement.clientHeight / 2) - (height / 2);
+      const upscale = 1 / this.scale;
+      let left = (upscale * slideElement.clientWidth / 2) - (width / 2);
+      let top = (upscale * slideElement.clientHeight / 2) - (height / 2);
+      const { currentSlide } = this.context.store;
+      const positions = currentSlide.children.reduce((positionHashMap, child) => {
+        const key = `${child.props.style.left}x${child.props.style.top}`;
+        positionHashMap[key] = true; // eslint-disable-line no-param-reassign
 
-      const positions =
-        this.context.store.currentSlide.children.reduce((positionHashMap, child) => {
-          const key = `${child.props.style.left}x${child.props.style.top}`;
-          positionHashMap[key] = true; // eslint-disable-line no-param-reassign
-
-          return positionHashMap;
-        }, {});
+        return positionHashMap;
+      }, {});
 
       while (positions[`${left}x${top}`]) {
         left += 10;

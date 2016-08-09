@@ -114,7 +114,6 @@ class ElementItem extends Component {
   }
 
   handleMouseUp = () => {
-
     if (this.mouseClickTimeout || this.mouseClickTimeout === 0) {
       clearTimeout(this.mouseClickTimeout);
       window.removeEventListener("mouseup", this.handleMouseUp);
