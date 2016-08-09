@@ -660,7 +660,7 @@ export default class ImageElement extends Component {
                   `${styles.canvasElement} ${extraClasses} ${BLACKLIST_CURRENT_ELEMENT_DESELECT}`
                 }
                 ref={component => {this.currentElementComponent = component;}}
-                style={{ ...wrapperStyle, ...computedDragStyles, zIndex: elementIndex }}
+                style={{ ...wrapperStyle, ...computedDragStyles }}
                 onMouseDown={this.handleMouseDown}
               >
                 {currentlySelected &&
