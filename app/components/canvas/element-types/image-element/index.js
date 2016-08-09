@@ -43,11 +43,9 @@ export default class ImageElement extends Component {
   componentDidMount() {
     defer(() => {
       if (this.currentElementComponent && !this.context.store.isDragging) {
-        const { width, height } = this.currentElementComponent.getBoundingClientRect();
-
         this.setState({ // eslint-disable-line react/no-did-mount-set-state
-          width,
-          height
+          width: this.currentElementComponent.clientWidth,
+          height: this.currentElementComponent.clientHeight
         });
       }
     });
@@ -166,6 +164,8 @@ export default class ImageElement extends Component {
       verticalResize
     } = this.state;
 
+    const { scale } = this.props;
+    const upscale = 1 / scale;
     let { height, width, left, top } = this.state;
     let verticalSnap = false;
     let horizontalSnap = false;
@@ -221,17 +221,17 @@ export default class ImageElement extends Component {
         if (isVertical) {
           if (isLeftSideDrag) {
             left -= distance;
-            width += distance;
+            width += distance * upscale;
           } else {
-            width -= distance;
+            width -= distance * upscale;
           }
           verticalSnap = distance;
         } else {
           if (isTopDrag) {
             top -= distance;
-            height += distance;
+            height += distance * upscale;
           } else {
-            height -= distance;
+            height -= distance * upscale;
           }
           horizontalSnap = distance;
         }
@@ -241,8 +241,12 @@ export default class ImageElement extends Component {
     if (verticalResize || this.shiftHeld) {
       const snapPoints = getPointsToSnap(
         left,
-        width,
-        (Math.max(pageX, resizeLastX) - Math.min(pageX, resizeLastX)) / 2
+        width * scale,
+        (
+          Math.max(pageX * scale, resizeLastX * scale)
+          -
+          Math.min(pageX * scale, resizeLastX * scale)
+        ) / 2
       );
 
       if (isLeftSideDrag) {
@@ -254,14 +258,14 @@ export default class ImageElement extends Component {
       snap(
         this.gridLines.vertical,
         snapPoints,
-        createSnapCallback(true, width, left)
+        createSnapCallback(true, width * scale, left)
       );
     }
 
     if (horizontalResize || this.shiftHeld) {
       const snapPoints = getPointsToSnap(
         top,
-        height,
+        height * scale,
         (Math.max(pageY, resizeLastY) - Math.min(pageY, resizeLastY)) / 2
       );
 
@@ -274,7 +278,7 @@ export default class ImageElement extends Component {
       snap(
         this.gridLines.horizontal,
         snapPoints,
-        createSnapCallback(false, height, top)
+        createSnapCallback(false, height * scale, top)
       );
     }
 
@@ -311,7 +315,10 @@ export default class ImageElement extends Component {
         delta[0] = pageX - resizeLastX;
       }
 
-      newWidth = verticalSnap || (horizontalSnap && this.shiftHeld) ? width : delta[0] + width;
+      newWidth = verticalSnap || (horizontalSnap && this.shiftHeld) ?
+      width
+      :
+      (delta[0] * upscale) + width;
 
       if (newWidth >= 0) {
         nextState = {
@@ -339,9 +346,9 @@ export default class ImageElement extends Component {
       }
 
       let newHeight = this.shiftHeld ?
-        (delta[1] + (props.height * newWidth) / props.width)
+        ((delta[1] * upscale) + (props.height * newWidth) / props.width)
         :
-        (delta[1] + height);
+        ((delta[1] * upscale) + height);
 
       newHeight = horizontalSnap || (this.shiftHeld && verticalSnap) ? height : newHeight;
 
@@ -430,14 +437,14 @@ export default class ImageElement extends Component {
 
       snap(
         this.gridLines.horizontal,
-        getPointsToSnap(offsetY, height, mouseOffsetY),
-        createSnapCallback(false, height, originalY)
+        getPointsToSnap(offsetY, height * this.props.scale, mouseOffsetY),
+        createSnapCallback(false, height * this.props.scale, originalY)
       );
 
       snap(
         this.gridLines.vertical,
-        getPointsToSnap(offsetX, width, mouseOffsetX),
-        createSnapCallback(true, width, originalX)
+        getPointsToSnap(offsetX, width * this.props.scale, mouseOffsetX),
+        createSnapCallback(true, width * this.props.scale, originalX)
       );
     } else {
       this.props.hideGridLine(true);
@@ -463,7 +470,8 @@ export default class ImageElement extends Component {
       this.props.component.props.style.top * this.props.scale
     ];
 
-    const { width, height } = this.currentElementComponent.getBoundingClientRect();
+    const width = this.currentElementComponent.clientWidth;
+    const height = this.currentElementComponent.clientHeight;
 
     window.addEventListener("mouseup", this.handleMouseUp);
 

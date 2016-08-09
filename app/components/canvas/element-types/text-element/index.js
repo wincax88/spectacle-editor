@@ -146,7 +146,7 @@ export default class TextElement extends Component {
         pointToAlignWithLine = Math.ceil(left + (canvasElementWidth * scale));
       }
 
-      const distance = (pointToAlignWithLine - line);
+      const distance = pointToAlignWithLine - line;
 
       if (Math.abs(distance) < 15) {
         if (isLeftSideDrag) {
@@ -167,7 +167,11 @@ export default class TextElement extends Component {
       getPointsToSnap(
         left,
         canvasElementWidth * scale,
-        (Math.max(pageX * scale, resizeLastX * scale) - Math.min(pageX * scale, resizeLastX * scale)) / 2
+        (
+          Math.max(pageX * scale, resizeLastX * scale)
+          -
+          Math.min(pageX * scale, resizeLastX * scale)
+        ) / 2
       ),
       snapCallback
     );
@@ -179,7 +183,10 @@ export default class TextElement extends Component {
       change = pageX - resizeLastX;
     }
 
-    const newCanvasElementWidth = isSnapped ? canvasElementWidth : (change * upscale) + canvasElementWidth;
+    const newCanvasElementWidth = isSnapped ?
+      canvasElementWidth
+      :
+      (change * upscale) + canvasElementWidth;
     const newWidth = isSnapped ? width : (change * upscale) + width;
     if (newCanvasElementWidth >= 0) {
       this.setState({
