@@ -123,8 +123,9 @@ function pack(plat, arch, cb) {
   packager(opts, (err, paths) => {
     if (plat === "darwin") {
       createDMG({
-        appPath: `${paths[0]}/spectacle-editor.app`,
+        appPath: `${paths[0]}/Spectacle Editor.app`,
         out: paths[0],
+        icon: `${paths[0]}/Spectacle Editor.app/Contents/Resources/app/app/app.svg`,
         name: "Spectacle Editor"
       }, (err) => {
         if (err) {
