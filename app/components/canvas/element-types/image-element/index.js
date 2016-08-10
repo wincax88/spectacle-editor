@@ -611,11 +611,6 @@ export default class ImageElement extends Component {
       if (mousePosition) {
         wrapperStyle.whiteSpace = "nowrap";
       }
-
-      // if (scale) {
-      //   wrapperStyle.transform = `scale(${scale})`;
-      //   wrapperStyle.transformOrigin = "top left";
-      // }
     }
 
     elementStyle = { ...elementStyle, position: "relative", left: 0, top: 0 };
@@ -669,7 +664,6 @@ export default class ImageElement extends Component {
                     cornerTopLeft
                     ref={component => {this.topLeftNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -679,7 +673,6 @@ export default class ImageElement extends Component {
                     ref={component => {this.leftResizeNode = findDOMNode(component);}}
                     alignLeft
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -689,7 +682,6 @@ export default class ImageElement extends Component {
                     ref={component => {this.bottomLeftNode = findDOMNode(component);}}
                     cornerBottomLeft
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -699,7 +691,6 @@ export default class ImageElement extends Component {
                     ref={component => {this.topResizeNode = findDOMNode(component);}}
                     alignTop
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -722,7 +713,6 @@ export default class ImageElement extends Component {
                     cornerTopRight
                     ref={component => {this.topRightNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -732,7 +722,6 @@ export default class ImageElement extends Component {
                     alignRight
                     ref={component => {this.rightResizeNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -742,7 +731,6 @@ export default class ImageElement extends Component {
                     ref={component => {this.bottomRightNode = findDOMNode(component);}}
                     cornerBottomRight
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -752,7 +740,6 @@ export default class ImageElement extends Component {
                     ref={component => {this.bottomResizeNode = findDOMNode(component);}}
                     alignBottom
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />

@@ -664,7 +664,6 @@ export default class PlotlyElement extends Component {
                     cornerTopLeft
                     ref={component => {this.topLeftNode = ReactDOM.findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -674,7 +673,6 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.leftResizeNode = ReactDOM.findDOMNode(component);}}
                     alignLeft
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -684,7 +682,6 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.bottomLeftNode = ReactDOM.findDOMNode(component);}}
                     cornerBottomLeft
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -694,7 +691,6 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.topResizeNode = ReactDOM.findDOMNode(component);}}
                     alignTop
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -721,7 +717,6 @@ export default class PlotlyElement extends Component {
                     cornerTopRight
                     ref={component => {this.topRightNode = ReactDOM.findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -731,7 +726,6 @@ export default class PlotlyElement extends Component {
                     alignRight
                     ref={component => {this.rightResizeNode = ReactDOM.findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -741,7 +735,6 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.bottomRightNode = ReactDOM.findDOMNode(component);}}
                     cornerBottomRight
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
@@ -751,7 +744,6 @@ export default class PlotlyElement extends Component {
                     ref={component => {this.bottomResizeNode = ReactDOM.findDOMNode(component);}}
                     alignBottom
                     handleMouseDownResize={this.handleMouseDownResize}
-                    onTouch={this.handleTouchStartResize}
                     scale={scale}
                     component={this.props.component}
                   />
