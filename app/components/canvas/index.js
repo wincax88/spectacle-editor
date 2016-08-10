@@ -117,7 +117,6 @@ class SlideList extends Component {
   // Keep a 4:3 ratio with the inner element centered, 30px padding
   resize = () => {
     const { offsetWidth, offsetHeight } = findDOMNode(this.refs.container);
-
     const width = offsetWidth;
     const height = offsetHeight;
 
@@ -156,9 +155,8 @@ class SlideList extends Component {
       const height = element.defaultHeight || element.props.height;
       const width = element.defaultWidth || element.props.width;
 
-      const upscale = 1 / this.scale;
-      let left = (upscale * slideElement.clientWidth / 2) - (width / 2);
-      let top = (upscale * slideElement.clientHeight / 2) - (height / 2);
+      let left = (slideElement.clientWidth / 2) - (width / 2);
+      let top = (slideElement.clientHeight / 2) - (height / 2);
       const { currentSlide } = this.context.store;
       const positions = currentSlide.children.reduce((positionHashMap, child) => {
         const key = `${child.props.style.left}x${child.props.style.top}`;
@@ -216,8 +214,6 @@ class SlideList extends Component {
       isDraggingElement,
       isDraggingSlide,
       scale,
-      width,
-      height,
       top,
       left
      } = this.context.store;
@@ -241,8 +237,9 @@ class SlideList extends Component {
             style={{
               position: "absolute",
               transformOrigin: "top left",
-              width, // Hardcoded to 1100:850 aspect ratio
-              height,
+              transform: `scale(${scale})`,
+              width: 1000, // Hardcoded to 1100:850 aspect ratio
+              height: 700,
               top,
               left,
               backgroundColor: "#999"

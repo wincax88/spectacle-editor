@@ -83,7 +83,7 @@ export default class TextElement extends Component {
     const isLeftSideDrag = target === this.leftResizeNode;
     let { width, height } = this.editable.getBoundingClientRect();
     const componentProps = this.props.component.props;
-    const componentLeft = componentProps.style && componentProps.style.left * this.props.scale;
+    const componentLeft = componentProps.style && componentProps.style.left;
     const left = componentLeft || 0;
 
     if (isLeftSideDrag) {
@@ -130,7 +130,7 @@ export default class TextElement extends Component {
         return;
       }
 
-      this.props.showGridLine(line, true);
+      this.props.showGridLine(line * upscale, true);
 
       let pointToAlignWithLine;
 
@@ -139,18 +139,18 @@ export default class TextElement extends Component {
       }
 
       if (index === 1) {
-        pointToAlignWithLine = Math.ceil(left + (canvasElementWidth * scale) / 2);
+        pointToAlignWithLine = Math.ceil(left + canvasElementWidth / 2);
       }
 
       if (index === 2) {
-        pointToAlignWithLine = Math.ceil(left + (canvasElementWidth * scale));
+        pointToAlignWithLine = Math.ceil(left + canvasElementWidth);
       }
 
-      const distance = pointToAlignWithLine - line;
+      const distance = pointToAlignWithLine - line * upscale;
 
       if (Math.abs(distance) < 15) {
         if (isLeftSideDrag) {
-          left -= distance;
+          left -= distance * upscale;
           canvasElementWidth += distance * upscale;
           width += distance * upscale;
         } else {
@@ -165,7 +165,7 @@ export default class TextElement extends Component {
     snap(
       this.gridLines.vertical,
       getPointsToSnap(
-        left,
+        left * scale,
         canvasElementWidth * scale,
         (
           Math.max(pageX * scale, resizeLastX * scale)
@@ -178,7 +178,7 @@ export default class TextElement extends Component {
 
     if (isLeftSideDrag) {
       change = resizeLastX - pageX;
-      left = isSnapped ? left : left - change;
+      left = isSnapped ? left : left - change * upscale;
     } else {
       change = pageX - resizeLastX;
     }
@@ -187,7 +187,7 @@ export default class TextElement extends Component {
       canvasElementWidth
       :
       (change * upscale) + canvasElementWidth;
-    const newWidth = isSnapped ? width : (change * upscale) + width;
+    const newWidth = isSnapped ? width : change * upscale + width;
     if (newCanvasElementWidth >= 0) {
       this.setState({
         left,
@@ -213,7 +213,7 @@ export default class TextElement extends Component {
     const propStyles = { ...this.props.component.props.style };
 
     propStyles.width = width;
-    propStyles.left = left * (1 / this.props.scale);
+    propStyles.left = left;
     this.context.store.updateElementProps({ style: propStyles });
   }
 
@@ -225,8 +225,8 @@ export default class TextElement extends Component {
       width,
       height
     } = this.state;
-
-    const newDelta = [pageX - x, pageY - y];
+    const upscale = 1 / this.props.scale;
+    const newDelta = [(pageX - x) * upscale, (pageY - y) * upscale];
 
     // Note: This doesn't handle the case of the mouse being off the slide and part of the element
     // still on the slide. AKA no gridlines or snapping will occur when mouse is outside of the
@@ -239,24 +239,24 @@ export default class TextElement extends Component {
           return;
         }
 
-        this.props.showGridLine(line, /* isVertical */ isVertical);
+        this.props.showGridLine(line * upscale, /* isVertical */ isVertical);
 
         // Index 0 = starting edge, 1 = middle, 2 = ending edge
         const offset = originalPoint + (length / 2 * index);
-
         // Set either x or y
-        newDelta[isVertical ? 0 : 1] = line - offset;
+        newDelta[isVertical ? 0 : 1] = line * upscale - offset * upscale;
       };
+
       snap(
         this.gridLines.horizontal,
-        getPointsToSnap(offsetY, height, mouseOffsetY),
-        createSnapCallback(false, height, originalY)
+        getPointsToSnap(offsetY * this.props.scale, height, mouseOffsetY),
+        createSnapCallback(false, height, originalY * this.props.scale)
       );
 
       snap(
         this.gridLines.vertical,
-        getPointsToSnap(offsetX, width, mouseOffsetX),
-        createSnapCallback(true, width, originalX)
+        getPointsToSnap(offsetX * this.props.scale, width, mouseOffsetX),
+        createSnapCallback(true, width, originalX * this.props.scale)
       );
     } else {
       this.props.hideGridLine(true);
@@ -281,8 +281,8 @@ export default class TextElement extends Component {
     const boundingBox = this.currentElementComponent.getBoundingClientRect();
     const mouseOffset = [Math.floor(boundingBox.left - pageX), Math.floor(boundingBox.top - pageY)];
     const originalPosition = [
-      this.props.component.props.style.left * this.props.scale,
-      this.props.component.props.style.top * this.props.scale
+      this.props.component.props.style.left,
+      this.props.component.props.style.top
     ];
     const { width, height } = boundingBox;
 
@@ -317,7 +317,6 @@ export default class TextElement extends Component {
   }
 
   handleMouseUp = (ev) => {
-    const upscale = 1 / this.props.scale;
     const timeSinceMouseDown = new Date().getTime() - this.clickStart;
 
     clearTimeout(this.mouseClickTimeout);
@@ -356,8 +355,8 @@ export default class TextElement extends Component {
     this.context.store.updateElementDraggingState(false);
     this.context.store.updateElementProps({
       style: {
-        left: (this.state.delta[0] * upscale) + this.props.component.props.style.left,
-        top: (this.state.delta[1] * upscale) + this.props.component.props.style.top
+        left: this.state.delta[0] + this.props.component.props.style.left,
+        top: this.state.delta[1] + this.props.component.props.style.top
       }
     });
 
@@ -428,14 +427,14 @@ export default class TextElement extends Component {
       const mouseX = mousePosition && mousePosition[0] ? mousePosition[0] : null;
 
       motionStyles.left = spring(
-        mouseX && mouseX || props.style.left * scale || 0,
+        mouseX && mouseX || props.style.left || 0,
         SpringSettings.DRAG
       );
 
       const mouseY = mousePosition && mousePosition[1] ? mousePosition[1] : null;
 
       motionStyles.top = spring(
-        mouseY && mouseY || props.style.top * scale || 0,
+        mouseY && mouseY || props.style.top || 0,
         SpringSettings.DRAG
       );
 
@@ -443,11 +442,6 @@ export default class TextElement extends Component {
 
       if (mousePosition) {
         wrapperStyle.whiteSpace = "nowrap";
-      }
-
-      if (scale) {
-        wrapperStyle.transform = `scale(${scale})`;
-        wrapperStyle.transformOrigin = "top left";
       }
     }
 
@@ -466,13 +460,13 @@ export default class TextElement extends Component {
 
     if (isPressed) {
       motionStyles.left =
-        spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
+        spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
       motionStyles.top =
-        spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
+        spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
     }
 
     if (isResizing && currentlySelected) {
-      const componentStylesLeft = props.style && props.style.left * scale || 0;
+      const componentStylesLeft = props.style && props.style.left || 0;
 
       motionStyles.left = spring(
         left === undefined ? componentStylesLeft : left,

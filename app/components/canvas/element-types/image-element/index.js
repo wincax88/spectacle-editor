@@ -119,8 +119,8 @@ export default class ImageElement extends Component {
 
     let { width, height } = this.currentElementComponent.getBoundingClientRect();
     const componentProps = this.props.component.props;
-    const componentLeft = componentProps.style && componentProps.style.left * this.props.scale;
-    const componentTop = componentProps.style && componentProps.style.top * this.props.scale;
+    const componentLeft = componentProps.style && componentProps.style.left;
+    const componentTop = componentProps.style && componentProps.style.top;
     const left = componentLeft || 0;
     const top = componentTop || 0;
 
@@ -198,7 +198,7 @@ export default class ImageElement extends Component {
         (!isLeftSideDrag && index === 0 && isVertical) ||
         (!isTopDrag && index === 0 && !isVertical)
       ) {
-        pointToAlignWithLine = Math.ceil(offset + length / 2);
+        pointToAlignWithLine = Math.ceil(offset + length * upscale / 2);
       }
 
       if (
@@ -206,21 +206,21 @@ export default class ImageElement extends Component {
         (!isLeftSideDrag && index === 1 && isVertical) ||
         (!isTopDrag && index === 1 && !isVertical)
       ) {
-        pointToAlignWithLine = Math.ceil(offset + length);
+        pointToAlignWithLine = Math.ceil(offset + length * upscale);
       }
 
-      const distance = pointToAlignWithLine - line;
+      const distance = pointToAlignWithLine - line * upscale;
 
       if (isVertical) {
-        lineX = line;
+        lineX = line * upscale;
       } else {
-        lineY = line;
+        lineY = line * upscale;
       }
 
       if (Math.abs(distance) < 15) {
         if (isVertical) {
           if (isLeftSideDrag) {
-            left -= distance;
+            left -= distance * upscale;
             width += distance * upscale;
           } else {
             width -= distance * upscale;
@@ -228,7 +228,7 @@ export default class ImageElement extends Component {
           verticalSnap = distance;
         } else {
           if (isTopDrag) {
-            top -= distance;
+            top -= distance * upscale;
             height += distance * upscale;
           } else {
             height -= distance * upscale;
@@ -240,7 +240,7 @@ export default class ImageElement extends Component {
 
     if (verticalResize || this.shiftHeld) {
       const snapPoints = getPointsToSnap(
-        left,
+        left * scale,
         width * scale,
         (
           Math.max(pageX * scale, resizeLastX * scale)
@@ -264,9 +264,13 @@ export default class ImageElement extends Component {
 
     if (horizontalResize || this.shiftHeld) {
       const snapPoints = getPointsToSnap(
-        top,
+        top * scale,
         height * scale,
-        (Math.max(pageY, resizeLastY) - Math.min(pageY, resizeLastY)) / 2
+        (
+          Math.max(pageY * scale, resizeLastY * scale)
+          -
+          Math.min(pageY * scale, resizeLastY * scale)
+        ) / 2
       );
 
       if (isTopDrag) {
@@ -310,7 +314,10 @@ export default class ImageElement extends Component {
     if (verticalResize || this.shiftHeld) {
       if (isLeftSideDrag) {
         delta[0] = resizeLastX - pageX;
-        left = verticalSnap || (horizontalSnap && this.shiftHeld) ? left : left - delta[0];
+        left =
+          verticalSnap
+            ||
+          (horizontalSnap && this.shiftHeld) ? left : left - delta[0] * upscale;
       } else {
         delta[0] = pageX - resizeLastX;
       }
@@ -337,9 +344,9 @@ export default class ImageElement extends Component {
 
         if (!horizontalSnap && (!this.shiftHeld || !verticalSnap)) {
           top = this.shiftHeld ?
-            top - ((delta[1] + (props.height * newWidth) / props.width) - height)
+            top - (((delta[1] * upscale) + (props.height * newWidth) / props.width) - height)
             :
-            top - delta[1];
+            top - delta[1] * upscale;
         }
       } else {
         delta[1] = pageY - resizeLastY;
@@ -378,12 +385,7 @@ export default class ImageElement extends Component {
     this.context.store.updateElementResizeState(false);
     this.changeNodeVisibility();
 
-    let { left, top } = this.state;
-    const { width, height } = this.state;
-    const upscale = 1 / this.props.scale;
-
-    left = left * upscale;
-    top = top * upscale;
+    const { left, top, width, height } = this.state;
 
     const propStyles = { ...this.props.component.props.style, width, left, top, height };
 
@@ -413,7 +415,8 @@ export default class ImageElement extends Component {
       height
     } = this.state;
 
-    const newDelta = [pageX - x, pageY - y];
+    const upscale = 1 / this.props.scale;
+    const newDelta = [(pageX - x) * upscale, (pageY - y) * upscale];
 
     // Note: This doesn't handle the case of the mouse being off the slide and part of the element
     // still on the slide. AKA no gridlines or snapping will occur when mouse is outside of the
@@ -426,25 +429,25 @@ export default class ImageElement extends Component {
           return;
         }
 
-        this.props.showGridLine(line, /* isVertical */ isVertical);
+        this.props.showGridLine(line * upscale, /* isVertical */ isVertical);
 
         // Index 0 = starting edge, 1 = middle, 2 = ending edge
         const offset = originalPoint + (length / 2 * index);
 
         // Set either x or y
-        newDelta[isVertical ? 0 : 1] = line - offset;
+        newDelta[isVertical ? 0 : 1] = line * upscale - offset * upscale;
       };
 
       snap(
         this.gridLines.horizontal,
-        getPointsToSnap(offsetY, height * this.props.scale, mouseOffsetY),
-        createSnapCallback(false, height * this.props.scale, originalY)
+        getPointsToSnap(offsetY * this.props.scale, height * this.props.scale, mouseOffsetY),
+        createSnapCallback(false, height * this.props.scale, originalY * this.props.scale)
       );
 
       snap(
         this.gridLines.vertical,
-        getPointsToSnap(offsetX, width * this.props.scale, mouseOffsetX),
-        createSnapCallback(true, width * this.props.scale, originalX)
+        getPointsToSnap(offsetX * this.props.scale, width * this.props.scale, mouseOffsetX),
+        createSnapCallback(true, width * this.props.scale, this.props.scale * originalX)
       );
     } else {
       this.props.hideGridLine(true);
@@ -466,8 +469,8 @@ export default class ImageElement extends Component {
     const boundingBox = target.getBoundingClientRect();
     const mouseOffset = [Math.floor(boundingBox.left - pageX), Math.floor(boundingBox.top - pageY)];
     const originalPosition = [
-      this.props.component.props.style.left * this.props.scale,
-      this.props.component.props.style.top * this.props.scale
+      this.props.component.props.style.left,
+      this.props.component.props.style.top
     ];
 
     const width = this.currentElementComponent.clientWidth;
@@ -504,8 +507,6 @@ export default class ImageElement extends Component {
   }
 
   handleMouseUp = () => {
-    const upscale = 1 / this.props.scale;
-
     if (this.mouseClickTimeout || this.mouseClickTimeout === 0) {
       clearTimeout(this.mouseClickTimeout);
       window.removeEventListener("mouseup", this.handleMouseUp);
@@ -535,8 +536,8 @@ export default class ImageElement extends Component {
     this.context.store.updateElementDraggingState(false);
     this.context.store.updateElementProps({
       style: {
-        left: (this.state.delta[0] * upscale) + this.props.component.props.style.left,
-        top: (this.state.delta[1] * upscale) + this.props.component.props.style.top
+        left: this.state.delta[0] + this.props.component.props.style.left,
+        top: this.state.delta[1] + this.props.component.props.style.top
       }
     });
 
@@ -595,12 +596,12 @@ export default class ImageElement extends Component {
 
       const mouseX = mousePosition && mousePosition[0] ? mousePosition[0] : null;
       motionStyles.left = spring(
-        mouseX && mouseX || props.style && props.style.left * scale || 0,
+        mouseX && mouseX || props.style && props.style.left || 0,
         SpringSettings.DRAG
       );
       const mouseY = mousePosition && mousePosition[1] ? mousePosition[1] : null;
       motionStyles.top = spring(
-        mouseY && mouseY || props.style && props.style.top * scale || 0,
+        mouseY && mouseY || props.style && props.style.top || 0,
         SpringSettings.DRAG
       );
 
@@ -611,24 +612,24 @@ export default class ImageElement extends Component {
         wrapperStyle.whiteSpace = "nowrap";
       }
 
-      if (scale) {
-        wrapperStyle.transform = `scale(${scale})`;
-        wrapperStyle.transformOrigin = "top left";
-      }
+      // if (scale) {
+      //   wrapperStyle.transform = `scale(${scale})`;
+      //   wrapperStyle.transformOrigin = "top left";
+      // }
     }
 
     elementStyle = { ...elementStyle, position: "relative", left: 0, top: 0 };
 
     if (currentlySelected && isPressed) {
       motionStyles.left =
-        spring((props.style && props.style.left * scale || 0) + x, SpringSettings.DRAG);
+        spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
       motionStyles.top =
-        spring((props.style && props.style.top * scale || 0) + y, SpringSettings.DRAG);
+        spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
     }
 
     if (currentlySelected && isResizing) {
-      const componentStylesLeft = props.style && props.style.left * scale || 0;
-      const componentStylesTop = props.style && props.style.top * scale || 0;
+      const componentStylesLeft = props.style && props.style.left || 0;
+      const componentStylesTop = props.style && props.style.top || 0;
 
       motionStyles.top = spring(
         top === undefined ? componentStylesTop : top,
