@@ -1,5 +1,5 @@
-var electronInstaller = require("electron-winstaller");
-var path = require("path");
+const electronInstaller = require("electron-winstaller");
+const path = require("path");
 
 electronInstaller
   .createWindowsInstaller({
@@ -18,5 +18,5 @@ electronInstaller
       console.log("winstaller build complete");
     },
     err => {
-      console.log("winstaller failed: " + err.message);
+      console.log(`winstaller failed: ${err.message}`);
     });
