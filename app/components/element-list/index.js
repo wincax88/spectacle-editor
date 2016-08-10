@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
 
 import ElementItem from "./element-item";
 import styles from "./index.css";
@@ -13,6 +13,10 @@ const wrapperWidth = elements.length * (elementWidth + elementMarginRight) - ele
 const elementTop = 8;
 
 class ElementList extends Component {
+  static propTypes = {
+    scale: PropTypes.number
+  };
+
   constructor(props) {
     super(props);
 
@@ -57,6 +61,7 @@ class ElementList extends Component {
             elementLeft={listLeft + ((elementWidth + elementMarginRight) * i)}
             elementWidth={elementWidth}
             elementHeight={elementHeight}
+            scale={this.props.scale}
           />
         ))}
       </div>

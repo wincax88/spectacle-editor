@@ -45,11 +45,9 @@ export default class TextElement extends Component {
 
   componentDidMount() {
     defer(() => {
-      const { width, height } = this.editable.getBoundingClientRect();
-
       this.setState({ // eslint-disable-line react/no-did-mount-set-state
-        width,
-        height
+        width: this.editable.clientWidth,
+        height: this.editable.clientHeight
       });
     });
   }
@@ -81,10 +79,9 @@ export default class TextElement extends Component {
     ev.preventDefault();
 
     this.context.store.updateElementResizeState(true);
-
     const { target, pageX } = ev;
     const isLeftSideDrag = target === this.leftResizeNode;
-    const { width, height } = this.editable.getBoundingClientRect();
+    let { width, height } = this.editable.getBoundingClientRect();
     const componentProps = this.props.component.props;
     const componentLeft = componentProps.style && componentProps.style.left;
     const left = componentLeft || 0;
@@ -96,6 +93,11 @@ export default class TextElement extends Component {
     }
 
     this.gridLines = this.context.store.gridLines;
+
+    const upscale = 1 / this.props.scale;
+
+    width = width * upscale;
+    height = height * upscale;
 
     this.setState({
       isLeftSideDrag,
@@ -115,8 +117,10 @@ export default class TextElement extends Component {
     const { pageX } = ev;
     const { isLeftSideDrag, resizeLastX } = this.state;
     let { left, width, canvasElementWidth } = this.state;
+    const { scale } = this.props;
     let change;
     let isSnapped;
+    const upscale = 1 / scale;
 
     const snapCallback = (line, index) => {
       if (line === null) {
@@ -126,7 +130,7 @@ export default class TextElement extends Component {
         return;
       }
 
-      this.props.showGridLine(line, true);
+      this.props.showGridLine(line * upscale, true);
 
       let pointToAlignWithLine;
 
@@ -142,16 +146,16 @@ export default class TextElement extends Component {
         pointToAlignWithLine = Math.ceil(left + canvasElementWidth);
       }
 
-      const distance = pointToAlignWithLine - line;
+      const distance = pointToAlignWithLine - line * upscale;
 
       if (Math.abs(distance) < 15) {
         if (isLeftSideDrag) {
-          left -= distance;
-          canvasElementWidth += distance;
-          width += distance;
+          left -= distance * upscale;
+          canvasElementWidth += distance * upscale;
+          width += distance * upscale;
         } else {
-          canvasElementWidth -= distance;
-          width -= distance;
+          canvasElementWidth -= (distance * upscale);
+          width -= (distance * upscale);
         }
 
         isSnapped = true;
@@ -161,23 +165,29 @@ export default class TextElement extends Component {
     snap(
       this.gridLines.vertical,
       getPointsToSnap(
-        left,
-        canvasElementWidth,
-        (Math.max(pageX, resizeLastX) - Math.min(pageX, resizeLastX)) / 2
+        left * scale,
+        canvasElementWidth * scale,
+        (
+          Math.max(pageX * scale, resizeLastX * scale)
+          -
+          Math.min(pageX * scale, resizeLastX * scale)
+        ) / 2
       ),
       snapCallback
     );
 
     if (isLeftSideDrag) {
       change = resizeLastX - pageX;
-      left = isSnapped ? left : left - change;
+      left = isSnapped ? left : left - change * upscale;
     } else {
       change = pageX - resizeLastX;
     }
 
-    const newCanvasElementWidth = isSnapped ? canvasElementWidth : change + canvasElementWidth;
-    const newWidth = isSnapped ? width : change + width;
-
+    const newCanvasElementWidth = isSnapped ?
+      canvasElementWidth
+      :
+      (change * upscale) + canvasElementWidth;
+    const newWidth = isSnapped ? width : change * upscale + width;
     if (newCanvasElementWidth >= 0) {
       this.setState({
         left,
@@ -215,8 +225,8 @@ export default class TextElement extends Component {
       width,
       height
     } = this.state;
-
-    const newDelta = [pageX - x, pageY - y];
+    const upscale = 1 / this.props.scale;
+    const newDelta = [(pageX - x) * upscale, (pageY - y) * upscale];
 
     // Note: This doesn't handle the case of the mouse being off the slide and part of the element
     // still on the slide. AKA no gridlines or snapping will occur when mouse is outside of the
@@ -229,24 +239,24 @@ export default class TextElement extends Component {
           return;
         }
 
-        this.props.showGridLine(line, /* isVertical */ isVertical);
+        this.props.showGridLine(line * upscale, /* isVertical */ isVertical);
 
         // Index 0 = starting edge, 1 = middle, 2 = ending edge
         const offset = originalPoint + (length / 2 * index);
-
         // Set either x or y
-        newDelta[isVertical ? 0 : 1] = line - offset;
+        newDelta[isVertical ? 0 : 1] = line * upscale - offset * upscale;
       };
+
       snap(
         this.gridLines.horizontal,
-        getPointsToSnap(offsetY, height, mouseOffsetY),
-        createSnapCallback(false, height, originalY)
+        getPointsToSnap(offsetY * this.props.scale, height, mouseOffsetY),
+        createSnapCallback(false, height, originalY * this.props.scale)
       );
 
       snap(
         this.gridLines.vertical,
-        getPointsToSnap(offsetX, width, mouseOffsetX),
-        createSnapCallback(true, width, originalX)
+        getPointsToSnap(offsetX * this.props.scale, width, mouseOffsetX),
+        createSnapCallback(true, width, originalX * this.props.scale)
       );
     } else {
       this.props.hideGridLine(true);
@@ -433,10 +443,6 @@ export default class TextElement extends Component {
       if (mousePosition) {
         wrapperStyle.whiteSpace = "nowrap";
       }
-
-      if (scale) {
-        wrapperStyle.transform = `scale(${scale})`;
-      }
     }
 
     elementStyle = {
@@ -453,10 +459,11 @@ export default class TextElement extends Component {
     }
 
     if (isPressed) {
-      motionStyles.left = spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
-      motionStyles.top = spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
+      motionStyles.left =
+        spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
+      motionStyles.top =
+        spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
     }
-
 
     if (isResizing && currentlySelected) {
       const componentStylesLeft = props.style && props.style.left || 0;
@@ -497,12 +504,23 @@ export default class TextElement extends Component {
                   <ResizeNode
                     ref={component => {this.leftResizeNode = ReactDOM.findDOMNode(component);}}
                     alignLeft
+                    scale={scale}
                     handleMouseDownResize={this.handleMouseDownResize}
                     component={this.props.component}
                   />
                 }
                 {currentlySelected && !isResizing && !isDragging && !editing &&
-                  <Arrange />
+                  <Arrange
+                    scale={scale}
+                    width={
+                      this.currentElementComponent &&
+                      this.currentElementComponent.clientWidth
+                    }
+                    height={
+                      this.currentElementComponent &&
+                      this.currentElementComponent.clientHeight
+                    }
+                  />
                 }
                 {!this.state.reRender &&
                   <TextContentEditor
@@ -523,6 +541,7 @@ export default class TextElement extends Component {
                   <ResizeNode
                     ref={component => {this.rightResizeNode = ReactDOM.findDOMNode(component);}}
                     alignRight
+                    scale={scale}
                     handleMouseDownResize={this.handleMouseDownResize}
                     component={this.props.component}
                   />

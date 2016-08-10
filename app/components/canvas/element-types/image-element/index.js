@@ -43,11 +43,9 @@ export default class ImageElement extends Component {
   componentDidMount() {
     defer(() => {
       if (this.currentElementComponent && !this.context.store.isDragging) {
-        const { width, height } = this.currentElementComponent.getBoundingClientRect();
-
         this.setState({ // eslint-disable-line react/no-did-mount-set-state
-          width,
-          height
+          width: this.currentElementComponent.clientWidth,
+          height: this.currentElementComponent.clientHeight
         });
       }
     });
@@ -119,7 +117,7 @@ export default class ImageElement extends Component {
       currentTarget !== this.leftResizeNode &&
       currentTarget !== this.rightResizeNode;
 
-    const { width, height } = this.currentElementComponent.getBoundingClientRect();
+    let { width, height } = this.currentElementComponent.getBoundingClientRect();
     const componentProps = this.props.component.props;
     const componentLeft = componentProps.style && componentProps.style.left;
     const componentTop = componentProps.style && componentProps.style.top;
@@ -127,6 +125,11 @@ export default class ImageElement extends Component {
     const top = componentTop || 0;
 
     this.gridLines = this.context.store.gridLines;
+
+    const upscale = 1 / this.props.scale;
+
+    width = width * upscale;
+    height = height * upscale;
 
     this.changeNodeVisibility("hidden", currentTarget);
     this.context.store.updateElementResizeState(true, this.getCursorTypes(currentTarget));
@@ -161,6 +164,8 @@ export default class ImageElement extends Component {
       verticalResize
     } = this.state;
 
+    const { scale } = this.props;
+    const upscale = 1 / scale;
     let { height, width, left, top } = this.state;
     let verticalSnap = false;
     let horizontalSnap = false;
@@ -193,7 +198,7 @@ export default class ImageElement extends Component {
         (!isLeftSideDrag && index === 0 && isVertical) ||
         (!isTopDrag && index === 0 && !isVertical)
       ) {
-        pointToAlignWithLine = Math.ceil(offset + length / 2);
+        pointToAlignWithLine = Math.ceil(offset + length * upscale / 2);
       }
 
       if (
@@ -201,32 +206,32 @@ export default class ImageElement extends Component {
         (!isLeftSideDrag && index === 1 && isVertical) ||
         (!isTopDrag && index === 1 && !isVertical)
       ) {
-        pointToAlignWithLine = Math.ceil(offset + length);
+        pointToAlignWithLine = Math.ceil(offset + length * upscale);
       }
 
-      const distance = pointToAlignWithLine - line;
+      const distance = pointToAlignWithLine - line * upscale;
 
       if (isVertical) {
-        lineX = line;
+        lineX = line * upscale;
       } else {
-        lineY = line;
+        lineY = line * upscale;
       }
 
       if (Math.abs(distance) < 15) {
         if (isVertical) {
           if (isLeftSideDrag) {
-            left -= distance;
-            width += distance;
+            left -= distance * upscale;
+            width += distance * upscale;
           } else {
-            width -= distance;
+            width -= distance * upscale;
           }
           verticalSnap = distance;
         } else {
           if (isTopDrag) {
-            top -= distance;
-            height += distance;
+            top -= distance * upscale;
+            height += distance * upscale;
           } else {
-            height -= distance;
+            height -= distance * upscale;
           }
           horizontalSnap = distance;
         }
@@ -235,9 +240,13 @@ export default class ImageElement extends Component {
 
     if (verticalResize || this.shiftHeld) {
       const snapPoints = getPointsToSnap(
-        left,
-        width,
-        (Math.max(pageX, resizeLastX) - Math.min(pageX, resizeLastX)) / 2
+        left * scale,
+        width * scale,
+        (
+          Math.max(pageX * scale, resizeLastX * scale)
+          -
+          Math.min(pageX * scale, resizeLastX * scale)
+        ) / 2
       );
 
       if (isLeftSideDrag) {
@@ -249,15 +258,19 @@ export default class ImageElement extends Component {
       snap(
         this.gridLines.vertical,
         snapPoints,
-        createSnapCallback(true, width, left)
+        createSnapCallback(true, width * scale, left)
       );
     }
 
     if (horizontalResize || this.shiftHeld) {
       const snapPoints = getPointsToSnap(
-        top,
-        height,
-        (Math.max(pageY, resizeLastY) - Math.min(pageY, resizeLastY)) / 2
+        top * scale,
+        height * scale,
+        (
+          Math.max(pageY * scale, resizeLastY * scale)
+          -
+          Math.min(pageY * scale, resizeLastY * scale)
+        ) / 2
       );
 
       if (isTopDrag) {
@@ -269,7 +282,7 @@ export default class ImageElement extends Component {
       snap(
         this.gridLines.horizontal,
         snapPoints,
-        createSnapCallback(false, height, top)
+        createSnapCallback(false, height * scale, top)
       );
     }
 
@@ -301,12 +314,18 @@ export default class ImageElement extends Component {
     if (verticalResize || this.shiftHeld) {
       if (isLeftSideDrag) {
         delta[0] = resizeLastX - pageX;
-        left = verticalSnap || (horizontalSnap && this.shiftHeld) ? left : left - delta[0];
+        left =
+          verticalSnap
+            ||
+          (horizontalSnap && this.shiftHeld) ? left : left - delta[0] * upscale;
       } else {
         delta[0] = pageX - resizeLastX;
       }
 
-      newWidth = verticalSnap || (horizontalSnap && this.shiftHeld) ? width : delta[0] + width;
+      newWidth = verticalSnap || (horizontalSnap && this.shiftHeld) ?
+      width
+      :
+      (delta[0] * upscale) + width;
 
       if (newWidth >= 0) {
         nextState = {
@@ -325,18 +344,18 @@ export default class ImageElement extends Component {
 
         if (!horizontalSnap && (!this.shiftHeld || !verticalSnap)) {
           top = this.shiftHeld ?
-            top - ((delta[1] + (props.height * newWidth) / props.width) - height)
+            top - (((delta[1] * upscale) + (props.height * newWidth) / props.width) - height)
             :
-            top - delta[1];
+            top - delta[1] * upscale;
         }
       } else {
         delta[1] = pageY - resizeLastY;
       }
 
       let newHeight = this.shiftHeld ?
-        (delta[1] + (props.height * newWidth) / props.width)
+        ((delta[1] * upscale) + (props.height * newWidth) / props.width)
         :
-        (delta[1] + height);
+        ((delta[1] * upscale) + height);
 
       newHeight = horizontalSnap || (this.shiftHeld && verticalSnap) ? height : newHeight;
 
@@ -366,7 +385,8 @@ export default class ImageElement extends Component {
     this.context.store.updateElementResizeState(false);
     this.changeNodeVisibility();
 
-    const { width, left, top, height } = this.state;
+    const { left, top, width, height } = this.state;
+
     const propStyles = { ...this.props.component.props.style, width, left, top, height };
 
     this.context.store.updateElementProps({ style: propStyles });
@@ -395,7 +415,8 @@ export default class ImageElement extends Component {
       height
     } = this.state;
 
-    const newDelta = [pageX - x, pageY - y];
+    const upscale = 1 / this.props.scale;
+    const newDelta = [(pageX - x) * upscale, (pageY - y) * upscale];
 
     // Note: This doesn't handle the case of the mouse being off the slide and part of the element
     // still on the slide. AKA no gridlines or snapping will occur when mouse is outside of the
@@ -408,25 +429,25 @@ export default class ImageElement extends Component {
           return;
         }
 
-        this.props.showGridLine(line, /* isVertical */ isVertical);
+        this.props.showGridLine(line * upscale, /* isVertical */ isVertical);
 
         // Index 0 = starting edge, 1 = middle, 2 = ending edge
         const offset = originalPoint + (length / 2 * index);
 
         // Set either x or y
-        newDelta[isVertical ? 0 : 1] = line - offset;
+        newDelta[isVertical ? 0 : 1] = line * upscale - offset * upscale;
       };
 
       snap(
         this.gridLines.horizontal,
-        getPointsToSnap(offsetY, height, mouseOffsetY),
-        createSnapCallback(false, height, originalY)
+        getPointsToSnap(offsetY * this.props.scale, height * this.props.scale, mouseOffsetY),
+        createSnapCallback(false, height * this.props.scale, originalY * this.props.scale)
       );
 
       snap(
         this.gridLines.vertical,
-        getPointsToSnap(offsetX, width, mouseOffsetX),
-        createSnapCallback(true, width, originalX)
+        getPointsToSnap(offsetX * this.props.scale, width * this.props.scale, mouseOffsetX),
+        createSnapCallback(true, width * this.props.scale, this.props.scale * originalX)
       );
     } else {
       this.props.hideGridLine(true);
@@ -452,7 +473,8 @@ export default class ImageElement extends Component {
       this.props.component.props.style.top
     ];
 
-    const { width, height } = this.currentElementComponent.getBoundingClientRect();
+    const width = this.currentElementComponent.clientWidth;
+    const height = this.currentElementComponent.clientHeight;
 
     window.addEventListener("mouseup", this.handleMouseUp);
 
@@ -589,17 +611,15 @@ export default class ImageElement extends Component {
       if (mousePosition) {
         wrapperStyle.whiteSpace = "nowrap";
       }
-
-      if (scale) {
-        wrapperStyle.transform = `scale(${scale})`;
-      }
     }
 
     elementStyle = { ...elementStyle, position: "relative", left: 0, top: 0 };
 
     if (currentlySelected && isPressed) {
-      motionStyles.left = spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
-      motionStyles.top = spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
+      motionStyles.left =
+        spring((props.style && props.style.left || 0) + x, SpringSettings.DRAG);
+      motionStyles.top =
+        spring((props.style && props.style.top || 0) + y, SpringSettings.DRAG);
     }
 
     if (currentlySelected && isResizing) {
@@ -644,6 +664,7 @@ export default class ImageElement extends Component {
                     cornerTopLeft
                     ref={component => {this.topLeftNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -652,6 +673,7 @@ export default class ImageElement extends Component {
                     ref={component => {this.leftResizeNode = findDOMNode(component);}}
                     alignLeft
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -660,6 +682,7 @@ export default class ImageElement extends Component {
                     ref={component => {this.bottomLeftNode = findDOMNode(component);}}
                     cornerBottomLeft
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -668,11 +691,16 @@ export default class ImageElement extends Component {
                     ref={component => {this.topResizeNode = findDOMNode(component);}}
                     alignTop
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
                 {currentlySelected && !isResizing && !isDragging &&
-                  <Arrange />
+                  <Arrange
+                    scale={scale}
+                    width={props.style.width || props.width}
+                    height={props.style.height || props.height}
+                  />
                 }
                   <ComponentClass
                     ref={component => {this.image = findDOMNode(component);}}
@@ -685,6 +713,7 @@ export default class ImageElement extends Component {
                     cornerTopRight
                     ref={component => {this.topRightNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -693,6 +722,7 @@ export default class ImageElement extends Component {
                     alignRight
                     ref={component => {this.rightResizeNode = findDOMNode(component);}}
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -701,6 +731,7 @@ export default class ImageElement extends Component {
                     ref={component => {this.bottomRightNode = findDOMNode(component);}}
                     cornerBottomRight
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }
@@ -709,6 +740,7 @@ export default class ImageElement extends Component {
                     ref={component => {this.bottomResizeNode = findDOMNode(component);}}
                     alignBottom
                     handleMouseDownResize={this.handleMouseDownResize}
+                    scale={scale}
                     component={this.props.component}
                   />
                 }

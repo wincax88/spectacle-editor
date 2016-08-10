@@ -11,8 +11,6 @@ import CanvasElement from "./canvas-element";
 import Slide from "./slide";
 import styles from "./index.css";
 
-const padding = 40;
-
 @observer
 class SlideList extends Component {
   static contextTypes = {
@@ -119,22 +117,30 @@ class SlideList extends Component {
   // Keep a 4:3 ratio with the inner element centered, 30px padding
   resize = () => {
     const { offsetWidth, offsetHeight } = findDOMNode(this.refs.container);
-
-    const effectiveWidth = Math.floor(offsetWidth - (padding * 2));
-    const effectiveHeight = Math.floor(offsetHeight - (padding * 2));
-
-    const isWidthConstrained = effectiveHeight / effectiveWidth > 0.75;
-
-    const width = isWidthConstrained ? effectiveWidth : Math.floor(effectiveHeight / 0.75);
-    const height = isWidthConstrained ? Math.floor(effectiveWidth * 0.75) : effectiveHeight;
-
-    const left = isWidthConstrained ? padding : Math.floor((offsetWidth - width) / 2);
-    const top = isWidthConstrained ? Math.floor((offsetHeight - height) / 2) : padding;
+    const width = offsetWidth;
+    const height = offsetHeight;
 
     // TODO: need better logic for handling scale and content scale
-    const scale = 1;
+    const shouldScale = offsetWidth < 1000 || offsetHeight < 700;
 
-    this.context.store.setCanvasSize({ width, height, left, top, scale });
+    const xScale = offsetWidth < 1000 ? offsetWidth / 1000 : 1;
+    const yScale = offsetHeight < 700 ? offsetHeight / 700 : 1;
+
+    this.scale = shouldScale ? Math.min(xScale, yScale) : 1;
+
+    const scaleXOffset = width - (1000 * this.scale);
+    const scaleYOffset = height - (700 * this.scale);
+
+    const left = Math.floor(scaleXOffset / 2);
+    const top = Math.floor(scaleYOffset / 2);
+
+    this.context.store.setCanvasSize({
+      width: 1000 * this.scale,
+      height: 700 * this.scale,
+      left,
+      top,
+      scale: this.scale
+    });
   }
 
   dropElement = (elementType, position) => {
@@ -144,20 +150,20 @@ class SlideList extends Component {
 
     if (!position) {
       const slideElement = findDOMNode(this.refs.slide);
+
       const element = Elements[elementType];
       const height = element.defaultHeight || element.props.height;
       const width = element.defaultWidth || element.props.width;
 
       let left = (slideElement.clientWidth / 2) - (width / 2);
       let top = (slideElement.clientHeight / 2) - (height / 2);
+      const { currentSlide } = this.context.store;
+      const positions = currentSlide.children.reduce((positionHashMap, child) => {
+        const key = `${child.props.style.left}x${child.props.style.top}`;
+        positionHashMap[key] = true; // eslint-disable-line no-param-reassign
 
-      const positions =
-        this.context.store.currentSlide.children.reduce((positionHashMap, child) => {
-          const key = `${child.props.style.left}x${child.props.style.top}`;
-          positionHashMap[key] = true; // eslint-disable-line no-param-reassign
-
-          return positionHashMap;
-        }, {});
+        return positionHashMap;
+      }, {});
 
       while (positions[`${left}x${top}`]) {
         left += 10;
@@ -183,6 +189,11 @@ class SlideList extends Component {
     x -= left + 1;
     y -= top + 1;
 
+    const upscale = 1 / this.context.store.scale;
+
+    x = x * upscale;
+    y = y * upscale;
+
     this.context.store.dropElement(elementType, /* props */{
       style: {
         position: "absolute",
@@ -203,8 +214,6 @@ class SlideList extends Component {
       isDraggingElement,
       isDraggingSlide,
       scale,
-      width,
-      height,
       top,
       left
      } = this.context.store;
@@ -227,15 +236,20 @@ class SlideList extends Component {
           <div
             style={{
               position: "absolute",
+              transformOrigin: "top left",
               transform: `scale(${scale})`,
-              width, // Hardcoded to 1100:850 aspect ratio
-              height,
+              width: 1000, // Hardcoded to 1100:850 aspect ratio
+              height: 700,
               top,
               left,
               backgroundColor: "#999"
             }}
           >
-            <Slide ref="slide" isOver={isOverPosition} />
+            <Slide
+              ref="slide"
+              isOver={isOverPosition}
+              scale={scale}
+            />
           </div>
           {isOverPosition &&
             <CanvasElement

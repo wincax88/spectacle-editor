@@ -18,7 +18,8 @@ class ElementItem extends Component {
     elementWidth: PropTypes.number.isRequired,
     elementHeight: PropTypes.number.isRequired,
     onIsOverCanvasChange: PropTypes.func.isRequired,
-    onDropElement: PropTypes.func.isRequired
+    onDropElement: PropTypes.func.isRequired,
+    scale: PropTypes.number
   };
 
   static contextTypes = {

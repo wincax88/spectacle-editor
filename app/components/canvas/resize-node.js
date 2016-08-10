@@ -14,7 +14,8 @@ export default class ResizeNode extends Component {
     cornerBottomLeft: PropTypes.bool,
     cornerBottomRight: PropTypes.bool,
     handleMouseDownResize: PropTypes.func,
-    handleTouchResize: PropTypes.func
+    handleTouchResize: PropTypes.func,
+    scale: PropTypes.number
   }
 
   renderCornerIcon(props) {
@@ -56,6 +57,7 @@ export default class ResizeNode extends Component {
 
     return (
       <div
+        style={{ transform: `scale(${1 / this.props.scale})` }}
         className={resolvedClassNames}
         onMouseDown={this.props.handleMouseDownResize}
         onTouchStart={this.props.handleTouchResize}
