@@ -55,6 +55,65 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
+const exportToPDF = () => {
+  pdfWindow.webContents.printToPDF({
+    landscape: true,
+    printBackground: true,
+    marginsType: 1
+  }, (err, data) => {
+    if (err) {
+      console.log(err);
+
+      return;
+    }
+
+    dialog.showSaveDialog({
+      filters: [{
+        name: "pdf",
+        extensions: ["pdf"]
+      }]
+    }, (fileName) => {
+      if (!fileName) {
+        return;
+      }
+
+      const normalizedName = fileName.substr(-4) === ".pdf" ? fileName : `${fileName}.pdf`;
+
+      fs.writeFile(normalizedName, data, (fileErr) => {
+        if (fileErr) {
+          console.log(fileErr);
+        }
+      });
+    });
+  });
+};
+
+const playSlideShow = () => {
+  if (presWindow) {
+    presWindow.focus();
+
+    return;
+  }
+
+  presWindow = new BrowserWindow({
+    show: false,
+    width: 1000,
+    height: 700
+  });
+
+  presWindow.loadURL(`file://${__dirname}/app/presentation.html`);
+
+  presWindow.webContents.on("did-finish-load", () => {
+    mainWindow.webContents.send("trigger-update");
+    presWindow.show();
+    presWindow.focus();
+  });
+
+  presWindow.on("closed", () => {
+    presWindow = null;
+  });
+};
+
 
 app.on("ready", () => {
   screencapWindow = new BrowserWindow({
@@ -133,15 +192,17 @@ app.on("ready", () => {
   });
 
   ipcMain.on("current-element", (event, isCurrentElement) => {
+    const stripMenuItemsAmpersand = (string) => string.replace(/^&/, "");
     menu.items.forEach((item, i) => {
-      if (item.label === "Edit") {
+      if (stripMenuItemsAmpersand(item.label) === "Edit") {
         item.submenu.items.forEach((option, k) => {
+          const label = stripMenuItemsAmpersand(option.label);
           if (
-            option.label === "Move Forward" ||
-            option.label === "Move Backward" ||
-            option.label === "Move To Front" ||
-            option.label === "Move To Back" ||
-            option.label === "Delete Element"
+            label === "Move Forward" ||
+            label === "Move Backward" ||
+            label === "Move To Front" ||
+            label === "Move To Back" ||
+            label === "Delete Element"
           ) {
             menu.items[i].submenu.items[k].enabled = isCurrentElement;
           }
@@ -223,36 +284,7 @@ app.on("ready", () => {
         label: "Export to PDF",
         accelerator: "Command+P",
         click() {
-          pdfWindow.webContents.printToPDF({
-            landscape: true,
-            printBackground: true,
-            marginsType: 1
-          }, (err, data) => {
-            if (err) {
-              console.log(err);
-
-              return;
-            }
-
-            dialog.showSaveDialog({
-              filters: [{
-                name: "pdf",
-                extensions: ["pdf"]
-              }]
-            }, (fileName) => {
-              if (!fileName) {
-                return;
-              }
-
-              const normalizedName = fileName.substr(-4) === ".pdf" ? fileName : `${fileName}.pdf`;
-
-              fs.writeFile(normalizedName, data, (fileErr) => {
-                if (fileErr) {
-                  console.log(fileErr);
-                }
-              });
-            });
-          });
+          exportToPDF();
         }
       }]
     }, {
@@ -366,29 +398,7 @@ app.on("ready", () => {
         label: "Slide Show",
         accelerator: "Command+L",
         click() {
-          if (presWindow) {
-            presWindow.focus();
-
-            return;
-          }
-
-          presWindow = new BrowserWindow({
-            show: false,
-            width: 1000,
-            height: 700
-          });
-
-          presWindow.loadURL(`file://${__dirname}/app/presentation.html`);
-
-          presWindow.webContents.on("did-finish-load", () => {
-            mainWindow.webContents.send("trigger-update");
-            presWindow.show();
-            presWindow.focus();
-          });
-
-          presWindow.on("closed", () => {
-            presWindow = null;
-          });
+          playSlideShow();
         }
       }]
     }, {
@@ -439,19 +449,24 @@ app.on("ready", () => {
       label: "&File",
       submenu: [{
         label: "&Open",
-        accelerator: "Ctrl+O"
+        accelerator: "Ctrl+O",
+        click() {
+          mainWindow.webContents.send("file", "open");
+        }
       },
       {
         label: "&Save",
-        accelerator: "Ctrl+S"
-      },
-      {
-        label: "&Save As...",
-        accelerator: "Ctrl+Shift+S"
+        accelerator: "Ctrl+S",
+        click() {
+          mainWindow.webContents.send("file", "save");
+        }
       },
       {
         label: "&Export To PDF",
-        accelerator: ""
+        accelerator: "Ctrl+P",
+        click() {
+          exportToPDF();
+        }
       },
       {
         label: "&Close",
@@ -507,12 +522,36 @@ app.on("ready", () => {
         }
       },
       {
-        label: "Delete Element",
+        label: "&Delete Element",
         accelerator: "Backspace",
         click() {
           mainWindow.webContents.send("edit", "delete");
         }
-      }]
+      },
+      {
+        type: "separator"
+      },
+      {
+        label: "&Cut",
+        accelerator: "Ctrl+X",
+        selector: "cut:"
+      },
+      {
+        label: "&Copy",
+        accelerator: "Ctrl+C",
+        selector: "copy:"
+      },
+      {
+        label: "&Paste",
+        accelerator: "Ctrl+V",
+        selector: "paste:"
+      },
+      {
+        label: "&Select All",
+        accelerator: "Ctrl+A",
+        selector: "selectAll:"
+      }
+      ]
     },
     {
       label: "&View",
@@ -530,10 +569,6 @@ app.on("ready", () => {
         }
       },
       {
-        label: "&Slideshow",
-        accelerator: ""
-      },
-      {
         label: "Toggle &Developer Tools",
         accelerator: "Alt+Ctrl+I",
         click() {
@@ -546,8 +581,19 @@ app.on("ready", () => {
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       }]
-    }, {
-      label: "Help",
+    },
+    {
+      label: "&Play",
+      submenu: [{
+        label: "&Slide Show",
+        accelerator: "Ctrl+L",
+        click() {
+          playSlideShow();
+        }
+      }]
+    },
+    {
+      label: "&Help",
       submenu: [{
         label: "Learn More",
         click() {
