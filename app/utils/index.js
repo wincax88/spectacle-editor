@@ -20,16 +20,20 @@ export const getParagraphStyles = (obj) => (
 export const extendParagraphStylesForTextElements = (slides, paragaphStyles) => {
   const clonedSlides = cloneDeep(slides);
 
-  clonedSlides.forEach((slide, i) => {
-    slide.children.forEach((child, k) => {
-      if (child.type === ElementTypes.TEXT) {
-        clonedSlides[i].children[k].props.style = {
-          ...paragaphStyles[child.props.paragraphStyle],
-          ...child.props.style
-        };
+  if (clonedSlides) {
+    clonedSlides.forEach((slide, i) => {
+      if (slide.children) {
+        slide.children.forEach((child, k) => {
+          if (child.type === ElementTypes.TEXT) {
+            clonedSlides[i].children[k].props.style = {
+              ...paragaphStyles[child.props.paragraphStyle],
+              ...child.props.style
+            };
+          }
+        });
       }
     });
-  });
+  }
 
   return clonedSlides;
 };

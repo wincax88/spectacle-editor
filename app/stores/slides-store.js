@@ -144,7 +144,10 @@ export default class SlidesStore {
 
     ipcRenderer.on("trigger-update", () => {
       ipcRenderer.send("update-presentation", {
-        slides: extendParagraphStylesForTextElements(this.slides, this.paragraphStyles),
+        slides: extendParagraphStylesForTextElements(
+          this.slides,
+          this.history[this.historyIndex].paragraphStyles
+        ),
         currentSlideIndex: this.currentSlideIndex
       });
     });
@@ -489,7 +492,10 @@ export default class SlidesStore {
     });
 
     ipcRenderer.send("update-presentation", {
-      slides: extendParagraphStylesForTextElements(this.slides, this.paragraphStyles),
+      slides: extendParagraphStylesForTextElements(
+        this.slides,
+        this.history[this.historyIndex].paragraphStyles
+      ),
       currentSlideIndex: this.currentSlideIndex
     });
   }
