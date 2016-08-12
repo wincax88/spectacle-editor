@@ -252,13 +252,13 @@ class SlideList extends Component {
               scale={scale}
             />
           </div>
-            {isOverPosition &&
-              <CanvasElement
-                mousePosition={isOverPosition}
-                scale={scale}
-                component={component}
-              />
-            }
+          {isOverPosition &&
+            <CanvasElement
+              mousePosition={isOverPosition}
+              scale={scale}
+              component={component}
+            />
+          }
         </div>
         <ElementList
           scale={scale}
