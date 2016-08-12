@@ -53,13 +53,13 @@ class SlideList extends Component {
     }
 
     const element = Elements[dragElementType];
-    const height = element.defaultHeight || element.props.height;
-    const width = element.defaultWidth || element.props.width;
+    const height = this.scale * (element.defaultHeight || element.props.height);
+    const width = this.scale * (element.defaultWidth || element.props.width);
     const position = newIsOverPosition.concat();
     const snapOffset = [0, 0];
 
-    position[0] -= width / 2;
-    position[1] -= height / 2;
+    position[0] -= width * this.scale / 2;
+    position[1] -= height * this.scale / 2;
 
     if (!this.gridLines) {
       this.gridLines = this.context.store.gridLines;
@@ -67,10 +67,10 @@ class SlideList extends Component {
 
     // If position is relative to the slide add slide left and top to the values.
     if (isOverSlide) {
-      position[0] += this.context.store.leftx;
       position[0] *= this.scale;
-      position[1] += this.context.store.top;
+      position[0] += this.context.store.left;
       position[1] *= this.scale;
+      position[1] += this.context.store.top;
 
       const createSnapCallback = (isVertical, length) => (line, index) => {
         if (line === null) {
@@ -79,7 +79,7 @@ class SlideList extends Component {
           return;
         }
 
-        this.refs.slide.showGridLine(line, isVertical);
+        this.refs.slide.showGridLine(line * (1 / this.scale), isVertical);
 
         // Index 0 = starting edge, 1 = middle, 2 = ending edge
         snapOffset[isVertical ? 0 : 1] = (length / 2 * index);
@@ -93,17 +93,17 @@ class SlideList extends Component {
         );
       };
 
-      // snap(
-      //   this.gridLines.horizontal,
-      //   getPointsToSnap(newIsOverPosition[1], height, height / -2),
-      //   createSnapCallback(false, height)
-      // );
+      snap(
+        this.gridLines.horizontal,
+        getPointsToSnap(newIsOverPosition[1] * this.scale, height, height / -2),
+        createSnapCallback(false, height)
+      );
 
-      // snap(
-      //   this.gridLines.vertical,
-      //   getPointsToSnap(newIsOverPosition[0], width, width / -2),
-      //   createSnapCallback(true, width)
-      // );
+      snap(
+        this.gridLines.vertical,
+        getPointsToSnap(newIsOverPosition[0] * this.scale, width, width / -2),
+        createSnapCallback(true, width)
+      );
     } else {
       this.refs.slide.hideGridLine(true);
       this.refs.slide.hideGridLine(false);
@@ -111,7 +111,6 @@ class SlideList extends Component {
 
     this.setState({
       isOverPosition: zipWith(position, snapOffset, (a, b) => a - b),
-      isOverSlide,
       dragElementType
     });
   }
@@ -253,13 +252,13 @@ class SlideList extends Component {
               scale={scale}
             />
           </div>
-          {isOverPosition &&
-            <CanvasElement
-              mousePosition={isOverPosition}
-              scale={scale}
-              component={component}
-            />
-          }
+            {isOverPosition &&
+              <CanvasElement
+                mousePosition={isOverPosition}
+                scale={scale}
+                component={component}
+              />
+            }
         </div>
         <ElementList
           scale={scale}
