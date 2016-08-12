@@ -67,8 +67,10 @@ class SlideList extends Component {
 
     // If position is relative to the slide add slide left and top to the values.
     if (isOverSlide) {
-      position[0] += this.context.store.left;
+      position[0] += this.context.store.leftx;
+      position[0] *= this.scale;
       position[1] += this.context.store.top;
+      position[1] *= this.scale;
 
       const createSnapCallback = (isVertical, length) => (line, index) => {
         if (line === null) {
@@ -91,17 +93,17 @@ class SlideList extends Component {
         );
       };
 
-      snap(
-        this.gridLines.horizontal,
-        getPointsToSnap(newIsOverPosition[1], height, height / -2),
-        createSnapCallback(false, height)
-      );
+      // snap(
+      //   this.gridLines.horizontal,
+      //   getPointsToSnap(newIsOverPosition[1], height, height / -2),
+      //   createSnapCallback(false, height)
+      // );
 
-      snap(
-        this.gridLines.vertical,
-        getPointsToSnap(newIsOverPosition[0], width, width / -2),
-        createSnapCallback(true, width)
-      );
+      // snap(
+      //   this.gridLines.vertical,
+      //   getPointsToSnap(newIsOverPosition[0], width, width / -2),
+      //   createSnapCallback(true, width)
+      // );
     } else {
       this.refs.slide.hideGridLine(true);
       this.refs.slide.hideGridLine(false);
