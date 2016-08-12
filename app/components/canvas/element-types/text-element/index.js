@@ -213,7 +213,10 @@ export default class TextElement extends Component {
     const propStyles = { ...this.props.component.props.style };
 
     propStyles.width = width;
+    propStyles.whiteSpace = "normal";
+    propStyles.wordBreak = "break-all";
     propStyles.left = left;
+
     this.context.store.updateElementProps({ style: propStyles });
   }
 
@@ -453,10 +456,14 @@ export default class TextElement extends Component {
       top: 0
     };
 
-    if (this.props.component.props.style.width !== undefined || isResizing) {
-      elementStyle = omit(elementStyle, "whiteSpace");
+    if (this.props.component.props.style.width === undefined && currentlySelected && isResizing) {
+      elementStyle.whiteSpace = "normal";
       elementStyle.wordBreak = "break-all";
     }
+    // if (this.props.component.props.style.width !== undefined || isResizing) {
+    //   elementStyle = omit(elementStyle, "whiteSpace");
+    //   elementStyle.wordBreak = "break-all";
+    // }
 
     if (isPressed) {
       motionStyles.left =

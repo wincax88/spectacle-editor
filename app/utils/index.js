@@ -1,4 +1,4 @@
-import { sortBy, sortedUniq, invert } from "lodash";
+import { sortBy, cloneDeep, sortedUniq, invert } from "lodash";
 
 import { ElementTypes, SNAP_DISTANCE } from "../constants";
 
@@ -16,6 +16,23 @@ export const getParagraphStyles = (obj) => (
     ...obj
   }
 );
+
+export const extendParagraphStylesForTextElements = (slides, paragaphStyles) =>
+  slides.map(slide =>
+    slide.children.map(child => {
+      // if (child.type === ElementTypes.TEXT) {
+      //   const textElement = cloneDeep(child);
+
+      //   textElement.props.style = {
+      //     ...paragaphStyles[child.props.paragraphStyle],
+      //     ...child.props.style
+      //   };
+
+      //   return textElement;
+      // }
+
+      return child;
+    }));
 
 export const getElementDimensions = ({ type, props }) => {
   if (type === ElementTypes.TEXT) {
