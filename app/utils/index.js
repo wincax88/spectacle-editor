@@ -78,11 +78,13 @@ export const generateClosestHash = (arr) => (
   }, {})
 );
 
-export const getGridLinesObj = (elements, horizontalInitial, verticalInitial) => (
+export const getGridLinesObj = (elements, horizontalInitial, verticalInitial, scale) => (
   elements.reduce((gridObj, element) => {
     const { width, height } = getElementDimensions(element);
-    const { top, left } = getElementLocation(element);
+    let { top, left } = getElementLocation(element);
 
+    top *= scale;
+    left *= scale;
     // TODO: don't use grid lines of elements off the canvas e.g.
     // TODO: Set all grid lines of elements off the slide to 0
 

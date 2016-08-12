@@ -58,8 +58,8 @@ class SlideList extends Component {
     const position = newIsOverPosition.concat();
     const snapOffset = [0, 0];
 
-    position[0] -= width * this.scale / 2;
-    position[1] -= height * this.scale / 2;
+    position[0] -= width / 2;
+    position[1] -= height / 2;
 
     if (!this.gridLines) {
       this.gridLines = this.context.store.gridLines;

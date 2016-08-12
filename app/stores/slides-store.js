@@ -118,7 +118,8 @@ export default class SlidesStore {
         this.currentSlide.children,
         // Start with slide edges and slide center lines
         [0, Math.floor(this.height / 2), this.height],
-        [0, Math.floor(this.width / 2), this.width]
+        [0, Math.floor(this.width / 2), this.width],
+        this.scale
       ),
       // Ignore lines for the current element index
       // Or if we're dragging a new element, don't ignore any current elements
