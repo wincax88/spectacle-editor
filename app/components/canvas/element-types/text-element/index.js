@@ -460,10 +460,6 @@ export default class TextElement extends Component {
       elementStyle.whiteSpace = "normal";
       elementStyle.wordBreak = "break-all";
     }
-    // if (this.props.component.props.style.width !== undefined || isResizing) {
-    //   elementStyle = omit(elementStyle, "whiteSpace");
-    //   elementStyle.wordBreak = "break-all";
-    // }
 
     if (isPressed) {
       motionStyles.left =

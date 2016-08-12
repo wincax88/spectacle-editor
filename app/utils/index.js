@@ -17,22 +17,23 @@ export const getParagraphStyles = (obj) => (
   }
 );
 
-export const extendParagraphStylesForTextElements = (slides, paragaphStyles) =>
-  slides.map(slide =>
-    slide.children.map(child => {
-      // if (child.type === ElementTypes.TEXT) {
-      //   const textElement = cloneDeep(child);
+export const extendParagraphStylesForTextElements = (slides, paragaphStyles) => {
+  const clonedSlides = cloneDeep(slides);
 
-      //   textElement.props.style = {
-      //     ...paragaphStyles[child.props.paragraphStyle],
-      //     ...child.props.style
-      //   };
+  clonedSlides.forEach((slide, i) => {
+    slide.children.forEach((child, k) => {
+      if (child.type === ElementTypes.TEXT) {
+        clonedSlides[i].children[k].props.style = {
+          ...paragaphStyles[child.props.paragraphStyle],
+          ...child.props.style
+        };
+      }
+    });
+  });
 
-      //   return textElement;
-      // }
+  return clonedSlides;
+};
 
-      return child;
-    }));
 
 export const getElementDimensions = ({ type, props }) => {
   if (type === ElementTypes.TEXT) {

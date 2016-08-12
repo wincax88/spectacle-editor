@@ -487,9 +487,9 @@ export default class SlidesStore {
         this.fileStore.setIsDirty(true);
       }
     });
-    console.log(extendParagraphStylesForTextElements(this.slides, this.paragraphStyles));
+
     ipcRenderer.send("update-presentation", {
-      slides: this.slides,
+      slides: extendParagraphStylesForTextElements(this.slides, this.paragraphStyles),
       currentSlideIndex: this.currentSlideIndex
     });
   }
