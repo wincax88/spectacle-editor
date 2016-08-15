@@ -609,6 +609,8 @@ export default class ImageElement extends Component {
       motionStyles.height = spring((height && height || 0), SpringSettings.RESIZE);
 
       if (mousePosition) {
+        wrapperStyle.transform = `scale(${scale})`;
+        wrapperStyle.transformOrigin = "top left";
         wrapperStyle.whiteSpace = "nowrap";
       }
     }

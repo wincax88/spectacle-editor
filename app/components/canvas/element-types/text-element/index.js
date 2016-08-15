@@ -444,6 +444,8 @@ export default class TextElement extends Component {
       motionStyles.width = spring((width && width || 0), SpringSettings.RESIZE);
 
       if (mousePosition) {
+        wrapperStyle.transform = `scale(${scale})`;
+        wrapperStyle.transformOrigin = "top left";
         wrapperStyle.whiteSpace = "nowrap";
       }
     }
