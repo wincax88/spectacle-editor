@@ -123,6 +123,8 @@ export default class TextContentEditor extends Component {
     // undo super+shift+z, stop propagation so as not to trigger global redo
     if (superKey && ev.which === 90 && ev.shiftKey) {
       ev.preventDefault();
+      ev.stopPropagation();
+
       document.execCommand("redo");
     }
 
