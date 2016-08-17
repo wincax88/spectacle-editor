@@ -5,7 +5,7 @@ import { ElementTypes, SNAP_DISTANCE } from "../constants";
 export const getParagraphStyles = (obj) => (
   {
     color: "#3d3d3d",
-    fontFamily: "openSans",
+    fontFamily: "Open Sans",
     fontSize: 45,
     fontStyle: "normal",
     fontWeight: 400,
