@@ -17,7 +17,11 @@ const normalizeUrl = (url) => {
     `${url}?link=false`;
   }
 
-  return `http://${url}`;
+  if (urlWithQuery.indexOf("http://") === 0 || urlWithQuery.indexOf("https://") === 0) {
+    return urlWithQuery;
+  }
+
+  return `https://${urlWithQuery}`;
 };
 
 export default class PlotlyMenu extends Component {
