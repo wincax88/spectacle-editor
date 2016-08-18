@@ -70,7 +70,7 @@ export const FontMap = {
       FontTypes.extraBoldItalic
     ]
   },
-  "Overpass": {
+  Overpass: {
     name: "Overpass",
     styles: [
       FontTypes.extraLight,
@@ -90,7 +90,7 @@ export const FontMap = {
       FontTypes.bold
     ]
   },
-  "Raleway": {
+  Raleway: {
     name: "Raleway",
     styles: [
       FontTypes.thin,
@@ -113,7 +113,7 @@ export const FontMap = {
       FontTypes.blackItalic
     ]
   },
-  "Roboto": {
+  Roboto: {
     name: "Roboto",
     styles: [
       FontTypes.thin,
