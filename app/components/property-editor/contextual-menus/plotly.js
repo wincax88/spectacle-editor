@@ -8,15 +8,13 @@ import commonStyles from "../index.css";
 const defaultPlotlySrc = elements[ElementTypes.PLOTLY].props.src;
 
 const normalizeUrl = (url) => {
-  let urlWithQuery;
+  let urlWithQuery = url;
 
   if (url.indexOf("link") === -1) {
     urlWithQuery = url.indexOf(".embed?") > -1 ?
     `${url}&link=false`
     :
     `${url}?link=false`;
-  } else {
-    urlWithQuery = url;
   }
 
   if (urlWithQuery.indexOf("http://") === 0 || urlWithQuery.indexOf("https://") === 0) {
