@@ -21,7 +21,7 @@ const normalizeUrl = (url) => {
     return urlWithQuery;
   }
 
-  return `http://${urlWithQuery}`;
+  return `https://${urlWithQuery}`;
 };
 
 export default class PlotlyMenu extends Component {
