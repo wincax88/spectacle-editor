@@ -8,22 +8,11 @@ import commonStyles from "../index.css";
 const defaultPlotlySrc = elements[ElementTypes.PLOTLY].props.src;
 
 const normalizeUrl = (url) => {
-  let urlWithQuery;
-
-  if (url.indexOf("link") === -1) {
-    urlWithQuery = url.indexOf(".embed?") > -1 ?
-    `${url}&link=false`
-    :
-    `${url}?link=false`;
-  } else {
-    urlWithQuery = url;
+  if (url.indexOf("http://") === 0 || url.indexOf("https://") === 0) {
+    return url;
   }
 
-  if (urlWithQuery.indexOf("http://") === 0 || urlWithQuery.indexOf("https://") === 0) {
-    return urlWithQuery;
-  }
-
-  return `http://${urlWithQuery}`;
+  return `http://${url}`;
 };
 
 export default class PlotlyMenu extends Component {
