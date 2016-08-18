@@ -67,7 +67,7 @@ elements[ElementTypes.PLOTLY] = {
   type: ElementTypes.PLOTLY,
   ComponentClass: (props) => (<iframe {...props} />),
   props: {
-    src: "https://plot.ly/~rgerstenberger/0.embed",
+    src: "https://plot.ly/~rgerstenberger/0.embed?link=false",
     width: 450,
     height: 400,
     frameBorder: 0,
