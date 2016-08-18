@@ -137,7 +137,7 @@
   border-radius: 4px;
   color: var(--primary-font-color);
   display: block;
-  font-family: "Open Sans", sans-serif;
+  font-family: "openSans", "Open Sans", sans-serif;
   font-size: 14px;
   height: 30px;
   line-height: 1;
@@ -154,7 +154,7 @@
   background-color: var(--plotly-blue);
   color: #fff;
   display: inline-block;
-  font-family: "Open Sans", sans-serif;
+  font-family: "openSans", "Open Sans", sans-serif;
   font-size: 12px;
   font-weight: normal;
   height: 30px;
