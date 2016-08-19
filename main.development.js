@@ -7,6 +7,7 @@ let mainWindow = null;
 let presWindow = null;
 let pdfWindow = null;
 let screencapWindow = null;
+let hidden = false;
 
 app.commandLine.appendSwitch("--ignore-certificate-errors");
 
@@ -170,6 +171,18 @@ app.on("ready", () => {
     mainWindow.focus();
   });
 
+  mainWindow.on("close", (ev) => {
+    if (process.platform === "darwin" && !hidden) {
+      hidden = true;
+      mainWindow.hide();
+      ev.preventDefault();
+    }
+  });
+
+  mainWindow.on("show", () => {
+    hidden = false;
+  });
+
   mainWindow.on("closed", () => {
     mainWindow = null;
     presWindow = null;
@@ -209,7 +222,6 @@ app.on("ready", () => {
         });
       }
     });
-    // console.log(menu.items[2].submenu.items);
   });
 
   ipcMain.on("social-login", (event, socialUrl) => {
@@ -263,6 +275,7 @@ app.on("ready", () => {
         label: "Quit",
         accelerator: "Command+Q",
         click() {
+          hidden = true;
           app.quit();
         }
       }]
@@ -272,18 +285,21 @@ app.on("ready", () => {
         label: "Save",
         accelerator: "Command+S",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("file", "save");
         }
       }, {
         label: "Open",
         accelerator: "Command+O",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("file", "open");
         }
       }, {
         label: "Export to PDF",
         accelerator: "Command+P",
         click() {
+          mainWindow.show();
           exportToPDF();
         }
       }]
@@ -294,6 +310,7 @@ app.on("ready", () => {
         accelerator: "Command+Z",
         selector: "undo:",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("edit", "undo");
         }
       }, {
@@ -301,6 +318,7 @@ app.on("ready", () => {
         accelerator: "Command+Shift+Z",
         selector: "redo:",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("edit", "redo");
         }
       }, {
@@ -311,6 +329,7 @@ app.on("ready", () => {
         accelerator: "CMD+[",
         selector: "forward:",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("edit", "forward");
         }
       },
@@ -319,6 +338,7 @@ app.on("ready", () => {
         accelerator: "CMD+]",
         selector: "backward:",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("edit", "backward");
         }
       },
@@ -327,6 +347,7 @@ app.on("ready", () => {
         accelerator: "shift+CMD+[",
         selector: "front:",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("edit", "front");
         }
       },
@@ -335,6 +356,7 @@ app.on("ready", () => {
         accelerator: "shift+CMD+]",
         selector: "back:",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("edit", "back");
         }
       },
@@ -343,6 +365,7 @@ app.on("ready", () => {
         accelerator: "Backspace",
         selector: "delete:",
         click() {
+          mainWindow.show();
           mainWindow.webContents.send("edit", "delete");
         }
       },
@@ -371,24 +394,28 @@ app.on("ready", () => {
         label: "Reload",
         accelerator: "Command+R",
         click() {
+          mainWindow.show();
           mainWindow.restart();
         }
       }, {
         label: "Toggle Full Screen",
         accelerator: "Ctrl+Command+F",
         click() {
+          mainWindow.show();
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       }, {
         label: "Toggle Developer Tools",
         accelerator: "Alt+Command+I",
         click() {
+          mainWindow.show();
           mainWindow.toggleDevTools();
         }
       }] : [{
         label: "Toggle Full Screen",
         accelerator: "Ctrl+Command+F",
         click() {
+          mainWindow.show();
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       }]
@@ -398,6 +425,7 @@ app.on("ready", () => {
         label: "Slide Show",
         accelerator: "Command+L",
         click() {
+          mainWindow.show();
           playSlideShow();
         }
       }]
