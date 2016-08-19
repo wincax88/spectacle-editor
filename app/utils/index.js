@@ -8,6 +8,7 @@ export const getParagraphStyles = (obj) => (
     fontFamily: "openSans",
     fontSize: 45,
     fontStyle: "normal",
+    lineHeight: 1,
     fontWeight: 400,
     minWidth: 20,
     opacity: 1,
