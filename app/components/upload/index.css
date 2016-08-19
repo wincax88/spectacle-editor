@@ -182,6 +182,7 @@
 .shareLink {
   color: var(--dark-plotly-blue);
   text-decoration: none;
+  -webkit-user-select: auto;
 }
 
 .shareLink:hover {
@@ -190,7 +191,6 @@
 
 .shareLinkIcon {
   margin-left: 5px;
-
   white-space: nowrap;
 }
 
