@@ -172,6 +172,7 @@ app.on("ready", () => {
   app.on("before-quit", () => {
     hidden = true;
   });
+
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on("did-finish-load", () => {
@@ -192,8 +193,8 @@ app.on("ready", () => {
   });
 
   mainWindow.on("closed", () => {
-    // mainWindow = null;
-    // presWindow = null;
+    mainWindow = null;
+    presWindow = null;
   });
 
   if (process.env.NODE_ENV === "development") {
@@ -293,6 +294,7 @@ app.on("ready", () => {
         accelerator: "Command+S",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("file", "save");
         }
       }, {
@@ -300,6 +302,7 @@ app.on("ready", () => {
         accelerator: "Command+O",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("file", "open");
         }
       }, {
@@ -307,6 +310,7 @@ app.on("ready", () => {
         accelerator: "Command+P",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           exportToPDF();
         }
       }]
@@ -318,6 +322,7 @@ app.on("ready", () => {
         selector: "undo:",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("edit", "undo");
         }
       }, {
@@ -326,6 +331,7 @@ app.on("ready", () => {
         selector: "redo:",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("edit", "redo");
         }
       }, {
@@ -337,6 +343,7 @@ app.on("ready", () => {
         selector: "forward:",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("edit", "forward");
         }
       },
@@ -346,6 +353,7 @@ app.on("ready", () => {
         selector: "backward:",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("edit", "backward");
         }
       },
@@ -355,6 +363,7 @@ app.on("ready", () => {
         selector: "front:",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("edit", "front");
         }
       },
@@ -364,6 +373,7 @@ app.on("ready", () => {
         selector: "back:",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("edit", "back");
         }
       },
@@ -373,6 +383,7 @@ app.on("ready", () => {
         selector: "delete:",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.webContents.send("edit", "delete");
         }
       },
@@ -402,6 +413,7 @@ app.on("ready", () => {
         accelerator: "Command+R",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.restart();
         }
       }, {
@@ -409,6 +421,7 @@ app.on("ready", () => {
         accelerator: "Ctrl+Command+F",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       }, {
@@ -416,6 +429,7 @@ app.on("ready", () => {
         accelerator: "Alt+Command+I",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.toggleDevTools();
         }
       }] : [{
@@ -423,6 +437,7 @@ app.on("ready", () => {
         accelerator: "Ctrl+Command+F",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       }]
@@ -433,6 +448,7 @@ app.on("ready", () => {
         accelerator: "Command+L",
         click() {
           mainWindow.show();
+          mainWindow.focus();
           playSlideShow();
         }
       }]
