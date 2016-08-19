@@ -8,7 +8,7 @@ export const getParagraphStyles = (obj) => (
     fontFamily: "openSans",
     fontSize: 45,
     fontStyle: "normal",
-    lineHeight: 1,
+    lineHeight: "normal",
     fontWeight: 400,
     minWidth: 20,
     opacity: 1,
@@ -17,28 +17,6 @@ export const getParagraphStyles = (obj) => (
     ...obj
   }
 );
-
-export const extendParagraphStylesForTextElements = (slides, paragaphStyles) => {
-  const clonedSlides = cloneDeep(slides);
-
-  if (clonedSlides) {
-    clonedSlides.forEach((slide, i) => {
-      if (slide.children) {
-        slide.children.forEach((child, k) => {
-          if (child.type === ElementTypes.TEXT) {
-            clonedSlides[i].children[k].props.style = {
-              ...paragaphStyles[child.props.paragraphStyle],
-              ...child.props.style
-            };
-          }
-        });
-      }
-    });
-  }
-
-  return clonedSlides;
-};
-
 
 export const getElementDimensions = ({ type, props }) => {
   if (type === ElementTypes.TEXT) {

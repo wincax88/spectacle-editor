@@ -7,7 +7,6 @@ import { merge, mergeWith, pick, omit } from "lodash";
 import ApiStore from "./api-store";
 import elementMap from "../elements";
 import { getParagraphStyles,
-  extendParagraphStylesForTextElements,
   getGridLinesObj,
   getGridLineHashes
 } from "../utils";
@@ -145,10 +144,8 @@ export default class SlidesStore {
 
     ipcRenderer.on("trigger-update", () => {
       ipcRenderer.send("update-presentation", {
-        slides: extendParagraphStylesForTextElements(
-          this.slides,
-          this.history[this.historyIndex].paragraphStyles
-        ),
+        slides: this.slides,
+        paragraphStyles: this.history[this.historyIndex].paragraphStyles,
         currentSlideIndex: this.currentSlideIndex
       });
     });
@@ -493,10 +490,8 @@ export default class SlidesStore {
     });
 
     ipcRenderer.send("update-presentation", {
-      slides: extendParagraphStylesForTextElements(
-        this.slides,
-        this.history[this.historyIndex].paragraphStyles
-      ),
+      slides: this.slides,
+      paragraphStyles: this.history[this.historyIndex].paragraphStyles,
       currentSlideIndex: this.currentSlideIndex
     });
   }
