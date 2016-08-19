@@ -1,4 +1,4 @@
-import { sortBy, cloneDeep, sortedUniq, invert } from "lodash";
+import { sortBy, sortedUniq, invert } from "lodash";
 
 import { ElementTypes, SNAP_DISTANCE } from "../constants";
 
