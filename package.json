@@ -4,6 +4,41 @@
   "productName": "Spectacle Editor",
   "description": "Drag and drop Spectacle editor",
   "main": "main.js",
+  "build": {
+    "appId": "com.formidable.spectacle.editor",
+    "category": "public.app-category.productivity",
+    "dmg": {
+      "title": "Spectacle Editor",
+      "icon": "./app/app.icns",
+      "iconUrl": "./app/app.icns",
+      "background-color": "#f8f8f9",
+      "contents": [
+        {
+          "x": 450,
+          "y": 100,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 250,
+          "y": 100,
+          "type": "file",
+          "path": "Spectacle Editor.app"
+        }
+      ]
+    },
+    "win": {
+      "iconUrl": "https://github.com/FormidableLabs/spectacle-editor/blob/master/app/app.ico?raw=true",
+      "msi": true,
+      "icon": "./app/app.ico"
+    },
+    "linux": {
+      "maintainer": "Formidable Labs"
+    }
+  },
+  "directories": {
+    "output": "./release"
+  },
   "scripts": {
     "check": "npm run lint && npm run test",
     "test": "cross-env NODE_ENV=test mocha --recursive --compilers js:babel-register --require ./test/setup.js \"test/**/*.spec.js\"",
@@ -21,7 +56,7 @@
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./main.development",
     "package": "cross-env NODE_ENV=production node -r babel-register package.js",
     "package-all": "npm run package -- --all",
-    "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
+    "postinstall": "install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\"",
     "winstall": "node ./winstaller.js"
   },
