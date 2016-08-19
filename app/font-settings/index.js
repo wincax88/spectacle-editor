@@ -1,7 +1,7 @@
 import { FontTypes } from "../constants/";
 
 export const FontMap = {
-  arial: {
+  Arial: {
     name: "Arial",
     styles: [
       FontTypes.regular,
@@ -19,7 +19,7 @@ export const FontMap = {
       FontTypes.boldItalic
     ]
   },
-  droidSans: {
+  "Droid Sans": {
     name: "Droid Sans",
     styles: [
       FontTypes.regular,
@@ -28,7 +28,7 @@ export const FontMap = {
       FontTypes.boldItalic
     ]
   },
-  droidSansMono: {
+  "Droid Sans Mono": {
     name: "Droid Sans Mono",
     styles: [
       FontTypes.regular,
@@ -37,7 +37,7 @@ export const FontMap = {
       FontTypes.boldItalic
     ]
   },
-  droidSerif: {
+  "Droid Serif": {
     name: "Droid Serif",
     styles: [
       FontTypes.regular,
@@ -46,7 +46,7 @@ export const FontMap = {
       FontTypes.boldItalic
     ]
   },
-  liberationSans: {
+  "Liberation Sans": {
     name: "Liberation Sans",
     styles: [
       FontTypes.regular,
@@ -55,7 +55,7 @@ export const FontMap = {
       FontTypes.boldItalic
     ]
   },
-  openSans: {
+  "Open Sans": {
     name: "Open Sans",
     styles: [
       FontTypes.light,
@@ -70,7 +70,7 @@ export const FontMap = {
       FontTypes.extraBoldItalic
     ]
   },
-  overPass: {
+  Overpass: {
     name: "Overpass",
     styles: [
       FontTypes.extraLight,
@@ -83,14 +83,14 @@ export const FontMap = {
       FontTypes.boldItalic
     ]
   },
-  ptSans: {
+  "PT Sans": {
     name: "PT Sans",
     styles: [
       FontTypes.regular,
       FontTypes.bold
     ]
   },
-  raleWay: {
+  Raleway: {
     name: "Raleway",
     styles: [
       FontTypes.thin,
@@ -113,7 +113,7 @@ export const FontMap = {
       FontTypes.blackItalic
     ]
   },
-  roboto: {
+  Roboto: {
     name: "Roboto",
     styles: [
       FontTypes.thin,

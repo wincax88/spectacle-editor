@@ -89,7 +89,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.7.2",
     "chai": "^3.5.0",
-    "chromedriver": "^2.21.2",
+    "chromedriver": "2.21.2",
     "co-mocha": "^1.1.2",
     "concurrently": "^2.0.0",
     "cross-env": "^1.0.7",
@@ -147,7 +147,7 @@
     "shortid": "^2.2.6",
     "source-map-support": "^0.4.0",
     "spectacle": "^1.0.6",
-    "spectacle-editor-viewer": "0.0.13"
+    "spectacle-editor-viewer": "0.0.14"
   },
   "devEngines": {
     "node": "4.x || 5.x || 6.x",
