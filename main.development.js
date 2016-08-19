@@ -164,6 +164,14 @@ app.on("ready", () => {
     height: 1000
   });
 
+  app.on("activate", () => {
+    mainWindow.show();
+    mainWindow.focus();
+  });
+
+  app.on("before-quit", () => {
+    hidden = true;
+  });
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on("did-finish-load", () => {
@@ -184,8 +192,8 @@ app.on("ready", () => {
   });
 
   mainWindow.on("closed", () => {
-    mainWindow = null;
-    presWindow = null;
+    // mainWindow = null;
+    // presWindow = null;
   });
 
   if (process.env.NODE_ENV === "development") {
@@ -275,7 +283,6 @@ app.on("ready", () => {
         label: "Quit",
         accelerator: "Command+Q",
         click() {
-          hidden = true;
           app.quit();
         }
       }]
