@@ -187,14 +187,19 @@ app.on("ready", () => {
 
       dialog.showMessageBox({
         type: "question",
-        buttons: ["Save", "Don't save", "Cancel"],
-        message: "Do You Wish to Save Your Project Before Quitting?"
+        buttons: ["Save", "Don't Save", "Cancel"],
+        message: "Do you wish to save your project before quitting?"
       }, (response) => {
         if (response === 0) {
           mainWindow.webContents.send("file", "save");
         } else if (response === 1) {
           promptToSave = false;
-          mainWindow.close();
+
+          if (hidden) {
+            app.quit();
+          } else {
+            mainWindow.close();
+          }
         }
       });
 
@@ -253,7 +258,7 @@ app.on("ready", () => {
     });
   });
 
-  ipcMain.on("save-prompt", (event, saveRequired) => {
+  ipcMain.on("dirty-state-changed", (event, saveRequired) => {
     promptToSave = saveRequired;
   });
 

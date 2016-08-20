@@ -59,7 +59,7 @@ class Home extends Component {
         document.title += "* - Edited";
       }
 
-      ipcRenderer.send("save-prompt", fileStore.isDirty);
+      ipcRenderer.send("dirty-state-changed", fileStore.isDirty);
     });
 
     document.addEventListener("mousedown", (ev) => {
