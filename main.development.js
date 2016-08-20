@@ -8,6 +8,7 @@ let presWindow = null;
 let pdfWindow = null;
 let screencapWindow = null;
 let hidden = false;
+let promptToSave = false;
 
 app.commandLine.appendSwitch("--ignore-certificate-errors");
 
@@ -181,6 +182,25 @@ app.on("ready", () => {
   });
 
   mainWindow.on("close", (ev) => {
+    if (promptToSave) {
+      ev.preventDefault();
+
+      dialog.showMessageBox({
+        type: "question",
+        buttons: ["Save", "Don't save", "Cancel"],
+        message: "Do You Wish to Save Your Project Before Quitting?"
+      }, (response) => {
+        if (response === 0) {
+          mainWindow.webContents.send("file", "save");
+        } else if (response === 1) {
+          promptToSave = false;
+          mainWindow.close();
+        }
+      });
+
+      return false;
+    }
+
     if (process.platform === "darwin" && !hidden) {
       hidden = true;
       mainWindow.hide();
@@ -231,6 +251,10 @@ app.on("ready", () => {
         });
       }
     });
+  });
+
+  ipcMain.on("save-prompt", (event, saveRequired) => {
+    promptToSave = saveRequired;
   });
 
   ipcMain.on("social-login", (event, socialUrl) => {

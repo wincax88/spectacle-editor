@@ -58,6 +58,8 @@ class Home extends Component {
       if (fileStore.isDirty && !document.title.match(/\* - Edited$/)) {
         document.title += "* - Edited";
       }
+
+      ipcRenderer.send("save-prompt", fileStore.isDirty);
     });
 
     document.addEventListener("mousedown", (ev) => {
