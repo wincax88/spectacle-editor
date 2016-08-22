@@ -8,6 +8,7 @@ let presWindow = null;
 let pdfWindow = null;
 let screencapWindow = null;
 let hidden = false;
+let promptToSave = false;
 
 app.commandLine.appendSwitch("--ignore-certificate-errors");
 
@@ -181,6 +182,36 @@ app.on("ready", () => {
   });
 
   mainWindow.on("close", (ev) => {
+    if (promptToSave) {
+      ev.preventDefault();
+
+      let buttons = ["Save", "Don't Save", "Cancel"];
+
+      if (process.platform === "darwin") {
+        buttons = ["Save", "Cancel", "Don't Save"];
+      }
+
+      dialog.showMessageBox({
+        type: "question",
+        buttons,
+        message: "Do you wish to save your project before quitting?"
+      }, (response) => {
+        if (response === 0) {
+          mainWindow.webContents.send("file", "save");
+        } else if (response === 1) {
+          promptToSave = false;
+
+          if (hidden) {
+            app.quit();
+          } else {
+            mainWindow.close();
+          }
+        }
+      });
+
+      return false;
+    }
+
     if (process.platform === "darwin" && !hidden) {
       hidden = true;
       mainWindow.hide();
@@ -231,6 +262,10 @@ app.on("ready", () => {
         });
       }
     });
+  });
+
+  ipcMain.on("dirty-state-changed", (event, saveRequired) => {
+    promptToSave = saveRequired;
   });
 
   ipcMain.on("social-login", (event, socialUrl) => {
