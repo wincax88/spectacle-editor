@@ -187,7 +187,7 @@ app.on("ready", () => {
 
       dialog.showMessageBox({
         type: "question",
-        buttons: ["Save", "Don't Save", "Cancel"],
+        buttons: ["Save", "Cancel", "Don't Save"],
         message: "Do you wish to save your project before quitting?"
       }, (response) => {
         if (response === 0) {
