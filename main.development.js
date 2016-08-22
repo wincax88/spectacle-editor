@@ -185,9 +185,15 @@ app.on("ready", () => {
     if (promptToSave) {
       ev.preventDefault();
 
+      let buttons = ["Save", "Don't Save", "Cancel"];
+
+      if (process.platform === "darwin") {
+        buttons = ["Save", "Cancel", "Don't Save"];
+      }
+
       dialog.showMessageBox({
         type: "question",
-        buttons: ["Save", "Cancel", "Don't Save"],
+        buttons,
         message: "Do you wish to save your project before quitting?"
       }, (response) => {
         if (response === 0) {
