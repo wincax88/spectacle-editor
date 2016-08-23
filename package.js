@@ -15,7 +15,7 @@ const pkg = require("./package.json");
 const deps = Object.keys(pkg.dependencies);
 const devDeps = Object.keys(pkg.devDependencies);
 
-const appName = argv.name || argv.n || pkg.productName;
+const appName = (argv.name || argv.n || pkg.productName).replace(" ", "-");
 const shouldUseAsar = argv.asar || argv.a || false;
 const shouldBuildAll = argv.all || false;
 
@@ -123,10 +123,10 @@ function pack(plat, arch, cb) {
   packager(opts, (err, paths) => {
     if (plat === "darwin") {
       createDMG({
-        appPath: `${paths[0]}/Spectacle Editor.app`,
+        appPath: `${paths[0]}/Spectacle-Editor.app`,
         out: paths[0],
-        icon: `${paths[0]}/Spectacle Editor.app/Contents/Resources/app/app/app.svg`,
-        name: "Spectacle Editor"
+        icon: `${paths[0]}/Spectacle-Editor.app/Contents/Resources/app/app/app.svg`,
+        name: "Spectacle-Editor"
       }, (err) => {
         if (err) {
           console.log(err);

@@ -4,42 +4,8 @@
   "productName": "Spectacle Editor",
   "description": "Drag and drop Spectacle editor",
   "main": "main.js",
-  "build": {
-    "appId": "com.formidable.spectacle.editor",
-    "category": "public.app-category.productivity",
-    "dmg": {
-      "title": "Spectacle Editor",
-      "icon": "./app/app.icns",
-      "iconUrl": "./app/app.icns",
-      "background-color": "#f8f8f9",
-      "contents": [
-        {
-          "x": 450,
-          "y": 100,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 250,
-          "y": 100,
-          "type": "file",
-          "path": "Spectacle Editor.app"
-        }
-      ]
-    },
-    "win": {
-      "iconUrl": "https://github.com/FormidableLabs/spectacle-editor/blob/master/app/app.ico?raw=true",
-      "msi": true,
-      "icon": "./app/app.ico"
-    },
-    "linux": {
-      "maintainer": "Formidable Labs"
-    }
-  },
-  "directories": {
-    "output": "./release"
-  },
   "scripts": {
+    "build-installer": "electron-installer-windows --src ./release/win32-ia32/Spectacle-Editor-win32-ia32/ --dest ./release/installers/",
     "check": "npm run lint && npm run test",
     "test": "cross-env NODE_ENV=test mocha --recursive --compilers js:babel-register --require ./test/setup.js \"test/**/*.spec.js\"",
     "test-watch": "npm test -- --watch",
@@ -56,7 +22,7 @@
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./main.development",
     "package": "cross-env NODE_ENV=production node -r babel-register package.js",
     "package-all": "npm run package -- --all",
-    "postinstall": "install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
+    "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\"",
     "winstall": "node ./winstaller.js"
   },
@@ -64,7 +30,7 @@
     "type": "git",
     "url": "git+https://github.com/FormidableLabs/spectacle-editor.git"
   },
-  "author": "",
+  "author": "Formidable Labs",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/FormidableLabs/spectacle-editor/issues"
@@ -97,6 +63,7 @@
     "del": "^2.2.0",
     "electron-builder": "^5.26.0",
     "electron-installer-dmg": "^0.1.1",
+    "electron-installer-windows": "^0.2.0",
     "electron-packager": "^6.0.2",
     "electron-prebuilt": "^0.37.6",
     "electron-rebuild": "^1.1.3",
