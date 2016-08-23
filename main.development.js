@@ -184,6 +184,7 @@ app.on("ready", () => {
   mainWindow.on("close", (ev) => {
     if (promptToSave) {
       ev.preventDefault();
+
       const platform = process.platform;
       let buttons = ["Save", "Don't Save", "Cancel"];
 
