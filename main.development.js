@@ -185,9 +185,10 @@ app.on("ready", () => {
     if (promptToSave) {
       ev.preventDefault();
 
+      const platform = process.platform;
       let buttons = ["Save", "Don't Save", "Cancel"];
 
-      if (process.platform === "darwin") {
+      if (platform === "darwin") {
         buttons = ["Save", "Cancel", "Don't Save"];
       }
 
@@ -198,7 +199,7 @@ app.on("ready", () => {
       }, (response) => {
         if (response === 0) {
           mainWindow.webContents.send("file", "save");
-        } else if (response === 1) {
+        } else if (platform === "darwin" ? response === 2 : response === 1) {
           promptToSave = false;
 
           if (hidden) {
