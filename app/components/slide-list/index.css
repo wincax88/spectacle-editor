@@ -8,7 +8,7 @@
 }
 
 .listWrapper {
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: visible;
   z-index: 100;
   flex: 1;
