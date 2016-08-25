@@ -82,7 +82,7 @@
   top: 0;
   transition: left 0.4s;
   width: 220px;
-  overflow-y: scroll;
+  overflow-y: auto;
   z-index: 1;
 }
 
