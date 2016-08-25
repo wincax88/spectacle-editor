@@ -8,6 +8,8 @@ const electronCfg = require("./webpack.config.electron.js");
 const cfg = require("./webpack.config.production.js");
 const packager = require("electron-packager");
 const createDMG = require("electron-installer-dmg");
+const createEXE = require("electron-builder");
+const Platform = createEXE.Platform;
 const del = require("del");
 const exec = require("child_process").exec;
 const argv = require("minimist")(process.argv.slice(2));
@@ -18,7 +20,6 @@ const devDeps = Object.keys(pkg.devDependencies);
 const appName = (argv.name || argv.n || pkg.productName).replace(" ", "-");
 const shouldUseAsar = argv.asar || argv.a || false;
 const shouldBuildAll = argv.all || false;
-
 
 const DEFAULT_OPTS = {
   dir: "./",
@@ -130,6 +131,29 @@ function pack(plat, arch, cb) {
       }, (err) => {
         if (err) {
           console.log(err);
+        }
+      });
+    } else if (plat === "win32") {
+      createEXE.build({
+        targets: Platform.WINDOWS.createTarget(),
+        devMetaData: {
+          build: {
+            appId: "com.formidable.spectacle.editor",
+            category: "public.app-category.productivity",
+            win: {
+              iconUrl: "https://raw.githubusercontent.com/FormidableLabs/spectacle-editor/master/app/app.ico",
+              msi: true,
+              icon: `${paths[0]}/resources/app/app/app.ico`
+            },
+            linux: {
+              maintainer: "Formidable Labs"
+            }
+          },
+          directories: {
+            out: "./release/binaries/",
+            output: "./release/binaries/",
+            buildResources: paths[0]
+          }
         }
       });
     }
