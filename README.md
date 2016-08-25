@@ -72,6 +72,10 @@ This is where options for the selected element will appear. The menu will depend
 To build for Windows on MacOS, you'll need (this may take 30+ mins):
 
 ```bash
+brew update
+```
+
+```bash
 brew install wine --without-x11
 brew install mono
 ```
