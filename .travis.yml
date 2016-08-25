@@ -19,7 +19,6 @@ cache:
   - $HOME/.electron
   - $HOME/.cache
 
-
 addons:
   apt:
     packages:
@@ -45,4 +44,5 @@ script:
   - npm run test
   - npm run build
   - npm run test-e2e
-  - npm run package
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then npm run package-linux; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then npm run package-mac; fi
