@@ -49,7 +49,6 @@ if (process.env.NODE_ENV === "development") {
   require("electron-debug")();
 }
 
-
 app.on("window-all-closed", () => {
   pdfWindow = null;
   screencapWindow = null;
@@ -103,7 +102,7 @@ const playSlideShow = () => {
     height: 700
   });
 
-  presWindow.loadURL(`file://${__dirname}/app/presentation.html`);
+  presWindow.loadURL(`file://${__dirname}/presentation.html`);
 
   presWindow.webContents.on("did-finish-load", () => {
     mainWindow.webContents.send("trigger-update");
@@ -128,7 +127,7 @@ app.on("ready", () => {
     }
   });
 
-  screencapWindow.loadURL(`file://${__dirname}/app/slide-preview.html#/?export`);
+  screencapWindow.loadURL(`file://${__dirname}/slide-preview.html#/?export`);
 
   ipcMain.on("ready-to-screencap", (event, data) => {
     const { currentSlideIndex, numberOfSlides } = data;
@@ -157,7 +156,7 @@ app.on("ready", () => {
     }
   });
 
-  pdfWindow.loadURL(`file://${__dirname}/app/presentation.html#/?export`);
+  pdfWindow.loadURL(`file://${__dirname}/presentation.html#/?export`);
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -174,7 +173,7 @@ app.on("ready", () => {
     hidden = true;
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app/app.html`);
+  mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on("did-finish-load", () => {
     mainWindow.show();
