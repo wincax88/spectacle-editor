@@ -19,20 +19,6 @@
   "homepage": "https://github.com/FormidableLabs/spectacle-editor#readme",
   "dependencies": {
     "font-awesome": "^4.6.1",
-    "lodash": "^4.12.0",
-    "mobx": "^2.2.2",
-    "mobx-react": "^3.1.0",
-    "moment": "^2.14.1",
-    "react": "^15.0.1",
-    "react-color": "^2.2.0",
-    "react-dom": "^15.0.1",
-    "react-motion": "^0.4.3",
-    "react-notification-system": "^0.2.7",
-    "react-router": "^2.2.4",
-    "seamless-immutable": "^6.1.0",
-    "shortid": "^2.2.6",
-    "source-map-support": "^0.4.0",
-    "spectacle": "^1.0.6",
-    "spectacle-editor-viewer": "0.0.18"
+    "source-map-support": "^0.4.0"
   }
 }
