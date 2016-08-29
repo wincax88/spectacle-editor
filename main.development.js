@@ -476,6 +476,14 @@ app.on("ready", () => {
           mainWindow.focus();
           mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
+      }, {
+        label: "Toggle Developer Tools",
+        accelerator: "Alt+Command+I",
+        click() {
+          mainWindow.show();
+          mainWindow.focus();
+          mainWindow.toggleDevTools();
+        }
       }]
     }, {
       label: "Play",
