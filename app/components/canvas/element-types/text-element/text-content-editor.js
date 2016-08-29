@@ -48,19 +48,45 @@ export default class TextContentEditor extends Component {
     this.isHighLighted = false;
 
     const { content } = this.state;
-    const { placeholderText, children } = this.props;
+    const { placeholderText, children, componentProps: { listType } } = this.props;
 
     if (content === null || content.length === 0) {
       this.editor.childNodes[0].innerText = children && children[0] || placeholderText;
       return;
     }
 
-    const nextChildren = Array.prototype.map.call(this.editor.childNodes, (child) => (
-      child.innerText || ""
-    ));
+    const childNodes = Array.prototype.slice.call(this.editor.childNodes);
+
+    const nextChildren = childNodes.map((child) => {
+      if (listType) {
+        const { children: childElements } = child;
+
+        Array.prototype.forEach.call(child.children, (line, i) => {
+          if (!line.children.length && !line.innerText.length && line.localName === "div") {
+            childElements[i].innerText = "\n";
+          }
+        });
+
+        return child.innerText;
+      }
+
+      if (!child.children.length) {
+        return child.innerText.replace(/\n$/, "") || "";
+      }
+
+      return Array.prototype.map.call(child.children, (line) => line.innerText.replace(/\n$/, ""));
+    });
 
     this.context.store.updateChildren(
-      nextChildren,
+      nextChildren.reduce((arr, child) => {
+        if (Array.isArray(child)) {
+          return arr.concat(child);
+        }
+
+        arr.push(child);
+
+        return arr;
+      }, []),
       this.currentSlide,
       this.currentElement
     );
@@ -111,7 +137,6 @@ export default class TextContentEditor extends Component {
 
   handleKeyDown = (ev) => {
     const superKey = process.platform === "darwin" ? ev.metaKey : ev.ctrlKey;
-
     // undo super+z, stop propagation so as not to trigger global undo
     if (superKey && ev.which === 90 && !ev.shiftKey) {
       ev.preventDefault();
@@ -133,7 +158,7 @@ export default class TextContentEditor extends Component {
       ev.preventDefault();
     }
 
-    // shift+enter new line in when not in list mode doesn't work properly, disabled
+    // shift+enter new line when not in list mode doesn't work properly, disabled
     if (ev.which === 13 && ev.shiftKey && !this.props.componentProps.listType) {
       ev.preventDefault();
     }
@@ -174,7 +199,7 @@ export default class TextContentEditor extends Component {
             style={style}
             key={i}
           >
-            {element.replace(/\n$/, "").split("\n").map((line, k) => (
+            {element.split("\n").map((line, k) => (
                 <span
                   className={classNames.line}
                   key={k}
@@ -206,21 +231,40 @@ export default class TextContentEditor extends Component {
         contentEditable={currentlySelected ? "true" : "false"}
         suppressContentEditableWarning
         onClick={this.handleClick}
-        onBlur={this.handleBlur}
         onKeyDown={this.handleKeyDown}
         onInput={this.handleInput}
       >
-        {text.map((element, i) => (
-          <li
-            className={
-             `${classNames.line}`
+        {text.map((li, i) => {
+          let listItem = li;
+          const lines = [];
+          let line = "";
+
+          while (listItem.length) {
+            if (listItem.indexOf("\n") === 0) {
+              lines.push(line);
+              line = "";
+            } else {
+              line += listItem[0];
             }
-            style={style}
-            key={i}
-          >
-           {element.replace(/\n$/, "").split("\n").map((line, k) => <div key={k}>{line}</div>)}
-          </li>)
-        )}
+
+            listItem = listItem.slice(1);
+          }
+
+          if (line.length) {
+            lines.push(line);
+          }
+
+          return (
+            <li
+              className={
+               `${classNames.line}`
+              }
+              style={style}
+              key={i}
+            >
+             {lines.map((str, k) => <div key={k}>{str}</div>)}
+            </li>);
+        })}
       </ListTag>
     );
   }
