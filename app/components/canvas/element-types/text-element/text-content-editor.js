@@ -233,23 +233,21 @@ export default class TextContentEditor extends Component {
         onInput={this.handleInput}
       >
         {text.map((li, i) => {
-          let listItem = li;
-          const lines = [];
           let line = "";
 
-          while (listItem.length) {
-            if (listItem.indexOf("\n") === 0) {
+          const string = li.split("").reduce((lines, character) => {
+            if (character === "\n") {
               lines.push(line);
               line = "";
             } else {
-              line += listItem[0];
+              line += character;
             }
 
-            listItem = listItem.slice(1);
-          }
+            return lines;
+          }, []);
 
           if (line.length) {
-            lines.push(line);
+            string.push(line);
           }
 
           return (
@@ -260,7 +258,7 @@ export default class TextContentEditor extends Component {
               style={style}
               key={i}
             >
-             {lines.map((str, k) => <div key={k}>{str}</div>)}
+             {string.map((str, k) => <div key={k}>{str}</div>)}
             </li>);
         })}
       </ListTag>
