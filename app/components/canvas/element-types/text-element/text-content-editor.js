@@ -55,9 +55,7 @@ export default class TextContentEditor extends Component {
       return;
     }
 
-    const childNodes = Array.prototype.slice.call(this.editor.childNodes);
-
-    const nextChildren = childNodes.map((child) => {
+    const nextChildren = Array.prototype.map.call(this.editor.childNodes, (child) => {
       if (listType) {
         const { children: childElements } = child;
 
