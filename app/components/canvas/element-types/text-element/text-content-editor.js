@@ -69,7 +69,7 @@ export default class TextContentEditor extends Component {
       }
 
       if (!child.children.length) {
-        return child.innerText.replace(/\n$/, "") || "";
+        return child.innerText.replace(/\n$/, "");
       }
 
       return Array.prototype.map.call(child.children, (line) => line.innerText.replace(/\n$/, ""));
