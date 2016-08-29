@@ -65,7 +65,7 @@ export default class TextContentEditor extends Component {
           }
         });
 
-        return child.innerText;
+        return child.innerText.replace(/\n$/, "");
       }
 
       if (!child.children.length) {
@@ -232,35 +232,17 @@ export default class TextContentEditor extends Component {
         onKeyDown={this.handleKeyDown}
         onInput={this.handleInput}
       >
-        {text.map((li, i) => {
-          let line = "";
-
-          const string = li.split("").reduce((lines, character) => {
-            if (character === "\n") {
-              lines.push(line);
-              line = "";
-            } else {
-              line += character;
+        {text.map((li, i) => (
+          <li
+            className={
+             `${classNames.line}`
             }
-
-            return lines;
-          }, []);
-
-          if (line.length) {
-            string.push(line);
-          }
-
-          return (
-            <li
-              className={
-               `${classNames.line}`
-              }
-              style={style}
-              key={i}
-            >
-             {string.map((str, k) => <div key={k}>{str}</div>)}
-            </li>);
-        })}
+            style={style}
+            key={`list-item-${i}`}
+          >
+           {li.split("\n").map((str, k) => <div key={k}>{str}</div>)}
+          </li>
+        ))}
       </ListTag>
     );
   }
