@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { map } from "lodash";
 
 export default class TextContentEditor extends Component {
   static propTypes = {
@@ -55,20 +56,8 @@ export default class TextContentEditor extends Component {
       return;
     }
 
-    const nextChildren = Array.prototype.map.call(this.editor.childNodes, (child) => {
-      if (listType) {
-        const { children: childElements } = child;
-
-        Array.prototype.forEach.call(child.children, (line, i) => {
-          if (!line.children.length && !line.innerText.length && line.localName === "div") {
-            childElements[i].innerText = "\n";
-          }
-        });
-
-        return child.innerText.replace(/\n$/, "");
-      }
-
-      if (!child.children.length) {
+    const nextChildren = map(this.editor.childNodes, (child) => {
+      if (listType || !child.children.length) {
         return child.innerText.replace(/\n$/, "");
       }
 
@@ -240,7 +229,7 @@ export default class TextContentEditor extends Component {
             style={style}
             key={`list-item-${i}`}
           >
-           {li.split("\n").map((str, k) => <div key={k}>{str}</div>)}
+           {li.split("\n").map((str, k) => <div key={k}>{str === "" ? <br /> : str}</div>)}
           </li>
         ))}
       </ListTag>
