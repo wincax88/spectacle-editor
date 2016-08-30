@@ -93,10 +93,7 @@ npm run release
 Other packaging steps are:
 ```
 npm run package-all
-npm rnu package-mac
-npm rnu package-win
-npm rnu package-linux
+npm run package-mac
+npm run package-win
+npm run package-linux
 ```
-
-
-
