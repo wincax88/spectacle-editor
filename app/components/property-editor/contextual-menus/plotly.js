@@ -8,36 +8,35 @@ import commonStyles from "../index.css";
 const defaultPlotlySrc = elements[ElementTypes.PLOTLY].props.src;
 
 const normalizeUrl = (url) => {
-  let urlWithEmbed = url;
+  let urlWithEmbedAndQuery = url;
 
-  if (urlWithEmbed.indexOf(".embed") === -1) {
-    const queryIndex = urlWithEmbed.indexOf("?");
+  if (urlWithEmbedAndQuery.indexOf(".embed") === -1) {
+    const queryIndex = urlWithEmbedAndQuery.indexOf("?");
 
     if (queryIndex === -1) {
-      urlWithEmbed =
-        /\/$/.test(urlWithEmbed) ?
-         `${urlWithEmbed.slice(0, -1)}.embed`
+      urlWithEmbedAndQuery =
+        /\/$/.test(urlWithEmbedAndQuery) ?
+         `${urlWithEmbedAndQuery.slice(0, -1)}.embed`
          :
-         `${urlWithEmbed}.embed`;
+         `${urlWithEmbedAndQuery}.embed`;
     } else {
-      urlWithEmbed = `${urlWithEmbed.slice(0, queryIndex)}.embed${urlWithEmbed.slice(queryIndex)}`;
+      urlWithEmbedAndQuery =
+      `${urlWithEmbedAndQuery.slice(0, queryIndex)}.embed${urlWithEmbedAndQuery.slice(queryIndex)}`;
     }
   }
 
-  let urlWithQuery = urlWithEmbed;
-
-  if (url.indexOf("link=") === -1) {
-    urlWithQuery = url.indexOf(".embed?") > -1 ?
-    `${url}&link=false`
+  if (urlWithEmbedAndQuery.indexOf("link=") === -1) {
+    urlWithEmbedAndQuery = urlWithEmbedAndQuery.indexOf(".embed?") > -1 ?
+    `${urlWithEmbedAndQuery}&link=false`
     :
-    `${url}?link=false`;
+    `${urlWithEmbedAndQuery}?link=false`;
   }
 
-  if (urlWithQuery.indexOf("http://") === 0 || urlWithQuery.indexOf("https://") === 0) {
-    return urlWithQuery;
+  if (urlWithEmbedAndQuery.indexOf("http://") === 0 || urlWithEmbedAndQuery.indexOf("https://") === 0) {
+    return urlWithEmbedAndQuery;
   }
 
-  return `https://${urlWithQuery}`;
+  return `https://${urlWithEmbedAndQuery}`;
 };
 
 export default class PlotlyMenu extends Component {
