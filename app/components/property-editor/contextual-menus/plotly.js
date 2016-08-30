@@ -8,9 +8,25 @@ import commonStyles from "../index.css";
 const defaultPlotlySrc = elements[ElementTypes.PLOTLY].props.src;
 
 const normalizeUrl = (url) => {
-  let urlWithQuery = url;
+  let urlWithEmbed = url;
 
-  if (url.indexOf("link") === -1) {
+  if (urlWithEmbed.indexOf(".embed") === -1) {
+    const queryIndex = urlWithEmbed.indexOf("?");
+
+    if (queryIndex === -1) {
+      urlWithEmbed =
+        /\/$/.test(urlWithEmbed) ?
+         `${urlWithEmbed.slice(0, -1)}.embed`
+         :
+         `${urlWithEmbed}.embed`;
+    } else {
+      urlWithEmbed = `${urlWithEmbed.slice(0, queryIndex)}.embed${urlWithEmbed.slice(queryIndex)}`;
+    }
+  }
+
+  let urlWithQuery = urlWithEmbed;
+
+  if (url.indexOf("link=") === -1) {
     urlWithQuery = url.indexOf(".embed?") > -1 ?
     `${url}&link=false`
     :
