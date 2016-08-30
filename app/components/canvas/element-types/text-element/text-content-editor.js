@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { map } from "lodash";
 
 export default class TextContentEditor extends Component {
   static propTypes = {
@@ -49,19 +48,43 @@ export default class TextContentEditor extends Component {
     this.isHighLighted = false;
 
     const { content } = this.state;
-    const { placeholderText, children } = this.props;
+    const { placeholderText, children, componentProps: { listType } } = this.props;
 
     if (content === null || content.length === 0) {
       this.editor.childNodes[0].innerText = children && children[0] || placeholderText;
       return;
     }
 
-    const nextChildren = map(this.editor.childNodes, (child) =>
-      child.innerText.replace(/\n$/, "")
-    );
+    const nextChildren = Array.prototype.map.call(this.editor.childNodes, (child) => {
+      if (listType) {
+        const { children: childElements } = child;
+
+        Array.prototype.forEach.call(child.children, (line, i) => {
+          if (!line.children.length && !line.innerText.length && line.localName === "div") {
+            childElements[i].innerText = "\n";
+          }
+        });
+
+        return child.innerText.replace(/\n$/, "");
+      }
+
+      if (!child.children.length) {
+        return child.innerText.replace(/\n$/, "");
+      }
+
+      return Array.prototype.map.call(child.children, (line) => line.innerText.replace(/\n$/, ""));
+    });
 
     this.context.store.updateChildren(
-      nextChildren,
+      nextChildren.reduce((arr, child) => {
+        if (Array.isArray(child)) {
+          return arr.concat(child);
+        }
+
+        arr.push(child);
+
+        return arr;
+      }, []),
       this.currentSlide,
       this.currentElement
     );
@@ -217,7 +240,7 @@ export default class TextContentEditor extends Component {
             style={style}
             key={`list-item-${i}`}
           >
-           {li.split("\n").map((str, k) => <div key={k}>{str === "" ? <br /> : str}</div>)}
+           {li.split("\n").map((str, k) => <div key={k}>{str}</div>)}
           </li>
         ))}
       </ListTag>
