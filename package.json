@@ -112,7 +112,7 @@
     "shortid": "^2.2.6",
     "source-map-support": "^0.4.0",
     "spectacle": "^1.0.6",
-    "spectacle-editor-viewer": "0.0.18"
+    "spectacle-editor-viewer": "0.0.21"
   },
   "devEngines": {
     "node": "4.x || 5.x || 6.x",
