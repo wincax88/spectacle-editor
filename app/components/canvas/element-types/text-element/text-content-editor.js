@@ -179,7 +179,7 @@ export default class TextContentEditor extends Component {
                   className={classNames.line}
                   key={k}
                 >
-                  {line}
+                  {line === "" ? <br /> : line}
                 </span>
               )
             )}
