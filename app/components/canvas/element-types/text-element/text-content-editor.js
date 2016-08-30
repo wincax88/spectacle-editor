@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { map } from "lodash";
 
 export default class TextContentEditor extends Component {
   static propTypes = {
@@ -55,9 +56,9 @@ export default class TextContentEditor extends Component {
       return;
     }
 
-    const nextChildren = Array.prototype.map.call(this.editor.childNodes, (child) => (
-      child.innerText || ""
-    ));
+    const nextChildren = map(this.editor.childNodes, (child) =>
+      child.innerText.replace(/\n$/, "")
+    );
 
     this.context.store.updateChildren(
       nextChildren,
@@ -111,7 +112,6 @@ export default class TextContentEditor extends Component {
 
   handleKeyDown = (ev) => {
     const superKey = process.platform === "darwin" ? ev.metaKey : ev.ctrlKey;
-
     // undo super+z, stop propagation so as not to trigger global undo
     if (superKey && ev.which === 90 && !ev.shiftKey) {
       ev.preventDefault();
@@ -133,7 +133,7 @@ export default class TextContentEditor extends Component {
       ev.preventDefault();
     }
 
-    // shift+enter new line in when not in list mode doesn't work properly, disabled
+    // shift+enter new line when not in list mode doesn't work properly, disabled
     if (ev.which === 13 && ev.shiftKey && !this.props.componentProps.listType) {
       ev.preventDefault();
     }
@@ -174,12 +174,12 @@ export default class TextContentEditor extends Component {
             style={style}
             key={i}
           >
-            {element.replace(/\n$/, "").split("\n").map((line, k) => (
+            {element.split("\n").map((line, k) => (
                 <span
                   className={classNames.line}
                   key={k}
                 >
-                  {line}
+                  {line === "" ? <br /> : line}
                 </span>
               )
             )}
@@ -206,21 +206,20 @@ export default class TextContentEditor extends Component {
         contentEditable={currentlySelected ? "true" : "false"}
         suppressContentEditableWarning
         onClick={this.handleClick}
-        onBlur={this.handleBlur}
         onKeyDown={this.handleKeyDown}
         onInput={this.handleInput}
       >
-        {text.map((element, i) => (
+        {text.map((li, i) => (
           <li
             className={
              `${classNames.line}`
             }
             style={style}
-            key={i}
+            key={`list-item-${i}`}
           >
-           {element.replace(/\n$/, "").split("\n").map((line, k) => <div key={k}>{line}</div>)}
-          </li>)
-        )}
+           {li.split("\n").map((str, k) => <div key={k}>{str === "" ? <br /> : str}</div>)}
+          </li>
+        ))}
       </ListTag>
     );
   }
