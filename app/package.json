@@ -1,0 +1,24 @@
+{
+  "name": "spectacle-editor",
+  "version": "0.1.0",
+  "productName": "Spectacle Editor",
+  "description": "Drag and drop Spectacle editor",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FormidableLabs/spectacle-editor.git"
+  },
+  "author": {
+    "name": "formidable",
+    "email": "admin@formidable.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FormidableLabs/spectacle-editor/issues"
+  },
+  "homepage": "https://github.com/FormidableLabs/spectacle-editor#readme",
+  "dependencies": {
+    "font-awesome": "^4.6.1",
+    "source-map-support": "^0.4.0"
+  }
+}

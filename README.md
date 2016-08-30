@@ -67,3 +67,33 @@ The slide list displays all slides in the presentation and allows for changing t
 
 This is where options for the selected element will appear. The menu will depend on the type of element selected. If no element is selected a slide menu will appear.
 
+## Creating release packages
+
+To build for Windows on MacOS, you'll need (this may take 30+ mins):
+
+```bash
+brew update
+```
+
+```bash
+brew install wine --without-x11
+brew install mono
+```
+
+To build for Linux on MacOS, you'll need:
+```bash
+brew install gnu-tar libicns graphicsmagick xz
+```
+
+To build and package for all platforms, run:
+```bash
+npm run release
+```
+
+Other packaging steps are:
+```
+npm run package-all
+npm run package-mac
+npm run package-win
+npm run package-linux
+```

@@ -1,3 +1,4 @@
+import path from "path";
 import webpack from "webpack";
 import baseConfig from "./webpack.config.base";
 
@@ -6,11 +7,11 @@ export default {
 
   devtool: "source-map",
 
-  entry: "./main.development",
+  entry: "./app/main.development",
 
   output: {
-    path: __dirname,
-    filename: "./main.js"
+    path: path.join(__dirname, "app"),
+    filename: "main.js"
   },
 
   plugins: [
