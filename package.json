@@ -16,6 +16,7 @@
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./app/main.development",
     "postinstall": "install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\"",
+    "release": "npm run build && npm run package-all",
     "package-all": "build -mwl",
     "package-mac": "build -m",
     "package-win": "build -w",

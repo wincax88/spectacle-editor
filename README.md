@@ -85,9 +85,17 @@ To build for Linux on MacOS, you'll need:
 brew install gnu-tar libicns graphicsmagick xz
 ```
 
-To build and build a package for all platforms, run:
+To build and package for all platforms, run:
 ```bash
-npm run build && npm run package
+npm run release
+```
+
+Other packaging steps are:
+```
+npm run package-all
+npm rnu package-mac
+npm rnu package-win
+npm rnu package-linux
 ```
 
 
