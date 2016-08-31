@@ -2,10 +2,7 @@ import React, { Component } from "react";
 import { autorun } from "mobx";
 
 import { ElementTypes } from "../../../constants";
-import elements from "../../../elements";
 import commonStyles from "../index.css";
-
-const defaultPlotlySrc = elements[ElementTypes.PLOTLY].props.src;
 
 const normalizeUrl = (url) => {
   let urlWithEmbedAndQuery = url;
@@ -72,61 +69,45 @@ export default class PlotlyMenu extends Component {
     });
   }
 
-  onSourceChange = (ev) => {
-    const plotlySrc = ev.target.value;
-
-    if (plotlySrc) {
-      this.context.store.updateElementProps({
-        src: plotlySrc
-      });
+  onInputKeyPress = (ev) => {
+    if (ev.which === 13) {
+      this.inputElement.blur();
     }
-  }
+  };
 
-  onSourceBlur = (ev) => {
-    const plotlySrc = ev.target.value;
-
-    if (!plotlySrc) {
+  onSourceBlur = ({ target: { value } }) => {
+    if (!value) {
       return;
     }
 
-    const normalizedUrl = normalizeUrl(plotlySrc);
-
-    if (plotlySrc !== normalizedUrl) {
-      this.context.store.updateElementProps({
-        src: normalizedUrl
-      });
-    }
+    this.context.store.updateElementProps({
+      src: normalizeUrl(value)
+    });
   }
 
   render() {
     const { currentElement } = this.state;
 
-    let srcValue = "";
-
-    if (currentElement) {
-      const { src } = currentElement.props;
-
-      // If not the default source or we don't have an imageName show src
-      if (src !== defaultPlotlySrc) {
-        srcValue = src;
-      }
-    }
-
     return (
       <div className={commonStyles.wrapper}>
-        <h3 className={commonStyles.heading}>Plotly</h3>
-        <hr className={commonStyles.hr} />
-        <p className={commonStyles.subHeading}>
-          Embed Url
-        </p>
-        <input
-          className={`globalInput`}
-          type="text"
-          name="imagesSource"
-          onChange={this.onSourceChange}
-          onBlur={this.onSourceBlur}
-          value={srcValue}
-        />
+        {currentElement && (
+          <div>
+            <h3 className={commonStyles.heading}>Plotly</h3>
+            <hr className={commonStyles.hr} />
+            <p className={commonStyles.subHeading}>
+              Embed Url
+            </p>
+            <input
+              ref={(component) => {this.inputElement = component;}}
+              onKeyPress={this.onInputKeyPress}
+              className={`globalInput`}
+              type="text"
+              name="imagesSource"
+              onInput={this.onSourceInput}
+              onBlur={this.onSourceBlur}
+            />
+          </div>
+        )}
       </div>
     );
   }
