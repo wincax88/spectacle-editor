@@ -373,13 +373,25 @@ export default class SlidesStore {
     });
   }
 
-  updateElementProps(props) {
-    if (!this.currentElement) {
+  updateElementProps(props, currentSlideIndex, currentElementIndex) {
+    const slideIndex = typeof currentSlideIndex === "number" ?
+      currentSlideIndex
+      :
+      this.currentSlideIndex;
+
+    const elementIndex = typeof currentElementIndex === "number" ?
+      currentElementIndex
+      :
+      this.currentElementIndex;
+
+    const currentElement = this.slides[slideIndex].children[elementIndex] || this.currentElement;
+
+    if (!currentElement) {
       return;
     }
 
-    const { paragraphStyle } = this.currentElement.props;
-    const newProps = merge(this.currentElement.props, props);
+    const { paragraphStyle } = currentElement.props;
+    const newProps = merge(currentElement.props, props);
     const newState = this.currentState;
 
     if (
@@ -392,7 +404,7 @@ export default class SlidesStore {
       newProps.style = omit(newProps.style, Object.keys(newState.paragraphStyles[paragraphStyle]));
     }
 
-    newState.slides[this.currentSlideIndex].children[this.currentElementIndex].props = newProps;
+    newState.slides[slideIndex].children[elementIndex].props = newProps;
     this._addToHistory(newState);
   }
 
