@@ -65,7 +65,10 @@ export default class ImageMenu extends Component {
               message: "Error loading file",
               level: "error"
             });
+
+            return;
           }
+
           const imgSrc = `data:${type};base64, ${encodedImageString}`;
 
           this.getScaledHeightAndWidth(imgSrc, ({ height, width, src }) => {
@@ -128,6 +131,7 @@ export default class ImageMenu extends Component {
   getScaledHeightAndWidth(src, cb) {
     const imageElement = new Image();
     imageElement.src = src;
+
     imageElement.addEventListener("load", () => {
       const { props } = this.context.store.currentElement;
       const { height, width } = imageElement;
