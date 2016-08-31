@@ -73,6 +73,10 @@ export default class PlotlyMenu extends Component {
     });
   }
 
+  componentWillUnmount() {
+    window.removeEventListener("click", this.handleClick);
+  }
+
   onInputKeyPress = (ev) => {
     if (ev.which === 13) {
       this.inputElement.blur();
