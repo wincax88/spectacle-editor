@@ -4,7 +4,8 @@ import fs from "fs";
 import notificationSystem from "../notifications";
 import { verifyFileContent } from "../utils";
 
-const dialog = remote.require("dialog");
+//const dialog = remote.require("dialog");
+const {dialog} = require('electron').remote
 
 const getFileContent = (slidesStore) => JSON.stringify({
   presentation: slidesStore.serialize()

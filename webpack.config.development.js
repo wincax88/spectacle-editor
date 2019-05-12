@@ -12,7 +12,7 @@ const config = {
 
   entry: {
     bundle: [
-      "webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr",
+      "webpack-hot-middleware/client?path=http://localhost:3001/__webpack_hmr",
       "./app/index"
     ],
     presentation: "./app/presentation",
@@ -21,7 +21,7 @@ const config = {
 
   output: {
     ...baseConfig.output,
-    publicPath: "http://localhost:3000/dist/"
+    publicPath: "http://localhost:3001/dist/"
   },
 
   module: {

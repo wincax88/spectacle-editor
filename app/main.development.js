@@ -43,7 +43,7 @@ const handleSocialAuth = (socialUrl) => {
   });
 };
 
-crashReporter.start();
+// crashReporter.start();
 
 if (process.env.NODE_ENV === "development") {
   require("electron-debug")();
